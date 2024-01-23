@@ -10,8 +10,8 @@ def load_data(url_dict,st):
     url_login ="https://biomonitoringwebsite.herokuapp.com/api/auth/login"
     data = {
 
-        "username": "biomonitoring",
-        "password": "wwfcam"
+        "username": st.secrets["username"],
+        "password": st.secrets["password"]
 
     }
 
