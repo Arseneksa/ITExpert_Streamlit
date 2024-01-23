@@ -87,8 +87,8 @@ def communication_page(st):
     localurl = "http://localhost:8000"
     onlineurl = "https://biomonitoringwebsite.herokuapp.com"
     dataurl =onlineurl+"/api/communication/"
-    interestScoreBreakdown_url =localurl+"/api/communication_combined/"+str(3)+"/pie"
-    datapub_typeurl =localurl+"/api/publicationType/"
+    interestScoreBreakdown_url =onlineurl+"/api/communication_combined/"+str(3)+"/pie"
+    datapub_typeurl =onlineurl+"/api/publicationType/"
     url_dict  = {
         "communication":dataurl,
         "publicationType":datapub_typeurl,
