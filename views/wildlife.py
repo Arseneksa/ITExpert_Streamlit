@@ -4,7 +4,11 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 import plotly.express as px
-
+from data.load_data import *
+from views.wildlifedata.wildlife_region import wildlife_region
+from views.wildlifedata.wildlife_country import *
+from views.wildlifedata.wildlife_landscape import *
+from views.wildlifedata.wildlife_site import *
 #######################
 # Plots
 
@@ -151,129 +155,70 @@ def wildlife():
 
     #######################
     # Load data
-    df_reshaped = pd.read_csv('data/us-population-2010-2019-reshaped.csv')
-
-
+    localurl = "http://localhost:8000"
+    onlineurl = "https://biomonitoringwebsite.herokuapp.com"
+    dataurl =onlineurl+"/api/wildlife/"
+    sites_url =onlineurl+"/api/sites/"
+    countries_url =onlineurl+"/api/countries/"
+    # regional_data_url =onlineurl+"/api/info_pillar/Region/1"
+    url_dict  = {
+        "wildlife":dataurl,
+        "sites":sites_url,
+        "countries":countries_url,
+        # "region_data":regional_data_url,
+    }
+   
+    data_dict= load_data(url_dict,st)
+    # st.write(data_dict)
+    data = data_dict["wildlife"]
+    sites = data_dict["sites"]
+    countries = data_dict["countries"]
+    
+    # value  = [x["y"] for x in interestScoreBreakdown["data"]]
+    # topics= [x["name"] for x in interestScoreBreakdown["data"]]
+    # interestScoreBreakdown = {
+    #     "Topic":topics,
+    #     "value": value
+    # }
+    
+    # st.write(sites)
+    df = pd.json_normalize(data)
+    sites_df = pd.json_normalize(sites)
+    countries_df = pd.json_normalize(countries)
+    df = df.loc[df['year']!=-1]
+    years = df['year'].unique()
+    min_year = df['year'].min()
+    max_year = df['year'].max()
+    levels = ["Region","Country","Landscape","Site"]
+    countries = countries_df["name"].unique()
+    sites = sites_df["name"].unique()
     #######################
     # Sidebar
     with st.sidebar:
         # st.title('🏂 US Population Dashboard')
-        st.title('Filter')
-        
-        year_list = list(df_reshaped.year.unique())[::-1]
-        
-        selected_year = st.selectbox('Select a year', year_list)
-        df_selected_year = df_reshaped[df_reshaped.year == selected_year]
-        df_selected_year_sorted = df_selected_year.sort_values(by="population", ascending=False)
+        # st.title('Filter')
+        selected_level = st.selectbox('Select a level', levels)
+    if selected_level =="Region":
+        regional_data_url =localurl+"/api/info_pillar/Region/wildlife/1"
+        url_dict  = {
+            "region_data":regional_data_url,
+        }
+    
+        data_dict= load_data(url_dict,st)
+        region_data = data_dict["region_data"]
+        # df = pd.json_normalize(region_data)
+        wildlife_region(st,region_data,pd)
+    if selected_level =="Country":
+        with st.sidebar:
+        # st.title('🏂 US Population Dashboard')
+        # st.title('Filter')
+            selected_country = st.selectbox('Select a country', countries)
+        wildlife_country(st,selected_country)
+    if selected_level =="Site":
+        with st.sidebar:
+        # st.title('🏂 US Population Dashboard')
+        # st.title('Filter')
+            selected_site = st.selectbox('Select a site', sites)
+        wildlife_site(st,selected_site)
 
-        color_theme_list = ['blues', 'cividis', 'greens', 'inferno', 'magma', 'plasma', 'reds', 'rainbow', 'turbo', 'viridis']
-        selected_color_theme = st.selectbox('Select a color theme', color_theme_list)
-
-    # Choropleth map
-    def make_choropleth(input_df, input_id, input_column, input_color_theme):
-        choropleth = px.choropleth(input_df, locations=input_id, color=input_column, locationmode="USA-states",
-                            color_continuous_scale=input_color_theme,
-                            range_color=(0, max(df_selected_year.population)),
-                            scope="usa",
-                            labels={'population':'Population'}
-                            )
-        choropleth.update_layout(
-            template='plotly_dark',
-            plot_bgcolor='rgba(0, 0, 0, 0)',
-            paper_bgcolor='rgba(0, 0, 0, 0)',
-            margin=dict(l=0, r=0, t=0, b=0),
-            height=350
-        )
-        return choropleth
-
-    #######################
-    # Dashboard Main Panel
-    col = st.columns((1.5, 4.5, 2), gap='medium')
-
-    with col[0]:
-        st.markdown('#### Gains/Losses')
-
-        df_population_difference_sorted = calculate_population_difference(df_reshaped, selected_year)
-
-        if selected_year > 2010:
-            first_state_name = df_population_difference_sorted.states.iloc[0]
-            first_state_population = format_number(df_population_difference_sorted.population.iloc[0])
-            first_state_delta = format_number(df_population_difference_sorted.population_difference.iloc[0])
-        else:
-            first_state_name = '-'
-            first_state_population = '-'
-            first_state_delta = ''
-        st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
-
-        if selected_year > 2010:
-            last_state_name = df_population_difference_sorted.states.iloc[-1]
-            last_state_population = format_number(df_population_difference_sorted.population.iloc[-1])   
-            last_state_delta = format_number(df_population_difference_sorted.population_difference.iloc[-1])   
-        else:
-            last_state_name = '-'
-            last_state_population = '-'
-            last_state_delta = ''
-        st.metric(label=last_state_name, value=last_state_population, delta=last_state_delta)
-
-        
-        st.markdown('#### States Migration')
-
-        if selected_year > 2010:
-            # Filter states with population difference > 50000
-            # df_greater_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference_absolute > 50000]
-            df_greater_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference > 50000]
-            df_less_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference < -50000]
-            
-            # % of States with population difference > 50000
-            states_migration_greater = round((len(df_greater_50000)/df_population_difference_sorted.states.nunique())*100)
-            states_migration_less = round((len(df_less_50000)/df_population_difference_sorted.states.nunique())*100)
-            donut_chart_greater = make_donut(states_migration_greater, 'Inbound Migration', 'green')
-            donut_chart_less = make_donut(states_migration_less, 'Outbound Migration', 'red')
-        else:
-            states_migration_greater = 0
-            states_migration_less = 0
-            donut_chart_greater = make_donut(states_migration_greater, 'Inbound Migration', 'green')
-            donut_chart_less = make_donut(states_migration_less, 'Outbound Migration', 'red')
-
-        migrations_col = st.columns((0.2, 1, 0.2))
-        with migrations_col[1]:
-            st.write('Inbound')
-            st.altair_chart(donut_chart_greater)
-            st.write('Outbound')
-            st.altair_chart(donut_chart_less)
-
-    with col[1]:
-        st.markdown('#### Total Population')
-        
-        choropleth = make_choropleth(df_selected_year, 'states_code', 'population', selected_color_theme)
-        st.plotly_chart(choropleth, use_container_width=True)
-        
-        heatmap = make_heatmap(df_reshaped, 'year', 'states', 'population', selected_color_theme)
-        st.altair_chart(heatmap, use_container_width=True)
-        
-
-    with col[2]:
-        st.markdown('#### Top States')
-
-        st.dataframe(df_selected_year_sorted,
-                    column_order=("states", "population"),
-                    hide_index=True,
-                    width=None,
-                    column_config={
-                        "states": st.column_config.TextColumn(
-                            "States",
-                        ),
-                        "population": st.column_config.ProgressColumn(
-                            "Population",
-                            format="%f",
-                            min_value=0,
-                            max_value=max(df_selected_year_sorted.population),
-                        )}
-                    )
-        
-        with st.expander('About', expanded=True):
-            st.write('''
-                - Data: [U.S. Census Bureau](https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html).
-                - :orange[**Gains/Losses**]: states with high inbound/ outbound migration for selected year
-                - :orange[**States Migration**]: percentage of states with annual inbound/ outbound migration > 50,000
-                ''')
+   

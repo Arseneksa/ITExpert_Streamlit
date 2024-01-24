@@ -11,6 +11,7 @@ colorama==0.4.6
 colour==0.1.5
 contourpy==1.2.0
 cycler==0.12.1
+deprecation==2.1.0
 extra-streamlit-components==0.1.60
 fonttools==4.47.2
 gitdb==4.0.11
@@ -61,6 +62,7 @@ seaborn==0.13.1
 six==1.16.0
 smmap==5.0.1
 streamlit==1.30.0
+streamlit-antd-components==0.3.2
 streamlit-authenticator==0.2.3
 streamlit-option-menu==0.3.12
 streamlit-pandas-profiling==0.1.3
