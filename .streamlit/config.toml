@@ -6,10 +6,15 @@
 #secondaryBackgroundColor = "#393939"
 #textColor = "#fafafa"
 #font = "sans serif"
+#[theme]
+#base="dark"
+#primaryColor="#19f960"
+#font="sans serif"
 [theme]
 base="dark"
 primaryColor="#19f960"
-font="sans serif"
+backgroundColor="#12250d"
+secondaryBackgroundColor="#2d312c"
 
 [server]
 enableStaticServing = true

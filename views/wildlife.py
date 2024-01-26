@@ -160,38 +160,50 @@ def wildlife():
     dataurl =onlineurl+"/api/wildlife/"
     sites_url =onlineurl+"/api/sites/"
     countries_url =onlineurl+"/api/countries/"
+    species_url =onlineurl+"/api/species/"
+    sampling_method_url =onlineurl+"/api/samplingMethod/"
+    landscapes_url =onlineurl+"/api/landscapes/"
+    main_landscapes_url =onlineurl+"/api/main_Landscapes/"
+    urlblock =onlineurl+"/api/blocks/"
+    urlsectors =onlineurl+"/api/sectors/"
     # regional_data_url =onlineurl+"/api/info_pillar/Region/1"
     url_dict  = {
         "wildlife":dataurl,
         "sites":sites_url,
         "countries":countries_url,
+        "species":species_url,
+        "landscapes":landscapes_url,
+        "main_landscapes":main_landscapes_url,
+        "blocks":urlblock,
+        "sectors":urlsectors,
+        "sampling_method":sampling_method_url,
         # "region_data":regional_data_url,
     }
    
     data_dict= load_data(url_dict,st)
     # st.write(data_dict)
-    data = data_dict["wildlife"]
-    sites = data_dict["sites"]
-    countries = data_dict["countries"]
+
+    df = pd.json_normalize(data_dict["wildlife"])
+    sites_df = pd.json_normalize(data_dict["sites"])
+    countries_df = pd.json_normalize(data_dict["countries"])
+    species_df = pd.json_normalize(data_dict["species"])
+    sampling_method_df = pd.json_normalize(data_dict["sampling_method"])
+    landscapes_df = pd.json_normalize(data_dict["landscapes"])
+    main_landscapes_df = pd.json_normalize(data_dict["main_landscapes"])
+    blocksdf = pd.json_normalize(data_dict["blocks"])
+    sectorsdf = pd.json_normalize(data_dict["sectors"])
     
-    # value  = [x["y"] for x in interestScoreBreakdown["data"]]
-    # topics= [x["name"] for x in interestScoreBreakdown["data"]]
-    # interestScoreBreakdown = {
-    #     "Topic":topics,
-    #     "value": value
-    # }
-    
-    # st.write(sites)
-    df = pd.json_normalize(data)
-    sites_df = pd.json_normalize(sites)
-    countries_df = pd.json_normalize(countries)
-    df = df.loc[df['year']!=-1]
-    years = df['year'].unique()
-    min_year = df['year'].min()
-    max_year = df['year'].max()
     levels = ["Region","Country","Landscape","Site"]
     countries = countries_df["name"].unique()
     sites = sites_df["name"].unique()
+    df = df[df["site"].isin(sites_df["id"].unique())]
+    # df = df[df["species"].isin(species_df["id"].unique())]
+    # df = df[df["country"].isin(countries_df["id"].unique())]
+    # df = df[df["landscape"].isin(landscapes_df["id"].unique())]
+    # df = df[df["main_landscape"].isin(main_landscapes_df["id"].unique())]
+    # df = df[df["sampling_method"].isin(sampling_method_df["id"].unique())]
+    # df = df[df["sector2"].isin(sectorsdf["id"].unique())]
+    # df = df[df["block2"].isin(blocksdf["id"].unique())]
     #######################
     # Sidebar
     with st.sidebar:
@@ -199,15 +211,22 @@ def wildlife():
         # st.title('Filter')
         selected_level = st.selectbox('Select a level', levels)
     if selected_level =="Region":
-        regional_data_url =localurl+"/api/info_pillar/Region/wildlife/1"
-        url_dict  = {
-            "region_data":regional_data_url,
-        }
-    
-        data_dict= load_data(url_dict,st)
-        region_data = data_dict["region_data"]
+        
         # df = pd.json_normalize(region_data)
-        wildlife_region(st,region_data,pd)
+        # wildlife_region(st,df,data,pd)
+        data = {
+            "wildlife":df,
+            "sites":sites_df,
+            "countries":countries_df,
+            "species":species_df,
+            "landscapes":landscapes_df,
+            "main_landscapes":main_landscapes_df,
+            "blocks":blocksdf,
+            "sectors":sectorsdf,
+            "sampling_method":sampling_method_df,
+            
+        }
+        wildlife_region(st,data,pd)
     if selected_level =="Country":
         with st.sidebar:
         # st.title('🏂 US Population Dashboard')

@@ -10,27 +10,10 @@ import numpy as np
 # from pydantic_settings import BaseSettings 
 from data.load_data import *
 from colour import Color
+
+from tools import altairLineChart, calculate_population_difference,format_number
 #######################
 # Page configuration
-def format_number(num):
-    if num > 1000000:
-        if not num % 1000000:
-            return f'{num // 1000000} M'
-        return f'{round(num / 1000000, 1)} M'
-    if num > 1000:
-        return f'{round(num / 1000,2)} K'
-    else:
-        return f'{round(num,2)} '
-
-# Calculation year-over-year population migrations
-def calculate_population_difference(input_df, input_year_start, input_year_end,selected_indicator):
-    input_df[selected_indicator] = input_df[selected_indicator].apply(lambda x: 0 if x ==-1 else x)
-    selected_year_data = input_df[input_df['year'] == str(input_year_end)].reset_index()
-    previous_year_data = input_df[input_df['year'] == str(input_year_start)].reset_index()
-    selected_year_data['difference'] = selected_year_data[selected_indicator].sub(previous_year_data[selected_indicator], fill_value=0)
-    return selected_year_data.sort_values(by="difference", ascending=False)
-    # return pd.concat([selected_year_data.states, selected_year_data.id, selected_year_data.population, selected_year_data.population_difference], axis=1).sort_values(by="population_difference", ascending=False)
-
 
 def communication_page(st):
     
@@ -201,25 +184,11 @@ def communication_page(st):
             coordinator_pub_df = coordinator_pub_df.loc[coordinator_pub_df[selected_indicator]!=-1]
             df_pub1 = coordinator_pub_df.loc[(coordinator_pub_df[selected_indicator]!=-1)&(coordinator_pub_df["name"]==publication_types[0])]
             # st.line_chart( df_pub1[[selected_indicator,'year']], x="year", y=selected_indicator)
-            chart = alt.Chart(df_pub1).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
-                x="year",
-                y=selected_indicator,
-                # color=publication_types[0]
-            )
-            text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text=selected_indicator).properties(
-                    title=alt.Title(publication_types[0].replace("Interest", "Trends in "+selected_indicator),subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
-                    height=450
-                )
-            chart.configure_legend(
-                    strokeColor='gray',
-                    fillColor='#EEEEEE',
-                    padding=10,
-                    cornerRadius=10,
-                    orient='top-right'
-                )
+            chart = altairLineChart(alt,df_pub1,selected_indicator,publication_types[0].replace("Interest", "Trends in "+selected_indicator))
+            
             # text = chart.mark_text(align="center",fontSize=10,opacity=0.6,color="white").encode(text={"value":"Copyright WWF"})
             
-            st.altair_chart(chart+text, theme=None, use_container_width=True)
+            st.altair_chart(chart, theme=None, use_container_width=True)
             if selected_indicator == "Research Interest Score":
                 # st.markdown('#### Research Interest Score Breakdown')
                 start = Color("#12783D")
@@ -304,16 +273,8 @@ def communication_page(st):
             # st.dataframe(df)
             # st.dataframe(df_pub2)
             # st.line_chart( df_pub1[[selected_indicator,'year']], x="year", y=selected_indicator)
-            chart2 = alt.Chart(df_pub2).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960").encode(
-            x="year",
-            y=selected_indicator,
-            # color=publication_types[0]
-            )
-            text2 = chart2.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text=selected_indicator).properties(
-                    title=alt.Title(publication_types[1].replace("Interest", "Trends in "+selected_indicator),subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
-                    height=450
-                )
-            st.altair_chart(chart2+text2, theme=None, use_container_width=True)
+            chart2 = altairLineChart(alt,df_pub2,selected_indicator,publication_types[1].replace("Interest", "Trends in "+selected_indicator))
+            st.altair_chart(chart2, theme=None, use_container_width=True)
         
     
     

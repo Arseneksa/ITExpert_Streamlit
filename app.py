@@ -26,7 +26,7 @@ alt.themes.enable("dark")
 
 
 pillars= [
-    "communication","wildlife","human activity","law enforcement","spatial data and landcover","capacity building"
+    "wildlife","communication","human activity","law enforcement","spatial data and landcover","capacity building"
 ]
 with st.sidebar:
     # st.title('🏂 US Population Dashboard')
