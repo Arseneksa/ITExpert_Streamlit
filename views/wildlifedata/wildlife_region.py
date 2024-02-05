@@ -7,7 +7,7 @@ import geopandas as gpd
 import altair as alt
 import folium
 from streamlit_folium import st_folium
-
+import plotly.express as px
 # @st.cache_data(experimental_allow_widgets=True)
 def wildlife_region(st,data,pd):
     st.header("Congo Basin wildlfe dashboard")
@@ -16,6 +16,11 @@ def wildlife_region(st,data,pd):
     years = df['year'].unique()
     min_year = df['year'].min()
     max_year = df['year'].max()
+    regiondf = pd.DataFrame({
+        'id':[1],
+        'name':["Congo Basin"],
+        "total_area":[4048053]
+    })
     sitesgdf = gpd.read_file("data/All_site.shp",)
     sitesgdf["site"] = sitesgdf[sitesgdf["Level"]=="Site"]["Site_1"]
     sampling_methods  = data["sampling_method"]
@@ -48,10 +53,16 @@ def wildlife_region(st,data,pd):
     countriesdf  = data["countries"]
     speciesdf  = data["species"]
     df["year"] = df["year"].astype(str)
-    df["main_landscape"] = df["main_landscape"].astype(str)
+    
+    # df["main_landscape"] = df["main_landscape"].astype(str)
+    # st.write(df.shape)
     area_cover_df =  get_area_covered_table(df ,sitesdf)
-    # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_df,1,"Country"))
+    # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_df,1,"Country")) 
+    # st.write(df[["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","coverage_rate","year"]])
     # st.write(area_cover_df)
+    # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_df,6,"Site","coverage_rate",sitesdf))
+    # st.write(landscapesdf)
+    
     # data = get_cumulative_max_area_covered_per_level_per_year(area_cover_df,1,"Region","area_covered")
     # print("Cumulative TRIDOM GAB",data)
     # cumulativedf = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Site")
@@ -113,7 +124,17 @@ def wildlife_region(st,data,pd):
         # folium.TileLayer("CartoDB positron", show=False).add_to(
         #     map
         # )
-        
+        # st.write(sites_result_gdf.to_json())
+        # fig = px.choropleth(sites_result_gdf, geojson=sites_result_gdf.to_json(), locations="Name", color="Number of species").update_layout(
+        #     template='plotly_dark',
+        #     plot_bgcolor='rgba(0, 0, 0, 0)',
+        #     paper_bgcolor='rgba(0, 0, 0, 0)',
+        #     margin=dict(l=0, r=0, t=0, b=0),
+        #     height=350
+        # )
+        # fig.update_geos(fitbounds="locations", visible=False)
+
+        # st.plotly_chart(fig)
         col = st.columns((4,4))
 
         with col[0]:   
@@ -178,7 +199,14 @@ def wildlife_region(st,data,pd):
                 "nav-link-selected": {"background": "#2D312C"},
             }
         )
-        st.write(resultype)
+        # st.write(resultype)
+        if resultype =="Efforts":
+            # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf))
+            cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
+            cumulative_region_area_covered_df["Area covered (Km²)"] = cumulative_region_area_covered_df["area_covered"]
+            chart = altairLineChart(alt,cumulative_region_area_covered_df,"Area covered (Km²)","Congo Basin Cumulative area covered",450)
+            st.markdown('#### Congo Basin cumulative area covered ')
+            st.altair_chart(chart, theme=None, use_container_width=True)
         # result_tab = st.tabs(["# EFFORT ", "# TRENDS IN ABUNDANCES ", "# COMPARISONS "])
         # with result_tab[0]:
 

@@ -193,10 +193,18 @@ def wildlife():
     blocksdf = pd.json_normalize(data_dict["blocks"])
     sectorsdf = pd.json_normalize(data_dict["sectors"])
     
+    
     levels = ["Region","Country","Landscape","Site"]
     countries = countries_df["name"].unique()
     sites = sites_df["name"].unique()
     df = df[df["site"].isin(sites_df["id"].unique())]
+    
+    # df["region"] = df["region"].astype(str)
+    df["country"] = df["country"].astype(int)
+    # df["main_landscape"] = df["main_landscape"].astype(str)
+    # df["landscape"] = df["landscape"].astype(str)
+    df["block2"] = df["block2"].astype(str)
+    df["sector2"] = df["sector2"].astype(str)
     # df = df[df["species"].isin(species_df["id"].unique())]
     # df = df[df["country"].isin(countries_df["id"].unique())]
     # df = df[df["landscape"].isin(landscapes_df["id"].unique())]
@@ -240,4 +248,4 @@ def wildlife():
             selected_site = st.selectbox('Select a site', sites)
         wildlife_site(st,selected_site)
 
-   
+       

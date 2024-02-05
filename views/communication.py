@@ -184,8 +184,8 @@ def communication_page(st):
             coordinator_pub_df = coordinator_pub_df.loc[coordinator_pub_df[selected_indicator]!=-1]
             df_pub1 = coordinator_pub_df.loc[(coordinator_pub_df[selected_indicator]!=-1)&(coordinator_pub_df["name"]==publication_types[0])]
             # st.line_chart( df_pub1[[selected_indicator,'year']], x="year", y=selected_indicator)
-            chart = altairLineChart(alt,df_pub1,selected_indicator,publication_types[0].replace("Interest", "Trends in "+selected_indicator))
-            
+            chart = altairLineChart(alt,df_pub1,selected_indicator,publication_types[0].replace("Interest", "Trends in "+selected_indicator),450)
+            # st.write(df_pub1)
             # text = chart.mark_text(align="center",fontSize=10,opacity=0.6,color="white").encode(text={"value":"Copyright WWF"})
             
             st.altair_chart(chart, theme=None, use_container_width=True)
@@ -273,7 +273,7 @@ def communication_page(st):
             # st.dataframe(df)
             # st.dataframe(df_pub2)
             # st.line_chart( df_pub1[[selected_indicator,'year']], x="year", y=selected_indicator)
-            chart2 = altairLineChart(alt,df_pub2,selected_indicator,publication_types[1].replace("Interest", "Trends in "+selected_indicator))
+            chart2 = altairLineChart(alt,df_pub2,selected_indicator,publication_types[1].replace("Interest", "Trends in "+selected_indicator),450)
             st.altair_chart(chart2, theme=None, use_container_width=True)
         
     

@@ -47,15 +47,17 @@ def naturalbreaksMap(gdf,column,fields):
             legend_kwds=dict(colorbar=True),
             )
     return map
-def altairLineChart(alt,df,selected_indicator,title):
+def altairLineChart(alt,df,selected_indicator,title,height):
+    alt.renderers.set_embed_options(actions={"editor": False})
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
                 x="year",
                 y=selected_indicator,
                 # color=publication_types[0]
             )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text=selected_indicator).properties(
+    df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="indicator_value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
-            height=450
+            height=height
         )
     chart.configure_legend(
             strokeColor='gray',
@@ -65,21 +67,38 @@ def altairLineChart(alt,df,selected_indicator,title):
             orient='top-right'
         )
     return chart+text
+# def make_choropleth(px,input_df, input_id, selected_indicator, input_color_theme):
+#         choropleth = px.choropleth(input_df, locations=input_id, color=selected_indicator, locationmode="USA-states",
+#                             color_continuous_scale=input_color_theme,
+#                             range_color=(0, max((input_df[selected_indicator]))),
+#                             scope="usa",
+#                             labels={'population':'Population'}
+#                             )
+#         choropleth.update_layout(
+#             template='plotly_dark',
+#             plot_bgcolor='rgba(0, 0, 0, 0)',
+#             paper_bgcolor='rgba(0, 0, 0, 0)',
+#             margin=dict(l=0, r=0, t=0, b=0),
+#             height=350
+#         )
+#         # choropleth = make_choropleth(df_selected_year, 'states_code', 'population', selected_color_theme)
+#         # st.plotly_chart(choropleth, use_container_width=True)
+#         return choropleth
 
 
 """Area covered automation fonctions."""
 
 """Cette fonction permet de d'avoir la plus grande superficie couverte par un site indépendament de l'année"""
 def get_max_area_covered(df,id):
-    
+    # st.write(df)
     maxdf1  = df[(df["site"]==id)&(df["level"] == "Site")]
     # st.write(df)
     # print(max_blockdf.head())
     max = round(maxdf1["coverage_rate"].max(),2)
     if max < 100:
-        print(1)
-        print(id)
-        print(max)
+        # print(1)
+        # print(id)
+        # print(max)
         maxdf  = df[df["site"]==id]
         """Les secteurs appartenant directement au site est considéré comme un block dans cette partie pour faciliter l'implementation de l'algorithme"""
         max_blockdf  = maxdf.loc[((maxdf["block2"]==0)|(maxdf["sector2"]==0))&(df["level"].isin(["Block","Sector"]))]
@@ -111,12 +130,13 @@ def get_max_area_covered(df,id):
         # print(blocklist)
     else:
         max = maxdf1["area_covered_km2"].max()
-        print(0)
-        print(id)
-        print(max)
+        # print(0)
+        # print(id)
+        # print(max)
     
     return max
 def get_max_area_covered_per_level(df,id,level,leveldf):
+    st.write(leveldf)
     if level == "Site":
         level_id = "site"
         # df["total_area"] = df[level_id].apply(lambda x: level_df.loc[level_df["id"]==x]["total_area"].unique()[0])
@@ -137,7 +157,7 @@ def get_max_area_covered_per_level(df,id,level,leveldf):
     df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0])
     level_df  = df.loc[(df[level_id]==id)&(df["level"] == "Site")]
     level_df = level_df[["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","total_area","total_coverage_km2"]].groupby(["region","country",'main_landscape',"landscape","site",'block2',"sector2","level"]).max().reset_index()
-    print(level_df)
+    # print(level_df)
     max = round(level_df["total_coverage_km2"].sum()*100/level_df["total_area"].max(),2)
     return max
 
@@ -192,7 +212,8 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
     elif level == "Region":
         level_id = "region"
         # df["total_area"] = df[level_id].apply(lambda x: Region.objects.get(id=x).total_area)
-    df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0])
+    # if level != "Region":
+    df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0] if x in leveldf["id"].unique() else None)
     level_df  = df.loc[df[level_id]==id]
     years = sorted(level_df["year"].unique())
     i=0 
@@ -213,7 +234,7 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
     # print(graph_data)
     # max = round(level_df["total_coverage_km2"].sum()*100/level_df["total_area"].max(),2)
     return graph_data
-def set_cumulative_by_year(id,level,df,leveldf):
+def set_cumulative_by_year(id,level,df,type,leveldf):
     years = df["year"].unique()
     # if level == "Site":
     #     level_id = "site"
@@ -229,7 +250,7 @@ def set_cumulative_by_year(id,level,df,leveldf):
     #     level_id = "region"
     # df = df.loc[df[level_id]==id]
     
-    data = get_cumulative_max_area_covered_per_level_per_year(df,id,level,"area_covered",leveldf)
+    data = get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
     year_area_covered_dict ={ x["label"] : x["y"] for x in data}
     # print (id)
     # print (year_area_covered_dict)
@@ -240,30 +261,37 @@ def set_cumulative_by_year(id,level,df,leveldf):
 #     return year_area_covered_dict[row["year"]]
     # print(row)
     
-def get_cumulative_max_area_covered_per_level_per_year_table(df,level,leveldf):
+def get_cumulative_max_area_covered_per_level_per_year_table(df,level,type,leveldf):
     
     if level == "Site":
         level_id = "site"
         # df["total_area"] = df[level_id].apply(lambda x: Site.objects.get(id=x).total_area)
     elif level == "Landscape" :
         df = df.loc[df["is_parent"]==True]
-        if id in [1884,1843,1839]:
-            level_id = "main_landscape"
-            # df["total_area"] = df[level_id].apply(lambda x: Main_Landscape.objects.get(id=x).total_area)
-        else:
-            level_id = "landscape"
+        # if id in [1884,1843,1839]:
+        #     level_id = "main_landscape"
+        #     # df["total_area"] = df[level_id].apply(lambda x: Main_Landscape.objects.get(id=x).total_area)
+        # else:
+        level_id = "landscape"
             # df["total_area"] = df[level_id].apply(lambda x: Landscape.objects.get(id=x).total_area)
     elif level == "Country":
         level_id = "country"
+    elif level == "Region":
+        level_id = "region"
         # df["total_area"] = df[level_id].apply(lambda x: Country.objects.get(id=x).total_area)
-    df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0])
+    # st.write(df[level_id].unique())
+    
+    # st.write(leveldf.loc[leveldf["id"]==None]["total_area"])
+    # leveldf["total_area"] = leveldf["total_area"].fillna(0)
+    # st.write(leveldf["total_area"])
+    df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0] if int(x) in leveldf["id"].unique() else None)
     # data = { x["label"] : x["y"] for x in data}
     level_ids = df[level_id].unique()
     years = df["year"].unique()
     # df = df.apply(lambda x : map_cumulative_area_covered_level_year(x,level,df))
-    result = {"id":[],"year":[],"area_covered":[],"level_id":[],"level":[]}
+    result = {"year":[],"area_covered":[],"level_id":[],"level":[]}
     for id in level_ids:
-        for year , area in set_cumulative_by_year(id,level,df,leveldf).items():
+        for year , area in set_cumulative_by_year(id,level,df,type,leveldf).items():
             result["level_id"].append(id)
             result["year"].append(year)
             # result["level_id"].append(level_id)
@@ -271,8 +299,8 @@ def get_cumulative_max_area_covered_per_level_per_year_table(df,level,leveldf):
             result["area_covered"].append(area)
         # set_cumulative_by_year(id,level,df)
     resultdf = pd.DataFrame(result)
-    resultdf.to_excel('cumulative_by_year.xlsx')
-    print (resultdf.head())
+    # resultdf.to_excel('cumulative_by_year.xlsx')
+    # print (resultdf.head())
     return resultdf
 
 """Construction de la fonction de création de la table du taux de couverture au niveau block et secteur
@@ -283,18 +311,18 @@ def get_area_covered_table(df ,sitesdf):
     child_sites = sitesdf[sitesdf["is_child"]==True]["id"].to_list()
     print(child_sites)
     
-    
+    # st.write(df.shape)
     df["is_parent"] = df["site"].apply(lambda x :True if x not in child_sites else False)
     df=df[df["area_covered_km2"]!=-1]
-    print(df["site"].unique())
-    
+    # print(df["site"].unique())
+    # st.write(df.shape)
     
     # df_coverage = df_coverage[df_coverage["level"].isin(child_sites) == False]
     # print(len(sitesdf[sitesdf["is_child"]==False]))
     # print(len(sitesdf[sitesdf["is_child"]==True]))
     # print(len(df["site"].unique()))
     sitesdf = sitesdf.loc[sitesdf["id"].isin(df["site"].unique())]
-    print(len(sitesdf["id"].unique()))
+    # print(len(sitesdf["id"].unique()))
     # print(len(df_coverage1["site"].unique()))
     df_coverage = df
     # print(len(df_coverage["site"].unique()))
@@ -306,10 +334,13 @@ def get_area_covered_table(df ,sitesdf):
     # print(df_coverage.info())
     # print(df_coverage.head())
     # st.write(df_coverage)
+    # st.write(df_coverage.shape)
     max_areadf_year =  df_coverage[["region","country",'main_landscape','site',"landscape",'block2',"sector2","area_covered_km2","coverage_rate","level",'is_parent',"year"]].groupby(["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","year"]).max().reset_index()
     # max_areadf = df[['main_landscape','country',"landscape","area_covered_km2","level"]].groupby(['main_landscape',"country","landscape","level"]).max().reset_index()
     # max_areadf = df[['main_landscape','country',"landscape","area_covered_km2","level","coverage_rate","year"]].groupby(['main_landscape',"country","landscape","level","year"]).max().reset_index()
     # st.write(max_areadf_year)
+    # print(max_areadf_year.info())
+    # st.write(max_areadf_year.shape)
     max_areadf = max_areadf[max_areadf["area_covered_km2"]!=-1]
     # st.write(max_areadf_year)
     max_areadf_year = max_areadf_year[max_areadf_year["area_covered_km2"]!=-1].merge(sitesdf[["id","name","total_area"]], left_on="site", right_on='id', how="left")
@@ -327,6 +358,7 @@ def get_area_covered_table(df ,sitesdf):
     # max_areadf_year.to_excel("area_covered_storage.xlsx",sheet_name='Sheet1')
     # st.write(max_areadf_year),
     # print(get_max_area_covered(max_areadf_year,1))
+    # st.write(max_areadf_year.shape)
     max_area_sitedf ={x:get_max_area_covered(max_areadf_year,x) for x in max_areadf_year['site'].unique()}
     # print(max_area_sitedf)
     
