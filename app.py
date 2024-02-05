@@ -15,6 +15,12 @@ from streamlit_option_menu import option_menu
 # Page configuration
 from views.communication import *
 from views.wildlife import wildlife
+
+st.set_page_config(
+    page_title="Congo Basin Monitoring and Evaluation database",
+    # page_icon="🏂",
+    layout="wide",
+    initial_sidebar_state="expanded")
 st.markdown("""
     <style>
 
@@ -61,12 +67,6 @@ st.markdown("""
 
     </style>
     """, unsafe_allow_html=True)
-st.set_page_config(
-    page_title="Congo Basin Monitoring and Evaluation database",
-    # page_icon="🏂",
-    layout="wide",
-    initial_sidebar_state="expanded")
-
 alt.themes.enable("dark")
 
 
