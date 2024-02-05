@@ -15,14 +15,6 @@ from streamlit_option_menu import option_menu
 # Page configuration
 from views.communication import *
 from views.wildlife import wildlife
-
-st.set_page_config(
-    page_title="Congo Basin Monitoring and Evaluation database",
-    # page_icon="🏂",
-    layout="wide",
-    initial_sidebar_state="expanded")
-
-alt.themes.enable("dark")
 st.markdown("""
     <style>
 
@@ -69,6 +61,14 @@ st.markdown("""
 
     </style>
     """, unsafe_allow_html=True)
+st.set_page_config(
+    page_title="Congo Basin Monitoring and Evaluation database",
+    # page_icon="🏂",
+    layout="wide",
+    initial_sidebar_state="expanded")
+
+alt.themes.enable("dark")
+
 
 pillars= [
     "wildlife","communication","human activity","law enforcement","spatial data and landcover","capacity building"
@@ -91,6 +91,7 @@ content = st.empty()
 if selected_pillar =="communication":
     communication_page(st)
 elif selected_pillar =="wildlife":
+    
     wildlife()
 
     
