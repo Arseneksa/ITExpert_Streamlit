@@ -13,6 +13,8 @@ def wildlife_region(st,data,pd):
     st.header("Congo Basin wildlfe dashboard")
     df = data["wildlife"]
     df = df.loc[df['year']!=-1]
+    df.to_csv("data/wildlife.csv")
+    original_df = df
     years = df['year'].unique()
     min_year = df['year'].min()
     max_year = df['year'].max()
@@ -135,6 +137,19 @@ def wildlife_region(st,data,pd):
         # fig.update_geos(fitbounds="locations", visible=False)
 
         # st.plotly_chart(fig)
+        
+
+        alt.Chart(sites_result_gdf).mark_geoshape().encode(
+            color='Number of species:Q'
+        ).transform_lookup(
+            lookup='id',
+            from_=alt.LookupData(sites_result_gdf, 'id', ['Number of species'])
+        ).project(
+            type='albersUsa'
+        ).properties(
+            width=500,
+            height=300
+        )
         col = st.columns((4,4))
 
         with col[0]:   
@@ -204,9 +219,17 @@ def wildlife_region(st,data,pd):
             # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf))
             cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
             cumulative_region_area_covered_df["Area covered (Km²)"] = cumulative_region_area_covered_df["area_covered"]
+            region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+            region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
+            region_area_covered_df["Area covered (Km²)"] = region_area_covered_df["area_covered_km2"]
             chart = altairLineChart(alt,cumulative_region_area_covered_df,"Area covered (Km²)","Congo Basin Cumulative area covered",450)
+            chart2 = altairBarChart(alt,region_area_covered_df,"Area covered (Km²)","Trend in Area covered in the Congo Basin ",490)
             st.markdown('#### Congo Basin cumulative area covered ')
             st.altair_chart(chart, theme=None, use_container_width=True)
+            st.markdown('#### Trend in Area covered in the Congo Basin ')
+            st.altair_chart(chart2, theme=None, use_container_width=True)
+            
+            effort_km = simple_cumlative_data_per_year(original_df,"sampling_effort_transect_Km","region")
         # result_tab = st.tabs(["# EFFORT ", "# TRENDS IN ABUNDANCES ", "# COMPARISONS "])
         # with result_tab[0]:
 

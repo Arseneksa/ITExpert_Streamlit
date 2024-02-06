@@ -193,11 +193,10 @@ def wildlife():
     blocksdf = pd.json_normalize(data_dict["blocks"])
     sectorsdf = pd.json_normalize(data_dict["sectors"])
     
-    
+    sites = sites_df["name"].unique()
     levels = ["Region","Country","Landscape","Site"]
     countries = countries_df["name"].unique()
-    sites = sites_df["name"].unique()
-    df = df[df["site"].isin(sites_df["id"].unique())]
+
     
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)

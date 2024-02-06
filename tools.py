@@ -48,14 +48,23 @@ def naturalbreaksMap(gdf,column,fields):
             )
     return map
 def altairLineChart(alt,df,selected_indicator,title,height):
+    # years = df["year"].unique()
+    # year = years[int(len(years)/2)]
+    # value = df.loc[df["year"]==year][selected_indicator]
+    # source = pd.DataFrame.from_records(
+    #     [
+    #         {'year': year,selected_indicator:value,  'image': './app/static/logo.jpg'},
+    #     ]
+    # )
     alt.renderers.set_embed_options(actions={"editor": False})
+    
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
                 x="year",
                 y=selected_indicator,
                 # color=publication_types[0]
             )
-    df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="indicator_value").properties(
+    df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -66,7 +75,81 @@ def altairLineChart(alt,df,selected_indicator,title,height):
             cornerRadius=10,
             orient='top-right'
         )
+    # img = alt.Chart(source).mark_image(width=50, height=75).encode(
+    #     x='year',
+    #     y=selected_indicator,
+    #     url='image'
+    # )
     return chart+text
+def altairBarChart(alt,df,selected_indicator,title,height):
+    # years = df["year"].unique()
+    # year = years[int(len(years)/2)]
+    # value = df.loc[df["year"]==year][selected_indicator]
+    # source = pd.DataFrame.from_records(
+    #     [
+    #         {'year': year,selected_indicator:value,  'image': './app/static/logo.jpg'},
+    #     ]
+    # )
+    alt.renderers.set_embed_options(actions={"editor": False})
+    
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
+                x="year",
+                y=selected_indicator,
+                # color=publication_types[0]
+            )
+    df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+            title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            height=height
+        )
+    chart.configure_legend(
+            strokeColor='gray',
+            fillColor='#EEEEEE',
+            padding=10,
+            cornerRadius=10,
+            orient='top-right'
+        )
+    # img = alt.Chart(source).mark_image(width=50, height=75).encode(
+    #     x='year',
+    #     y=selected_indicator,
+    #     url='image'
+    # )
+    return chart+text
+def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggregation,x_label):
+    # years = df["year"].unique()
+    # year = years[int(len(years)/2)]
+    # value = df.loc[df["year"]==year][selected_indicator]
+    # source = pd.DataFrame.from_records(
+    #     [
+    #         {'year': year,selected_indicator:value,  'image': './app/static/logo.jpg'},
+    #     ]
+    # )
+    alt.renderers.set_embed_options(actions={"editor": False})
+    
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
+                x=x_label+":O",
+                # y=selected_indicator,
+                y=alt.Y(field=selected_indicator, aggregate=aggregation, type='quantitative')
+                # color=publication_types[0]
+            )
+    df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="indicator_value").properties(
+    #         title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+    #         height=height
+    #     )
+    chart.configure_legend(
+            strokeColor='gray',
+            fillColor='#EEEEEE',
+            padding=10,
+            cornerRadius=10,
+            orient='top-right'
+        )
+    # img = alt.Chart(source).mark_image(width=50, height=75).encode(
+    #     x='year',
+    #     y=selected_indicator,
+    #     url='image'
+    # )
+    return chart
 # def make_choropleth(px,input_df, input_id, selected_indicator, input_color_theme):
 #         choropleth = px.choropleth(input_df, locations=input_id, color=selected_indicator, locationmode="USA-states",
 #                             color_continuous_scale=input_color_theme,
@@ -324,6 +407,8 @@ def get_area_covered_table(df ,sitesdf):
     sitesdf = sitesdf.loc[sitesdf["id"].isin(df["site"].unique())]
     # print(len(sitesdf["id"].unique()))
     # print(len(df_coverage1["site"].unique()))
+        # sites = sites_df["name"].unique()
+    df = df[df["site"].isin(sitesdf["id"].unique())]
     df_coverage = df
     # print(len(df_coverage["site"].unique()))
     # print(df_coverage1["name"].unique())
@@ -380,3 +465,25 @@ def get_area_covered_table(df ,sitesdf):
     # print(max_areadf_year.info())
     # print(max_areadf_year.head(30)
     return max_areadf_year
+def cumulative(df,element,min_year,selected_indicator):
+    # st.write(element)
+    element = int(element)
+    df["year"] = df["year"].astype(int)
+    if min_year == element:
+        value = sum(df.loc[df["year"]==min_year][selected_indicator])
+    else:
+        value = sum(df.loc[(df["year"]>=int(min_year))&(df["year"]<=element)][selected_indicator])
+    return value
+def simple_cumlative_data_per_year(df,selected_indicator,level):
+    # st.write(df[selected_indicator].unique())
+    df = df.loc[df[selected_indicator]!=-1]
+    # st.write(df[selected_indicator])
+    
+    df = df[[level,"year",selected_indicator]].groupby([level,"year"]).sum().reset_index()
+    # st.write(df)
+    years = df["year"].unique()
+    min_year = min(years)
+    df["cumulative "] = df["year"].apply(lambda x : cumulative(df,x,min_year,selected_indicator))
+    df["year"] = df["year"].astype(str)
+    # st.write(df)
+    return df
