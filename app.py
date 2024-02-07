@@ -67,6 +67,9 @@ st.markdown("""
     .st-emotion-cache-klqnuk{
         display: none;
     }
+    .st-emotion-cache-16txtl3 {
+        padding: 3rem 1.5rem;
+    }
     /*[data-testid='stToolbar']{
         display: none;
     }*/

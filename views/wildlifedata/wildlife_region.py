@@ -146,22 +146,22 @@ def wildlife_region(st,data,pd):
         # st.plotly_chart(fig)
         
 
-        alt.Chart(sites_result_gdf).mark_geoshape().encode(
-            color='Number of species:Q'
-        ).transform_lookup(
-            lookup='id',
-            from_=alt.LookupData(sites_result_gdf, 'id', ['Number of species'])
-        ).project(
-            type='albersUsa'
-        ).properties(
-            width=500,
-            height=300
-        )
+        # alt.Chart(sites_result_gdf).mark_geoshape().encode(
+        #     color='Number of species:Q'
+        # ).transform_lookup(
+        #     lookup='id',
+        #     from_=alt.LookupData(sites_result_gdf, 'id', ['Number of species'])
+        # ).project(
+        #     type='albersUsa'
+        # ).properties(
+        #     width=500,
+        #     height=300
+        # )
         col = st.columns((4,4))
-
-        with col[0]:   
+        tab_occurence, tab_richness = st.tabs(["# Species occurence in site", "# Species richness by site"])
+        with tab_occurence:   
             st.markdown('#### Species occurence in site')
-            
+            st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
             st.dataframe(
                 species_result_df,
                 column_config={
@@ -180,16 +180,24 @@ def wildlife_region(st,data,pd):
                 },
                 hide_index=True, use_container_width=True
             )
-        with col[1]:
+        with tab_richness:
             st.markdown('#### Species richness by site')
-            tabmap, tabTable = st.tabs(["Map", "Species list per site"])
+            # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
             
-            with tabTable:
+            # with tabmap:
+            with st.expander("Map"):
+                
+                st_folium(map,height=350, use_container_width=True)
+            with st.expander("Table"):
+                
+                st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
+                # time.sleep(10)
+                # msg = ''
                 st.dataframe(
                     sites_result_df,
                     column_config={
                         "sites": st.column_config.ListColumn(
-                            "List of species",
+                            "Species list",
                             help="List of species present in the site",
                             width="small",
                         ),
@@ -205,8 +213,10 @@ def wildlife_region(st,data,pd):
                     },
                     hide_index=True,height=350, use_container_width=True
                 )
-            with tabmap:
-                st_folium(map,height=350, use_container_width=True)
+            
+            # with tabTable:
+            
+            
     with tab2:
         # 3. CSS style definitions
         resultype = option_menu(None, ["Efforts", "Trends in abundances",  "Comparisons"], 
