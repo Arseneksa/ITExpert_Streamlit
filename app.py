@@ -64,8 +64,19 @@ st.markdown("""
         -ms-transform: translateX(-50%);
         transform: translateX(-50%);
     }
-
+    .st-emotion-cache-klqnuk{
+        display: none;
+    }
+    /*[data-testid='stToolbar']{
+        display: none;
+    }*/
     </style>
+    <script>
+    
+        //document.querySelector("[data-testid='stToolbar]").style.display = "none");
+        //document.querySelector(".st-emotion-cache-klqnuk").innerHtml = "<b>Loading ...</b>");
+        
+    </script>
     """, unsafe_allow_html=True)
 alt.themes.enable("dark")
 
@@ -76,11 +87,11 @@ pillars= [
 with st.sidebar:
     # st.title('🏂 US Population Dashboard')
     st.markdown(
-            '<img src="./app/static/logo.jpg" height="120" style="">',
+            '<img src="./app/static/logo.png"  style="width:95%"> ',
             unsafe_allow_html=True,
         )
     # st.image("static/logo.jpg")
-    st.title('Congo Basin Monitoring and Evaluation Database')
+    st.title('Filter')
     
     # indicator_list = list(df_reshaped.year.unique())[::-1]
     

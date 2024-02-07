@@ -10,7 +10,11 @@ from streamlit_folium import st_folium
 import plotly.express as px
 # @st.cache_data(experimental_allow_widgets=True)
 def wildlife_region(st,data,pd):
-    st.header("Congo Basin wildlfe dashboard")
+    st.markdown(
+            ' <span style="font-size:2em;font-weight:bold;margin-left:0px;">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Wildlfe dashboard</span><br>',
+            unsafe_allow_html=True,
+        )
+    # st.subheader("wildlfe dashboard")
     df = data["wildlife"]
     df = df.loc[df['year']!=-1]
     df.to_csv("data/wildlife.csv")
@@ -28,7 +32,10 @@ def wildlife_region(st,data,pd):
     sampling_methods  = data["sampling_method"]
     sampling_method_ids  = df["sampling_method"].unique()
     sampling_methods = sampling_methods.loc[sampling_methods["id"].isin(sampling_method_ids)][["name","id"]].drop_duplicates()
-    # st.write(sampling_methods)
+    sampling_methods = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]
+    sampling_method_ids = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]["id"].unique()
+    # st.write(sampling_method_ids,sampling_methods["id"].unique())
+    # st.write(sampling_methods_list)
     sampling_name_id = {x.replace("_"," "):sampling_methods.loc[sampling_methods["name"]==x]["id"].unique()[0] for x in sampling_methods["name"].unique() if x != None} 
     sampling_method_names = ["All"]+[key for key,value in sampling_name_id.items() ]
     with st.sidebar:
@@ -113,9 +120,9 @@ def wildlife_region(st,data,pd):
         col = st.columns((2,2,2,2))
         for indicator in indicators_metric:
                         
-            difference = calculate_lenght_difference(df, start_year, end_year,indicator)
+            difference = calculate_lenght_difference( df[df["site"].isin(sitesdf["id"].unique())], start_year, end_year,indicator)
             # st.dataframe(df_population_difference_sorted)
-            first_state_name = "# **"+indicators_name[indicator]+ ' inventoried** '
+            first_state_name = "# **"+indicators_name[indicator]+ '** '
             first_state_population = format_number(len(df[indicator].unique()))
             first_state_delta = format_number(difference)
             with col[i]:
@@ -153,7 +160,7 @@ def wildlife_region(st,data,pd):
         col = st.columns((4,4))
 
         with col[0]:   
-            st.markdown('#### Most common species in the Congo Basin')
+            st.markdown('#### Species occurence in site')
             
             st.dataframe(
                 species_result_df,
@@ -174,7 +181,7 @@ def wildlife_region(st,data,pd):
                 hide_index=True, use_container_width=True
             )
         with col[1]:
-            st.markdown('#### Site with most species in the Congo Basin')
+            st.markdown('#### Species richness by site')
             tabmap, tabTable = st.tabs(["Map", "Species list per site"])
             
             with tabTable:
@@ -217,19 +224,34 @@ def wildlife_region(st,data,pd):
         # st.write(resultype)
         if resultype =="Efforts":
             # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf))
-            cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
-            cumulative_region_area_covered_df["Area covered (Km²)"] = cumulative_region_area_covered_df["area_covered"]
-            region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
-            region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
-            region_area_covered_df["Area covered (Km²)"] = region_area_covered_df["area_covered_km2"]
-            chart = altairLineChart(alt,cumulative_region_area_covered_df,"Area covered (Km²)","Congo Basin Cumulative area covered",450)
-            chart2 = altairBarChart(alt,region_area_covered_df,"Area covered (Km²)","Trend in Area covered in the Congo Basin ",490)
-            st.markdown('#### Congo Basin cumulative area covered ')
-            st.altair_chart(chart, theme=None, use_container_width=True)
-            st.markdown('#### Trend in Area covered in the Congo Basin ')
-            st.altair_chart(chart2, theme=None, use_container_width=True)
             
-            effort_km = simple_cumlative_data_per_year(original_df,"sampling_effort_transect_Km","region")
+            effort_indicators = ["Area covered (Km²)","Sampling transect effort (Km)"]
+            selected_effort_indicator = st.selectbox('Select a indicator', effort_indicators)
+            if selected_effort_indicator =="Area covered (Km²)":
+                cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
+                cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
+                region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+                region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
+                region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
+                chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",450)
+                chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",490)
+                st.markdown('#### Congo Basin cumulative area covered ')
+                st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
+                st.markdown('#### Trend in Area covered in the Congo Basin ')
+                st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
+            elif selected_effort_indicator =="Sampling transect effort (Km)":
+                
+                sampling_effort_df = original_df.loc[original_df["sampling_effort_transect_Km"]!=-1]
+                region_sampling_transect_effort_df =sampling_effort_df[["region","year","sampling_effort_transect_Km"]].groupby(["year"]).sum().reset_index()
+            
+                cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
+                region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
+                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450)
+                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
+                st.markdown('#### Congo Basin cumulative area covered ')
+                st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
+                st.markdown('#### Trend in Area covered in the Congo Basin ')
+                st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
         # result_tab = st.tabs(["# EFFORT ", "# TRENDS IN ABUNDANCES ", "# COMPARISONS "])
         # with result_tab[0]:
 

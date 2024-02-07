@@ -59,7 +59,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     alt.renderers.set_embed_options(actions={"editor": False})
     
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
-                x="year",
+                x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
             )
@@ -93,7 +93,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     alt.renderers.set_embed_options(actions={"editor": False})
     
     chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
-                x="year",
+                x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
             )
@@ -483,7 +483,7 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df)
     years = df["year"].unique()
     min_year = min(years)
-    df["cumulative "] = df["year"].apply(lambda x : cumulative(df,x,min_year,selected_indicator))
+    df["Sampling transect effort (Km)"] = df["year"].apply(lambda x : cumulative(df,x,min_year,selected_indicator))
     df["year"] = df["year"].astype(str)
     # st.write(df)
     return df
