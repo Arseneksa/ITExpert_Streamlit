@@ -72,7 +72,7 @@ setuptools
 shapely
 six
 smmap
-streamlit
+streamlit==1.4.0
 streamlit-antd-components
 streamlit-authenticator
 streamlit-folium

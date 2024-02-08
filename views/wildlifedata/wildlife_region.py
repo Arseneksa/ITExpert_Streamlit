@@ -115,15 +115,17 @@ def wildlife_region(st,data,pd):
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
         i=0
-        indicators_name =  {"species":"Species","country":"Countries","landscape":"Landscapes","site":"Sites"}
-        indicators_metric = [ "species","country","landscape","site"]
+        indicators_name =  {"species":"Species","country":"Countries","main_landscape":"Landscapes","site":"Sites"}
+        indicators_metric = [ "species","country","main_landscape","site"]
         col = st.columns((2,2,2,2))
+        metric_df = df[df["site"].isin(sitesdf["id"].unique())]
+        # st.write(len(metric_df["site"].unique()))
         for indicator in indicators_metric:
                         
-            difference = calculate_lenght_difference( df[df["site"].isin(sitesdf["id"].unique())], start_year, end_year,indicator)
+            difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
             # st.dataframe(df_population_difference_sorted)
             first_state_name = "# **"+indicators_name[indicator]+ '** '
-            first_state_population = format_number(len(df[indicator].unique()))
+            first_state_population = format_number(len(metric_df[indicator].unique()))
             first_state_delta = format_number(difference)
             with col[i]:
                 st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
