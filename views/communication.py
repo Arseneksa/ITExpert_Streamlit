@@ -65,7 +65,10 @@ def communication_page(st):
 
     </style>
     """, unsafe_allow_html=True)
-    st.header('Communication')
+    st.markdown(
+            ' <span style="font-size:2em;font-weight:bold;margin-left:0px;">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Communication dashboard</span><br>',
+            unsafe_allow_html=True,
+        )
     
     localurl = "http://localhost:8000"
     onlineurl = "https://biomonitoringwebsite.herokuapp.com"

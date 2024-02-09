@@ -19,18 +19,21 @@ def wildlife_region(st,data,pd):
     df = df.loc[df['year']!=-1]
     df.to_csv("data/wildlife.csv")
     original_df = df
-    years = df['year'].unique()
-    min_year = df['year'].min()
-    max_year = df['year'].max()
+    
     regiondf = pd.DataFrame({
         'id':[1],
         'name':["Congo Basin"],
         "total_area":[4048053]
     })
+    landscapesdf  = data["landscapes"]
+    sitesdf  = data["sites"]
+    countriesdf  = data["countries"]
+    speciesdf  = data["species"]
     sitesgdf = gpd.read_file("data/All_site.shp",)
     sitesgdf["site"] = sitesgdf[sitesgdf["Level"]=="Site"]["Site_1"]
     sampling_methods  = data["sampling_method"]
-    sampling_method_ids  = df["sampling_method"].unique()
+    sampling_method_ids  = df[df["site"].isin(sitesdf["id"].unique())]["sampling_method"].dropna().unique()
+    # st.write(sampling_method_ids,sampling_methods["id"].unique())
     sampling_methods = sampling_methods.loc[sampling_methods["id"].isin(sampling_method_ids)][["name","id"]].drop_duplicates()
     sampling_methods = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]
     sampling_method_ids = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]["id"].unique()
@@ -45,22 +48,51 @@ def wildlife_region(st,data,pd):
             'Select sampling method',
             options=sampling_method_names
         )
-        start_year, end_year = st.select_slider(
-            'Select year range',
-            options=years,
-            value=(min_year, max_year)
-        )
+        # start_year, end_year = st.select_slider(
+        #     'Select year range',
+        #     options=years,
+        #     value=(min_year, max_year)
+        # )
         
-    df = df.loc[(df["year"]>=start_year)&(df["year"]<=end_year)]
+    
     if select_sampling_method != "All":
         # st.write(sampling_name_id[select_sampling_method])
+        
         df = df.loc[df["sampling_method"]==sampling_name_id[select_sampling_method]]
-    
+        years = df['year'].unique()
+        min_year = df['year'].min()
+        max_year = df['year'].max()
+        # st.write(df)
+        with st.sidebar:
+    # st.title('🏂 US Population Dashboard')
+    # st.title('Filter')
 
-    landscapesdf  = data["landscapes"]
-    sitesdf  = data["sites"]
-    countriesdf  = data["countries"]
-    speciesdf  = data["species"]
+            if(min_year<max_year):
+                start_year, end_year = st.select_slider(
+                    'Select year range',
+                    options=years,
+                    value=(min_year, max_year)
+                )
+            else:
+                start_year=end_year = st.selectbox('Year', years)
+        
+    else:
+        years = df['year'].unique()
+        min_year = df['year'].min()
+        max_year = df['year'].max()
+        # st.write(df)
+        with st.sidebar:
+    # st.title('🏂 US Population Dashboard')
+    # st.title('Filter')
+            if(min_year<max_year):
+                start_year, end_year = st.select_slider(
+                    'Select year range',
+                    options=years,
+                    value=(min_year, max_year)
+                )
+            else:
+                start_year=end_year = st.selectbox('Year', years)
+    df = df.loc[(df["year"]>=start_year)&(df["year"]<=end_year)]
     df["year"] = df["year"].astype(str)
     
     # df["main_landscape"] = df["main_landscape"].astype(str)
