@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 import streamlit as st 
 
@@ -62,7 +63,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
-            )
+            ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
@@ -81,6 +82,52 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     #     url='image'
     # )
     return chart+text
+def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
+    # years = df["year"].unique()
+    # year = years[int(len(years)/2)]
+    # value = df.loc[df["year"]==year][selected_indicator]
+    # source = pd.DataFrame.from_records(
+    #     [
+    #         {'year': year,selected_indicator:value,  'image': './app/static/logo.jpg'},
+    #     ]
+    # )
+    df[error["min"]] = df[error["min"]].apply(lambda x: int(0) if x ==-1 else x)
+    df[error["max"]] = df[error["max"]].apply(lambda x: int(0) if x ==-1 else x)
+    df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
+    alt.renderers.set_embed_options(actions={"editor": False})
+    
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=35),color="#19F960",tension=0.6).encode(
+                x="year(year):T",
+                y=selected_indicator,
+                
+                # color=publication_types[0]
+            ).interactive()
+    error = alt.Chart(df).mark_errorbar(ticks=True).encode(
+                # y=selected_indicator,
+                alt.X("year(year):T").scale(zero=False).title("Year"),
+                alt.Y(error["min"]).title(selected_indicator),
+                alt.Y2(error["max"]),
+                color=alt.value("#CCEAC1"),
+                # color=publication_types[0]
+            )
+    df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+            title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            height=height
+        )
+    chart.configure_legend(
+            strokeColor='gray',
+            fillColor='#EEEEEE',
+            padding=10,
+            cornerRadius=10,
+            orient='top-right'
+        )
+    # img = alt.Chart(source).mark_image(width=50, height=75).encode(
+    #     x='year',
+    #     y=selected_indicator,
+    #     url='image'
+    # )
+    return chart+text+error
 def altairBarChart(alt,df,selected_indicator,title,height):
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
@@ -96,7 +143,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
-            )
+            ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
@@ -131,7 +178,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
                 # y=selected_indicator,
                 y=alt.Y(field=selected_indicator, aggregate=aggregation, type='quantitative')
                 # color=publication_types[0]
-            )
+            ).interactive()
     df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="indicator_value").properties(
     #         title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),

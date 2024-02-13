@@ -18,7 +18,7 @@ def wildlife_region(st,data,pd):
     df = data["wildlife"]
     df = df.loc[df['year']!=-1]
     df.to_csv("data/wildlife.csv")
-    original_df = df
+    
     
     regiondf = pd.DataFrame({
         'id':[1],
@@ -93,6 +93,8 @@ def wildlife_region(st,data,pd):
             else:
                 start_year=end_year = st.selectbox('Year', years)
     df = df.loc[(df["year"]>=start_year)&(df["year"]<=end_year)]
+    original_df = df
+    
     df["year"] = df["year"].astype(str)
     
     # df["main_landscape"] = df["main_landscape"].astype(str)
@@ -162,7 +164,10 @@ def wildlife_region(st,data,pd):
             with col[i]:
                 st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
                 i=i+1
-
+        # geo_chart = alt.Chart(sites_result_gdf, title="Vega-Altair").mark_geoshape().encode(
+        #     alt.Color("Number of species:N").scale(None)
+        # ).project(type="identity", reflectY=True)
+        # st.altair_chart(geo_chart)
         map = naturalbreaksMap(sites_result_gdf,"Number of species",["Name","Number of species"])
         # folium.TileLayer("CartoDB positron", show=False).add_to(
         #     map
@@ -296,6 +301,56 @@ def wildlife_region(st,data,pd):
                 st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
                 st.markdown('#### Trend in Area covered in the Congo Basin ')
                 st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
+        if resultype == "Trends in abundances":
+            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size", "Capture Rate", "Occupancy Rate"]
+            abundance_indicators = {
+                "Density (n/km²)":"density",
+                "Encounter Rate (n/km)":"encounterRate",
+                "Population Size":"populationSize", 
+                "Capture Rate":"captureRate", 
+                "Occupancy Rate":"occupancyRate"}
+            abundance_indicators_error = {
+                "density":{"min":"densityMinimumError","max":"density_maximumError"},
+                "encounterRate":{"min":"encounterRateMinimumError","max":"encounterRateMaximumError"},
+                "populationSize":{"min":"populationSizeMinimumError","max":"populationSizeMaximumError"}, 
+                "captureRate":{"min":"captureRateMinimumError","max":"captureRateMaximumError"}, 
+                "occupancyRate":{"min":"occupancyRateMinimumError","max":"occupancyRateMaximumError"}
+                }
+           
+            
+            level_df  ={
+                "Site":sitesdf,
+                "Landscape":landscapesdf,
+            }
+            col_indicator,col_level, col_species, col2_site= st.columns(4)
+            with col_indicator:
+                selected_abundace_indicator = st.selectbox('Select a indicator', abundance_indicators_name)
+                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]]!=-1]
+                abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
+                # st.write(abundance_df)
+            with col_level:
+                selected_level_indicator = st.selectbox('Select a level', ["Landscape", "Site"])
+                abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
+                speciesdf  = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
+                # st.write(abundance_df)
+            with col_species:
+                selected_species = st.selectbox('Select species', list(speciesdf["name"].unique()))
+                species_name_id = { x["name"]: x["id"] for x in speciesdf[["id","name"]].T.to_dict().values()}
+                abundance_df = abundance_df.loc[abundance_df["species"] ==species_name_id[selected_species]]
+                leveldf = level_df[selected_level_indicator]
+                site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[selected_level_indicator.lower()].unique())]
+                # st.write(abundance_df)
+            with col2_site:
+                selected_site_abundance = st.selectbox('Select species', list(site_abundance_df["name"].unique()))
+            
+            sites_name_id = { x["name"]: x["id"] for x in site_abundance_df[["id","name"]].T.to_dict().values()}
+            
+            abundance_df = abundance_df.loc[abundance_df["site"] ==sites_name_id[selected_site_abundance]]
+            
+            chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]])
+            st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
+            # st.write(abundance_df)
+            st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
         # result_tab = st.tabs(["# EFFORT ", "# TRENDS IN ABUNDANCES ", "# COMPARISONS "])
         # with result_tab[0]:
 
