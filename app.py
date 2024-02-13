@@ -18,7 +18,7 @@ from views.wildlife import wildlife
 
 st.set_page_config(
     page_title="Congo Basin Monitoring and Evaluation database",
-    # page_icon="🏂",
+    page_icon="./app/static/logo.png",
     layout="wide",
     initial_sidebar_state="expanded")
 st.markdown("""
