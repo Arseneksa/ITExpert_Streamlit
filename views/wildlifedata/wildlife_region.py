@@ -224,7 +224,7 @@ def wildlife_region(st,data,pd):
             # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
             
             # with tabmap:
-            with st.expander("Map"):
+            with st.expander("Map",expanded=True):
                 
                 st_folium(map,height=350, use_container_width=True)
             with st.expander("Table"):
@@ -275,7 +275,11 @@ def wildlife_region(st,data,pd):
             # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf))
             
             effort_indicators = ["Area covered (Km²)","Sampling transect effort (Km)"]
-            selected_effort_indicator = st.selectbox('Select a indicator', effort_indicators)
+            col_indicator_effort,col_efffort_graph_type= st.columns(2)
+            with col_indicator_effort:
+                selected_effort_indicator = st.selectbox('Select a indicator', effort_indicators)
+            with col_efffort_graph_type:
+                selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
             if selected_effort_indicator =="Area covered (Km²)":
                 cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
                 cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
@@ -284,10 +288,12 @@ def wildlife_region(st,data,pd):
                 region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
                 chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",450)
                 chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",490)
-                st.markdown('#### Congo Basin cumulative area covered ')
-                st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
-                st.markdown('#### Trend in Area covered in the Congo Basin ')
-                st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
+                if selected_effort_graph_type == "Cumulative":
+                    st.markdown('#### Congo Basin cumulative area covered ')
+                    st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
+                else:
+                    st.markdown('#### Trend in Area covered in the Congo Basin ')
+                    st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
             elif selected_effort_indicator =="Sampling transect effort (Km)":
                 
                 sampling_effort_df = original_df.loc[original_df["sampling_effort_transect_Km"]!=-1]
@@ -297,10 +303,13 @@ def wildlife_region(st,data,pd):
                 region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
                 chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450)
                 chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
-                st.markdown('#### Congo Basin cumulative area covered ')
-                st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
-                st.markdown('#### Trend in Area covered in the Congo Basin ')
-                st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
+                
+                if selected_effort_graph_type == "Cumulative":
+                    st.markdown('#### Congo Basin cumulative area covered ')
+                    st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
+                else:
+                    st.markdown('#### Trend in Area covered in the Congo Basin ')
+                    st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
         if resultype == "Trends in abundances":
             abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size", "Capture Rate", "Occupancy Rate"]
             abundance_indicators = {
@@ -329,19 +338,19 @@ def wildlife_region(st,data,pd):
                 abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
                 # st.write(abundance_df)
             with col_level:
-                selected_level_indicator = st.selectbox('Select a level', ["Landscape", "Site"])
+                selected_level_indicator = st.selectbox('Select level', ["Landscape", "Site"])
                 abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
                 speciesdf  = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
                 # st.write(abundance_df)
             with col_species:
-                selected_species = st.selectbox('Select species', list(speciesdf["name"].unique()))
+                selected_species = st.selectbox('Select species ( '+str(len(speciesdf))+' )', list(speciesdf["name"].unique()))
                 species_name_id = { x["name"]: x["id"] for x in speciesdf[["id","name"]].T.to_dict().values()}
                 abundance_df = abundance_df.loc[abundance_df["species"] ==species_name_id[selected_species]]
                 leveldf = level_df[selected_level_indicator]
                 site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[selected_level_indicator.lower()].unique())]
                 # st.write(abundance_df)
             with col2_site:
-                selected_site_abundance = st.selectbox('Select species', list(site_abundance_df["name"].unique()))
+                selected_site_abundance = st.selectbox('Select site( '+str(len(site_abundance_df))+' )', list(site_abundance_df["name"].unique()))
             
             sites_name_id = { x["name"]: x["id"] for x in site_abundance_df[["id","name"]].T.to_dict().values()}
             

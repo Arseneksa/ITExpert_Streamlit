@@ -58,9 +58,10 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     #     ]
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
-    
+    # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
                 x="year:O",
+                # alt.X("year(year):T").scale(zero=False).title("Year"),
                 y=selected_indicator,
                 # color=publication_types[0]
             ).interactive()
@@ -97,14 +98,14 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
     alt.renderers.set_embed_options(actions={"editor": False})
     
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=35),color="#19F960",tension=0.6).encode(
-                x="year(year):T",
+                alt.X("year(year):T").title("Year"),
                 y=selected_indicator,
                 
                 # color=publication_types[0]
             ).interactive()
     error = alt.Chart(df).mark_errorbar(ticks=True).encode(
                 # y=selected_indicator,
-                alt.X("year(year):T").scale(zero=False).title("Year"),
+                alt.X("year(year):T").title("Year"),
                 alt.Y(error["min"]).title(selected_indicator),
                 alt.Y2(error["max"]),
                 color=alt.value("#CCEAC1"),
