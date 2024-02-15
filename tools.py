@@ -129,6 +129,60 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
     #     url='image'
     # )
     return chart+text+error
+def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abbreviations):
+    # years = df["year"].unique()
+    # year = years[int(len(years)/2)]
+    # value = df.loc[df["year"]==year][selected_indicator]
+    # source = pd.DataFrame.from_records(
+    #     [
+    #         {'year': year,selected_indicator:value,  'image': './app/static/logo.jpg'},
+    #     ]
+    # )
+    df[error["min"]] = df[error["min"]].apply(lambda x: int(0) if x ==-1 else x)
+    df[error["max"]] = df[error["max"]].apply(lambda x: int(0) if x ==-1 else x)
+    # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
+    alt.renderers.set_embed_options(actions={"editor": False})
+    
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="green").encode(
+                alt.X(x_label).title(abbreviations),
+                y=selected_indicator,
+                
+                # color=publication_types[0]
+            ).interactive()
+    error = alt.Chart(df).mark_errorbar(ticks=True).encode(
+                # y=selected_indicator,
+                # alt.X(x_label+":O").title(),
+                alt.X(x_label).axis(
+                    title=abbreviations,
+                    titleAngle=0,
+                    # titleAlign="left",
+                    # titleY=-2,
+                    # titleX=0,
+                ),
+                alt.Y(error["min"]).title(selected_indicator),
+                alt.Y2(error["max"]),
+                color=alt.value("#EABD21"),
+                # color=alt.value("#FAFAFA"),
+                # color=publication_types[0]
+            )
+    df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+            title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            height=height
+        )
+    chart.configure_legend(
+            strokeColor='gray',
+            fillColor='#EEEEEE',
+            padding=10,
+            cornerRadius=10,
+            orient='top-right'
+        )
+    # img = alt.Chart(source).mark_image(width=50, height=75).encode(
+    #     x='year',
+    #     y=selected_indicator,
+    #     url='image'
+    # )
+    return chart+text+error
 def altairBarChart(alt,df,selected_indicator,title,height):
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
