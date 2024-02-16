@@ -122,9 +122,12 @@ def wildlife():
     }
 
     [data-testid="stMetric"] {
-        background-color: #393939;
+        /*background-color: #73815E;*/
+        background-color: #95B393;
         text-align: center;
-        padding: 15px 0;
+        padding: 8px 0;
+        border-radius:10px !important;
+        /*box-shadow: 0px 0 10px #33252D;*/
     }
 
     [data-testid="stMetricLabel"] {

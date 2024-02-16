@@ -36,7 +36,7 @@ def communication_page(st):
     }
 
     [data-testid="stMetric"] {
-        background-color: #393939;
+        background-color: #95B393;
         text-align: center;
         padding: 15px 0;
     }

@@ -9,6 +9,9 @@ import folium
 from streamlit_folium import st_folium
 import plotly.express as px
 # @st.cache_data(experimental_allow_widgets=True)
+# alt.themes.enable('powerbi')
+# alt.themes.enable('default')
+alt.themes.enable('none')
 def wildlife_region(st,data,pd):
     st.markdown(
             ' <span style="font-size:2em;font-weight:bold;margin-left:0px;">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Wildlfe dashboard</span><br>',
@@ -197,48 +200,26 @@ def wildlife_region(st,data,pd):
         #     height=300
         # )
         col = st.columns((4,4))
-        tab_occurence, tab_richness = st.tabs(["# Species occurence in site", "# Species richness by site"])
-        with tab_occurence:   
-            st.markdown('#### Species occurence in site')
-            st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
-            st.dataframe(
-                species_result_df,
-                column_config={
-                    "sites_number": st.column_config.ProgressColumn(
-                        "Number of site",
-                        help="Number of site where species is present",
-                        format="%f /"+str(len(sites_result_df)),
-                        min_value=0,
-                        max_value=len(sites_result_df),
-                    ),
-                    "sites": st.column_config.ListColumn(
-                        "List of sites",
-                        help="List of sites where the species is present",
-                        width="small",
-                    ),
-                },
-                hide_index=True, use_container_width=True
-            )
+        tab_richness,tab_occurence  = st.tabs(["# Species occurence in site", "# Species richness by site"])
+        
         with tab_richness:
             st.markdown('#### Species richness by site')
             # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
             
             # with tabmap:
-            with st.expander("Map",expanded=True):
-                
-                st_folium(map,height=350, use_container_width=True)
+             
             with st.expander("Table"):
                 
-                st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
+                # st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
                 # time.sleep(10)
                 # msg = ''
                 st.dataframe(
                     sites_result_df,
                     column_config={
                         "sites": st.column_config.ListColumn(
-                            "Species list",
+                            "Species list ( **Double-click on each  cell to see all the species**)",
                             help="List of species present in the site",
-                            width="small",
+                            width="large",
                         ),
                         "sites_number": st.column_config.ProgressColumn(
                             "Number of species",
@@ -252,22 +233,46 @@ def wildlife_region(st,data,pd):
                     },
                     hide_index=True,height=350, use_container_width=True
                 )
-            
+            with st.expander("Map",expanded=True):
+                st_folium(map,height=650, use_container_width=True)
+               
+        with tab_occurence:   
+            st.markdown('#### Species occurence in site')
+            # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
+            st.dataframe(
+                species_result_df,
+                column_config={
+                    "sites_number": st.column_config.ProgressColumn(
+                        "Number of site ",
+                        help="Number of site where species is present",
+                        format="%f /"+str(len(sites_result_df)),
+                        min_value=0,
+                        max_value=len(sites_result_df),
+                    ),
+                    "sites": st.column_config.ListColumn(
+                        "List of sites ( **Double-click on each  cell to see all sites**)",
+                        help="List of sites where the species is present",
+                        width="large",
+                    ),
+                },
+                hide_index=True, use_container_width=True
+            )
             # with tabTable:
             
             
     with tab2:
+        # st.write(st.config["secondaryBackgroundColor"])
         # 3. CSS style definitions
         resultype = option_menu(None, ["Efforts", "Trends in abundances",  "Comparisons"], 
             # icons=['house', 'cloud-upload', "list-task", 'gear'], 
             # menu_icon="cast"
             default_index=0, orientation="horizontal",
             styles={
-                "container": {"padding": "0px !important","max-width": "100%","background": "rgb(18, 37, 13)"},
+                "container": {"padding": "0px !important","max-width": "100%","background": "#fff"},
                 # "icon": {"color": "orange", "font-size": "1em"}, 
-                "icon": {"color": "rgb(25, 249, 96)", "font-size": "0.95em"}, 
-                "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#fff", "margin":"0px", "--hover-color": "#2D312C"},
-                "nav-link-selected": {"background": "#2D312C"},
+                "icon": {"color": "#4D5A3A", "font-size": "0.95em"}, 
+                "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#0A0C0A", "margin":"0px", "--hover-color": "#95B393"},
+                "nav-link-selected": {"background": "#95B393"},
             }
         )
         # st.write(resultype)
@@ -368,7 +373,7 @@ def wildlife_region(st,data,pd):
             abundance_indicators = {
                 "Density (n/km²)":"density",
                 "Encounter Rate (n/km)":"encounterRate",
-                "Population Size":"populationSize", 
+                "Population Size (n)":"populationSize", 
                 "Capture Rate":"captureRate", 
                 "Occupancy Rate":"occupancyRate"}
             abundance_indicators_error = {
@@ -410,13 +415,14 @@ def wildlife_region(st,data,pd):
             if len(species)>0:
                 sites_id_name = { x["id"]:x["short_name"]  for x in site_abundance_df[["id","short_name"]].T.to_dict().values()}
                 # sites_id_abbr = { x["id"]:}
-                abbreviations = ["< "+x["short_name"]+" > "+": "+x["name"]  for x in site_abundance_df[["id","short_name","name"]].T.to_dict().values()]
-                if len(abbreviations) > 25:
+                abbreviations = ["< "+x["short_name"]+" > "+": "+x["name"]  for x in site_abundance_df[["id","short_name","name"]].T.to_dict().values() if x["short_name"] != x["name"] ]
+                # st.write(len(abbreviations))
+                if len(abbreviations)>35:
                     size = int(len(abbreviations)/12)
-                if len(abbreviations) > 18:
-                    size = int(len(abbreviations)/10)
-                elif len(abbreviations)>50:
-                    size = int(len(abbreviations)/18)
+                elif len(abbreviations) > 22:
+                    size = int(len(abbreviations)/8)
+                elif len(abbreviations) > 18:
+                    size = int(len(abbreviations)/6)
                 elif len(abbreviations)>5:
                     size = int(len(abbreviations)/2)
                 else:
@@ -464,7 +470,7 @@ def wildlife_region(st,data,pd):
                 
                 abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(abundance_df)
-                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations)
+                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations)
                 st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(abundance_df.info())
                 # st.write(abundance_df)

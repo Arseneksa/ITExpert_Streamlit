@@ -4,18 +4,20 @@
 #backgroundColor = "#111111"
 # secondaryBackgroundColor = "#154360"
 #secondaryBackgroundColor = "#393939"
-#textColor = "#fafafa"
+
 #font = "sans serif"
 #[theme]
 #base="dark"
 #primaryColor="#19f960"
 #font="sans serif"
 [theme]
-base="dark"
-primaryColor="#19f960"
-backgroundColor="#12250d"
-secondaryBackgroundColor="#2d312c"
-
+base="light"
+primaryColor="#4D5A3A"
+backgroundColor="#fff"
+#backgroundColor="#12250d"
+#secondaryBackgroundColor="#2d312c"
+secondaryBackgroundColor="#95B393"
+textColor = "#0A0C0A"
 [server]
 enableStaticServing = true
 #[theme]

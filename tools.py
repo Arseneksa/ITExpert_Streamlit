@@ -59,14 +59,14 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=30),color="#4D5A3A",tension=0.6).encode(
                 x="year:O",
                 # alt.X("year(year):T").scale(zero=False).title("Year"),
                 y=selected_indicator,
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -97,7 +97,7 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
     df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=35),color="#19F960",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=35),color="#4D5A3A",tension=0.6).encode(
                 alt.X("year(year):T").title("Year"),
                 y=selected_indicator,
                 
@@ -108,11 +108,11 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
                 alt.X("year(year):T").title("Year"),
                 alt.Y(error["min"]).title(selected_indicator),
                 alt.Y2(error["max"]),
-                color=alt.value("#CCEAC1"),
+                color=alt.value("#EABD21"),
                 # color=publication_types[0]
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -143,7 +143,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="green").encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#95B393").encode(
                 alt.X(x_label).title(abbreviations),
                 y=selected_indicator,
                 
@@ -155,6 +155,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
                 alt.X(x_label).axis(
                     title=abbreviations,
                     titleAngle=0,
+                    gridColor="black"
                     # titleAlign="left",
                     # titleY=-2,
                     # titleX=0,
@@ -162,11 +163,11 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
                 alt.Y(error["min"]).title(selected_indicator),
                 alt.Y2(error["max"]),
                 color=alt.value("#EABD21"),
-                # color=alt.value("#FAFAFA"),
+                # color=alt.value("#0A0C0A"),
                 # color=publication_types[0]
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -176,6 +177,10 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
             padding=10,
             cornerRadius=10,
             orient='top-right'
+        )
+    chart.configure_axis(
+            grid=True,
+            gridColor = '#000',
         )
     # img = alt.Chart(source).mark_image(width=50, height=75).encode(
     #     x='year',
@@ -194,13 +199,13 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=30),color="#4D5A3A",tension=0.6).encode(
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -228,14 +233,14 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#19F960",size=30),color="#19F960",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=30),color="#4D5A3A",tension=0.6).encode(
                 x=x_label+":O",
                 # y=selected_indicator,
                 y=alt.Y(field=selected_indicator, aggregate=aggregation, type='quantitative')
                 # color=publication_types[0]
             ).interactive()
     df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="white",dy=-15).encode(text="indicator_value").properties(
+    # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="indicator_value").properties(
     #         title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
     #         height=height
     #     )
