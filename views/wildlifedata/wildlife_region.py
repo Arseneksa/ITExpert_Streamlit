@@ -316,11 +316,11 @@ def wildlife_region(st,data,pd):
                     st.markdown('#### Trend in Area covered in the Congo Basin ')
                     st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
         if resultype == "Trends in abundances":
-            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size", "Capture Rate", "Occupancy Rate"]
+            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
             abundance_indicators = {
                 "Density (n/km²)":"density",
                 "Encounter Rate (n/km)":"encounterRate",
-                "Population Size":"populationSize", 
+                "Population Size (n)":"populationSize", 
                 "Capture Rate":"captureRate", 
                 "Occupancy Rate":"occupancyRate"}
             abundance_indicators_error = {
@@ -369,7 +369,7 @@ def wildlife_region(st,data,pd):
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
         if resultype == "Comparisons":
-            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size", "Capture Rate", "Occupancy Rate"]
+            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
             abundance_indicators = {
                 "Density (n/km²)":"density",
                 "Encounter Rate (n/km)":"encounterRate",
