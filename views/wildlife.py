@@ -123,11 +123,67 @@ def wildlife():
 
     [data-testid="stMetric"] {
         /*background-color: #73815E;*/
-        background-color: #95B393;
+        background-color: #91B384;
         text-align: center;
-        padding: 8px 0;
+        padding: 6px 0;
         border-radius:10px !important;
-        /*box-shadow: 0px 0 10px #33252D;*/
+        box-shadow: 0px 0 4px #0A0C0A;
+    }
+    [data-testid="stMetricValue"] {
+        /*background-color: #73815E;*/
+       
+        text-align: center;
+        color: #FFFFFF;
+       
+        
+    }
+    [role="tab"] {
+        /*background-color: #C8D8C0;*/
+        padding:5px  !important;
+        text-align: center;
+        border-radius: 3px;
+        font-size: 1em;
+
+       
+        
+    }
+    [data-testid="stMetricLabel"] {
+        /*background-color: #73815E;*/
+       
+        text-align: center;
+        color: #FFFFFF;
+       
+        
+    }
+    /*[data-testid="stExpander"] {
+        border:1px solid #0A0C0A;
+        border-radius:10px !important;
+        text-align: center;
+       
+        
+    }*/
+    [data-testid="stArrowVegaLiteChart"] {
+        background-color: #C8D8C0;
+        border-radius:10px !important;
+        text-align: center;
+        color: #000;
+       
+        
+    }
+    [data-testid="stMetricDelta"] {
+        /*background-color: #73815E;*/
+       
+        text-align: center;
+        
+        padding:2px;
+        background: white;
+        border: 0.1px solid #DF7A0F;
+        margin-left: 8px;
+        margin-right: 8px;
+        border-radius:5px
+
+       
+        
     }
 
     [data-testid="stMetricLabel"] {

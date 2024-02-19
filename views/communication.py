@@ -36,7 +36,7 @@ def communication_page(st):
     }
 
     [data-testid="stMetric"] {
-        background-color: #95B393;
+        background-color: #C8D8C0;
         text-align: center;
         padding: 15px 0;
     }
@@ -194,8 +194,8 @@ def communication_page(st):
             st.altair_chart(chart, theme=None, use_container_width=True)
             if selected_indicator == "Research Interest Score":
                 # st.markdown('#### Research Interest Score Breakdown')
-                start = Color("#12783D")
-                end = Color("#99DAB4")
+                start = Color("#DF7A0F")
+                end = Color("#F9DFC5")
                 ramp = ["%s"% x for x in list(start.range_to(end, len(value)))]
                 source = pd.DataFrame(interestScoreBreakdown)
                 source = source.sort_values(by='value', ascending=False)

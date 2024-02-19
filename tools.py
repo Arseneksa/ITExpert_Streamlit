@@ -59,7 +59,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=30),color="#4D5A3A",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
                 x="year:O",
                 # alt.X("year(year):T").scale(zero=False).title("Year"),
                 y=selected_indicator,
@@ -97,7 +97,7 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
     df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=35),color="#4D5A3A",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#DF7A0F",size=35),color="#DF7A0F",tension=0.6).encode(
                 alt.X("year(year):T").title("Year"),
                 y=selected_indicator,
                 
@@ -143,7 +143,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#95B393").encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#DEDDC2").encode(
                 alt.X(x_label).title(abbreviations),
                 y=selected_indicator,
                 
@@ -199,7 +199,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=30),color="#4D5A3A",tension=0.6).encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
@@ -233,7 +233,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#4D5A3A",size=30),color="#4D5A3A",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
                 x=x_label+":O",
                 # y=selected_indicator,
                 y=alt.Y(field=selected_indicator, aggregate=aggregation, type='quantitative')

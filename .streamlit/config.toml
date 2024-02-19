@@ -10,14 +10,14 @@
 #base="dark"
 #primaryColor="#19f960"
 #font="sans serif"
-[theme]
-base="light"
-primaryColor="#4D5A3A"
-backgroundColor="#fff"
+#[theme]
+#base="light"
+#primaryColor="#DF7A0F"
+#backgroundColor="#fff"
 #backgroundColor="#12250d"
 #secondaryBackgroundColor="#2d312c"
-secondaryBackgroundColor="#95B393"
-textColor = "#0A0C0A"
+#secondaryBackgroundColor="#DEDDC2"
+
 [server]
 enableStaticServing = true
 #[theme]
@@ -26,3 +26,8 @@ enableStaticServing = true
 #secondaryBackgroundColor="#f2efe3"
 #font="serif"
 
+[theme]
+primaryColor="#df7a0f"
+backgroundColor="#fff"
+secondaryBackgroundColor="#c8d8c0"
+textColor="#0a0c0a"

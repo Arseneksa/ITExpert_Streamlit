@@ -270,9 +270,9 @@ def wildlife_region(st,data,pd):
             styles={
                 "container": {"padding": "0px !important","max-width": "100%","background": "#fff"},
                 # "icon": {"color": "orange", "font-size": "1em"}, 
-                "icon": {"color": "#4D5A3A", "font-size": "0.95em"}, 
-                "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#0A0C0A", "margin":"0px", "--hover-color": "#95B393"},
-                "nav-link-selected": {"background": "#95B393"},
+                "icon": {"color": "#DF7A0F", "font-size": "0.95em"}, 
+                "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#0A0C0A", "margin":"0px", "--hover-color": "#DEDDC2"},
+                "nav-link-selected": {"background": "#DEDDC2"},
             }
         )
         # st.write(resultype)
