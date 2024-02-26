@@ -115,25 +115,70 @@ def wildlife():
         padding-bottom: 0rem;
         margin-bottom: -7rem;
     }
+    [data-testid="stExpander"] {
+       
+        opacity: 0.97;
+        font-weight: 25;
+        border: none;
+        background: white;
+        border-radius:15px;
+    }
+    [data-baseweb="tab"], [data-baseweb="tab"]:active {
+        padding: 15px;
+        opacity: 0.98;
+        font-weight: 25;
+        background: white;
+        border-radius:15px;
+    }
+    [data-testid="stArrowVegaLiteChart"] {
+        padding: 15px;
+        opacity: 0.97;
+        background: white;
+        margin-bottom:10px;
+        border-radius:15px;
+    }
+    [data-testid="StyledLinkIconContainer"]{
+        text-shadow: 2px 2px 4px #000 ;
+        color:white
+    }
+    [data-testid="stWidgetLabel"]{
+        text-shadow: 3px 4px 3px #fff ;
+        color:black;
+        font-weight: 25;
+        font-size:1em;
+    }
+    [data-testid="block-container"] {
+        background-color: white;
+        background: url(https://images.pexels.com/photos/7304987/pexels-photo-7304987.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+        background-size: cover;
+        overflow-y: scroll;
 
+        min-height:100%;
+        
+    }
+    [stMarkdownContainer] {
+        background: white;
+        opacity: 0.97;
+        padding: 5px;
+    }
     [data-testid="stVerticalBlock"] {
         padding-left: 0rem;
         padding-right: 0rem;
     }
 
     [data-testid="stMetric"] {
-        /*background-color: #73815E;*/
-        background-color: #91B384;
+        /*background-color: #91B384;*/
+        background-color: #C8D8C0;
         text-align: center;
         padding: 6px 0;
         border-radius:10px !important;
-        box-shadow: 0px 0 4px #0A0C0A;
+        /*box-shadow: 0px 0 4px #000;*/
     }
     [data-testid="stMetricValue"] {
         /*background-color: #73815E;*/
        
         text-align: center;
-        color: #FFFFFF;
+        /*color: #FFFFFF;*/
        
         
     }
@@ -151,18 +196,19 @@ def wildlife():
         /*background-color: #73815E;*/
        
         text-align: center;
-        color: #FFFFFF;
+        font-size: 1em;
+        /*color: #FFFFFF;*/
        
         
     }
     /*[data-testid="stExpander"] {
-        border:1px solid #0A0C0A;
+        border:1px solid #000;
         border-radius:10px !important;
         text-align: center;
        
         
     }*/
-    [data-testid="stArrowVegaLiteChart"] {
+    /*[data-testid="stArrowVegaLiteChart"] {
         background-color: #C8D8C0;
         border-radius:10px !important;
         text-align: center;
@@ -184,7 +230,7 @@ def wildlife():
 
        
         
-    }
+    }*/
 
     [data-testid="stMetricLabel"] {
     display: flex;
@@ -254,7 +300,7 @@ def wildlife():
     
     sites = sites_df["name"].unique()
     levels = ["Region","Country","Landscape","Site"]
-    countries = countries_df["name"].unique()
+    
 
     
     # df["region"] = df["region"].astype(str)
@@ -294,16 +340,52 @@ def wildlife():
         }
         wildlife_region(st,data,pd)
     if selected_level =="Country":
+        countries_df = countries_df.loc[countries_df["id"].isin(df["site"].unique())]
+        countries = countries_df["name"].unique()
         with st.sidebar:
         # st.title('🏂 US Population Dashboard')
         # st.title('Filter')
             selected_country = st.selectbox('Select a country', countries)
-        wildlife_country(st,selected_country)
+        country_name_id = { x["name"]: x["id"] for x in countries_df[["id","name"]].T.to_dict().values()}
+        country_id = country_name_id[selected_country]
+        landscapes_df  = landscapes_df.loc[landscapes_df["country"]==country_id]
+        sites_df  = sites_df.loc[sites_df["country"]==country_id]
+        df  = df.loc[df["country"]==country_id]
+        data = {
+            "wildlife":df,
+            "sites":sites_df,
+            "countries":countries_df,
+            "species":species_df,
+            "landscapes":landscapes_df,
+            "main_landscapes":main_landscapes_df,
+            "blocks":blocksdf,
+            "sectors":sectorsdf,
+            "sampling_method":sampling_method_df,
+            
+        }
+        
+        wildlife_country(st,selected_country,data,pd)
     if selected_level =="Site":
+        sites_df = sites_df.loc[sites_df["id"].isin(df["site"].unique())]
+        sites = sites_df["name"].unique()
         with st.sidebar:
         # st.title('🏂 US Population Dashboard')
         # st.title('Filter')
-            selected_site = st.selectbox('Select a site', sites)
-        wildlife_site(st,selected_site)
-
+            selected_site = st.selectbox('Select site', sites)
+        site_name_id = { x["name"]: x["id"] for x in sites_df[["id","name"]].T.to_dict().values()}
+        site_id = site_name_id[selected_site]
+        blocksdf  = blocksdf.loc[blocksdf["site"]==site_id]
+        sectorsdf  = sectorsdf.loc[sectorsdf["site"]==site_id]
+        df  = df.loc[df["site"]==site_id]
+        data = {
+            "wildlife":df,
+            "sites":sites_df,
+            "species":species_df,
+            "blocks":blocksdf,
+            "sectors":sectorsdf,
+            "sampling_method":sampling_method_df,
+            
+        }
+        
+        wildlife_site(st,selected_site,data,pd)
        

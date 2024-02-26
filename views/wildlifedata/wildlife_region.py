@@ -14,13 +14,13 @@ import plotly.express as px
 alt.themes.enable('none')
 def wildlife_region(st,data,pd):
     st.markdown(
-            ' <span style="font-size:2em;font-weight:bold;margin-left:0px;">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Wildlfe dashboard</span><br>',
+            ' <span style="font-size:2em;font-weight:bold;margin-left:0px; background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Wildlfe dashboard</span><br>',
             unsafe_allow_html=True,
         )
     # st.subheader("wildlfe dashboard")
     df = data["wildlife"]
     df = df.loc[df['year']!=-1]
-    df.to_csv("data/wildlife.csv")
+    # df.to_csv("data/wildlife.csv")
     
     
     regiondf = pd.DataFrame({
@@ -156,17 +156,18 @@ def wildlife_region(st,data,pd):
         indicators_metric = [ "species","country","main_landscape","site"]
         col = st.columns((2,2,2,2))
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
+        generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
         # st.write(len(metric_df["site"].unique()))
-        for indicator in indicators_metric:
+        # for indicator in indicators_metric:
                         
-            difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
-            # st.dataframe(df_population_difference_sorted)
-            first_state_name = "# **"+indicators_name[indicator]+ '** '
-            first_state_population = format_number(len(metric_df[indicator].unique()))
-            first_state_delta = format_number(difference)
-            with col[i]:
-                st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
-                i=i+1
+        #     difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
+        #     # st.dataframe(df_population_difference_sorted)
+        #     first_state_name = "# **"+indicators_name[indicator]+ '** '
+        #     first_state_population = format_number(len(metric_df[indicator].unique()))
+        #     first_state_delta = format_number(difference)
+        #     with col[i]:
+        #         st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
+        #         i=i+1
         # geo_chart = alt.Chart(sites_result_gdf, title="Vega-Altair").mark_geoshape().encode(
         #     alt.Color("Number of species:N").scale(None)
         # ).project(type="identity", reflectY=True)
@@ -199,64 +200,64 @@ def wildlife_region(st,data,pd):
         #     width=500,
         #     height=300
         # )
-        col = st.columns((4,4))
-        tab_richness,tab_occurence  = st.tabs(["# Species occurence in site", "# Species richness by site"])
-        
-        with tab_richness:
-            st.markdown('#### Species richness by site')
-            # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
+        with st.container():
+            tab_richness ,tab_occurence = st.tabs(["# Species richness by site","# Species occurence in site"])
             
-            # with tabmap:
-             
-            with st.expander("Table"):
+            with tab_richness:
+                st.markdown('#### Species richness by site')
+                # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
                 
-                # st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
-                # time.sleep(10)
-                # msg = ''
+                # with tabmap:
+                
+                with st.expander("Table"):
+                    
+                    # st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
+                    # time.sleep(10)
+                    # msg = ''
+                    st.dataframe(
+                        sites_result_df,
+                        column_config={
+                            "sites": st.column_config.ListColumn(
+                                "Species list ( **Double-click on each  cell to see all the species**)",
+                                help="List of species present in the site",
+                                width="large",
+                            ),
+                            "sites_number": st.column_config.ProgressColumn(
+                                "Number of species",
+                                
+                                help="Number of species present in the site",
+                                format="%f /"+str(len(species_result_df)),
+                                min_value=0,
+                                max_value=len(species_result_df),
+                            ),
+                            
+                        },
+                        hide_index=True,height=350, use_container_width=True
+                    )
+                with st.expander("Map",expanded=True):
+                    st_folium(map,height=650, use_container_width=True)
+                
+            with tab_occurence:   
+                st.markdown('#### Species occurence in site')
+                # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
                 st.dataframe(
-                    sites_result_df,
+                    species_result_df,
                     column_config={
+                        "sites_number": st.column_config.ProgressColumn(
+                            "Number of site ",
+                            help="Number of site where species is present",
+                            format="%f /"+str(len(sites_result_df)),
+                            min_value=0,
+                            max_value=len(sites_result_df),
+                        ),
                         "sites": st.column_config.ListColumn(
-                            "Species list ( **Double-click on each  cell to see all the species**)",
-                            help="List of species present in the site",
+                            "List of sites ( **Double-click on each  cell to see all sites**)",
+                            help="List of sites where the species is present",
                             width="large",
                         ),
-                        "sites_number": st.column_config.ProgressColumn(
-                            "Number of species",
-                            
-                            help="Number of species present in the site",
-                            format="%f /"+str(len(species_result_df)),
-                            min_value=0,
-                            max_value=len(species_result_df),
-                        ),
-                        
                     },
-                    hide_index=True,height=350, use_container_width=True
+                    hide_index=True, use_container_width=True
                 )
-            with st.expander("Map",expanded=True):
-                st_folium(map,height=650, use_container_width=True)
-               
-        with tab_occurence:   
-            st.markdown('#### Species occurence in site')
-            # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
-            st.dataframe(
-                species_result_df,
-                column_config={
-                    "sites_number": st.column_config.ProgressColumn(
-                        "Number of site ",
-                        help="Number of site where species is present",
-                        format="%f /"+str(len(sites_result_df)),
-                        min_value=0,
-                        max_value=len(sites_result_df),
-                    ),
-                    "sites": st.column_config.ListColumn(
-                        "List of sites ( **Double-click on each  cell to see all sites**)",
-                        help="List of sites where the species is present",
-                        width="large",
-                    ),
-                },
-                hide_index=True, use_container_width=True
-            )
             # with tabTable:
             
             
@@ -271,7 +272,7 @@ def wildlife_region(st,data,pd):
                 "container": {"padding": "0px !important","max-width": "100%","background": "#fff"},
                 # "icon": {"color": "orange", "font-size": "1em"}, 
                 "icon": {"color": "#DF7A0F", "font-size": "0.95em"}, 
-                "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#0A0C0A", "margin":"0px", "--hover-color": "#DEDDC2"},
+                "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#000", "margin":"0px", "--hover-color": "#DEDDC2"},
                 "nav-link-selected": {"background": "#DEDDC2"},
             }
         )

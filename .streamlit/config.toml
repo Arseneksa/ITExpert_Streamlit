@@ -30,4 +30,4 @@ enableStaticServing = true
 primaryColor="#df7a0f"
 backgroundColor="#fff"
 secondaryBackgroundColor="#c8d8c0"
-textColor="#0a0c0a"
+textColor="#000"

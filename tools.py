@@ -66,7 +66,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -112,7 +112,7 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
                 # color=publication_types[0]
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -163,11 +163,11 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
                 alt.Y(error["min"]).title(selected_indicator),
                 alt.Y2(error["max"]),
                 color=alt.value("#EABD21"),
-                # color=alt.value("#0A0C0A"),
+                # color=alt.value("#000"),
                 # color=publication_types[0]
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -178,10 +178,13 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
             cornerRadius=10,
             orient='top-right'
         )
-    chart.configure_axis(
-            grid=True,
-            gridColor = '#000',
-        )
+    chart.configure_view(
+        continuousHeight=200,
+        continuousWidth=200,
+        strokeWidth=4,
+        fill='#FFEEDD',
+        stroke='red',
+    )
     # img = alt.Chart(source).mark_image(width=50, height=75).encode(
     #     x='year',
     #     y=selected_indicator,
@@ -205,7 +208,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="Short value").properties(
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
             title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
@@ -240,7 +243,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
                 # color=publication_types[0]
             ).interactive()
     df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#0A0C0A",dy=-15).encode(text="indicator_value").properties(
+    # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="indicator_value").properties(
     #         title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
     #         height=height
     #     )
@@ -594,3 +597,34 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
     df["year"] = df["year"].astype(str)
     # st.write(df)
     return df
+
+
+def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end_year):
+    box_number = len(indicators_metric)
+    # col =[0,0,0,0]
+    # if box_number == 4:
+    #     col[0],col[1],col[2],col[3] = st.columns(box_number)
+    # elif box_number == 3:
+    #     col[0],col[1],col[2] = st.columns(box_number)
+    # elif box_number == 2:
+    #     col[0],col[1] = st.columns(box_number)
+    # elif box_number == 1:
+    #     col[0] = st.columns(box_number)
+    col= st.columns(box_number)
+    metric_df = leveldf
+    # st.write(col)
+    # metric_df = df[df["site"].isin(leveldf["id"].unique())]
+    # st.write(len(metric_df["site"].unique()))
+    i=0
+    for indicator in indicators_metric:
+                 
+        difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
+        # st.dataframe(df_population_difference_sorted)
+        first_state_name = "# **"+indicators_name[indicator]+ '** '
+        first_state_population = format_number(len(metric_df[indicator].unique()))
+        first_state_delta = format_number(difference)
+        with col[i]:
+            st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
+            i=i+1
+
+# def wildlife_data_clean(df):
