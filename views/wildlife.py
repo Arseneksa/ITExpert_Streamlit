@@ -142,10 +142,22 @@ def wildlife():
         color:white
     }
     [data-testid="stWidgetLabel"]{
-        text-shadow: 3px 4px 3px #fff ;
-        color:black;
-        font-weight: 25;
-        font-size:1em;
+        text-shadow: 0px 0px 2px white,
+                0px 0px 3px rgba(255, 255, 255, 1), 
+               0px 0px 06px rgba(255, 255, 255, 1), 
+			   0px 0px 8px rgba(255, 255, 255, 1),
+			   0px 0px 20px rgba(73, 255, 24, 1),
+			   0px 0px 30px rgba(73, 255, 24, 1),
+			   0px 0px 40px rgba(73, 255, 24, 1),
+			   0px 0px 55px rgba(73, 255, 24, 1),
+			   0px 0px 75px rgba(73, 255, 24, 1);
+			   
+        color:#000;
+        font-weight: bold;
+        font-size:1.2em;
+    }
+    [data-testid="manage-app-button"]{
+        display: none;
     }
     [data-testid="block-container"],[data-testid="stAppViewBlockContainer"] {
         background-color: white;
