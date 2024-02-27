@@ -619,11 +619,17 @@ def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end
     for indicator in indicators_metric:
                  
         difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
-        # metric_df[indicator] = metric_df[indicator].dropna()
-        # st.write(metric_df[indicator].unique())
+        metrics = metric_df.loc[metric_df[indicator]!="nan"][indicator].unique()
+        
+        size = len(metrics)
+        # if size ==1 :
+        #     if metrics[0]== "nan" :
+        #         size =0
+            
+        # st.write(metrics,size)
         # st.dataframe(df_population_difference_sorted)
         first_state_name = "# **"+indicators_name[indicator]+ '** '
-        first_state_population = format_number(len(metric_df[indicator].unique()))
+        first_state_population = format_number(size)
         first_state_delta = format_number(difference)
         with col[i]:
             st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
