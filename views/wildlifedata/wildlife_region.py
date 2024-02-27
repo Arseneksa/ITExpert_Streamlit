@@ -101,12 +101,12 @@ def wildlife_region(st,data,pd):
     df["year"] = df["year"].astype(str)
     
     # df["main_landscape"] = df["main_landscape"].astype(str)
-    st.write(df.shape)
-    st.write(sitesdf.shape)
+    # st.write(df.shape)
+    # st.write(sitesdf.shape)
     area_cover_region_df =  get_area_covered_table(df ,sitesdf)
     # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_region_df,1,"Country")) 
     # st.write(df[["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","coverage_rate","year"]])
-    st.write(area_cover_region_df)
+    # st.write(area_cover_region_df)
     # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_region_df,6,"Site","coverage_rate",sitesdf))
     # st.write(landscapesdf)
     
