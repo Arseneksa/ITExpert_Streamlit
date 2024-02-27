@@ -502,7 +502,7 @@ def get_area_covered_table(df ,sitesdf):
     max_areadf =  df[["region","country",'main_landscape','site',"landscape","area_covered_km2","level","year"]].groupby(["region","country",'main_landscape',"landscape","site","level"]).max().reset_index()
     # df_coverage1 = df.merge(sitesdf, left_on="site", right_on='id', how="left")
     child_sites = sitesdf[sitesdf["is_child"]==True]["id"].to_list()
-    print(child_sites)
+    # print(child_sites)
     
     # st.write(df.shape)
     df["is_parent"] = df["site"].apply(lambda x :True if x not in child_sites else False)
@@ -515,6 +515,8 @@ def get_area_covered_table(df ,sitesdf):
     # print(len(sitesdf[sitesdf["is_child"]==True]))
     # print(len(df["site"].unique()))
     sitesdf = sitesdf.loc[sitesdf["id"].isin(df["site"].unique())]
+    st.write(df["site"].unique())
+    st.write(sitesdf)
     # print(len(sitesdf["id"].unique()))
     # print(len(df_coverage1["site"].unique()))
         # sites = sites_df["name"].unique()
@@ -529,15 +531,15 @@ def get_area_covered_table(df ,sitesdf):
     # print(df_coverage.info())
     # print(df_coverage.head())
     # st.write(df_coverage)
-    # st.write(df_coverage.shape)
+    st.write(df_coverage.shape)
     max_areadf_year =  df_coverage[["region","country",'main_landscape','site',"landscape",'block2',"sector2","area_covered_km2","coverage_rate","level",'is_parent',"year"]].groupby(["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","year"]).max().reset_index()
     # max_areadf = df[['main_landscape','country',"landscape","area_covered_km2","level"]].groupby(['main_landscape',"country","landscape","level"]).max().reset_index()
     # max_areadf = df[['main_landscape','country',"landscape","area_covered_km2","level","coverage_rate","year"]].groupby(['main_landscape',"country","landscape","level","year"]).max().reset_index()
     # st.write(max_areadf_year)
     # print(max_areadf_year.info())
-    # st.write(max_areadf_year.shape)
+    st.write(max_areadf_year.shape)
     max_areadf = max_areadf[max_areadf["area_covered_km2"]!=-1]
-    # st.write(max_areadf_year)
+    st.write(max_areadf_year)
     max_areadf_year = max_areadf_year[max_areadf_year["area_covered_km2"]!=-1].merge(sitesdf[["id","name","total_area"]], left_on="site", right_on='id', how="left")
     # max_areadf_year = max_areadf_year.merge(sitesdf[["id","name","total_area"]], left_on="site", right_on='id', how="left")
     # max_areadf_year["coverage_rate"] = round((max_areadf_year["area_covered_km2"]/max_areadf_year["total_area"])*100,2)
@@ -563,6 +565,7 @@ def get_area_covered_table(df ,sitesdf):
     max_areadf_site = max_areadf_year[["region","country",'main_landscape',"landscape",'site',"area_covered_km2","coverage_rate"]].groupby(["region","country",'main_landscape',"landscape",'site']).max().reset_index()
     # max_areadf_site.to_excel("area_covered_storage.xlsx",sheet_name='Sheet2')
     # print()
+    # st.write(max_areadf_site)
     
     max_areadf_site = max_areadf_site.merge(sitesdf[["id","name","total_area"]], left_on="site", right_on='id', how="left")
     # with pd.ExcelWriter("area_covered_storage.xlsx") as writer:
@@ -590,7 +593,7 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df[selected_indicator])
     
     df = df[[level,"year",selected_indicator]].groupby([level,"year"]).sum().reset_index()
-    # st.write(df)
+    st.write(df)
     years = df["year"].unique()
     min_year = min(years)
     df["Sampling transect effort (Km)"] = df["year"].apply(lambda x : cumulative(df,x,min_year,selected_indicator))

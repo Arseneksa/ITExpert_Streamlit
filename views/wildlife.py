@@ -157,7 +157,7 @@ def wildlife():
         font-size:1.2em;
     }
     [data-testid="manage-app-button"],[data-testid="baseButton-headerNoPadding"],[data-testid="baseButton-header"]{
-        display: none !important;
+        /*display: none !important;*/
     }
     [data-testid="block-container"],[data-testid="stAppViewBlockContainer"] {
         background-color: white;
@@ -313,8 +313,9 @@ def wildlife():
     sites = sites_df["name"].unique()
     levels = ["Region","Country","Landscape","Site"]
     
-
-    
+    species_df = species_df.loc[species_df["id"]!=53]
+    df = df.loc[df["species"]!=53]
+    # st.write(df.loc[df["species"]==53])
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)
     # df["main_landscape"] = df["main_landscape"].astype(str)
@@ -378,8 +379,8 @@ def wildlife():
         
         wildlife_country(st,selected_country,data,pd)
     if selected_level =="Site":
-        sites_df = sites_df.loc[sites_df["id"].isin(df["site"].unique())]
-        sites = sites_df["name"].unique()
+        sites_df2 = sites_df.loc[sites_df["id"].isin(df["site"].unique())]
+        sites = sites_df2["name"].unique()
         with st.sidebar:
         # st.title('🏂 US Population Dashboard')
         # st.title('Filter')
@@ -391,7 +392,7 @@ def wildlife():
         df  = df.loc[df["site"]==site_id]
         data = {
             "wildlife":df,
-            "sites":sites_df,
+            "sites":sites_df2,
             "species":species_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,

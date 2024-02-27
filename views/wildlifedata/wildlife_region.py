@@ -101,25 +101,26 @@ def wildlife_region(st,data,pd):
     df["year"] = df["year"].astype(str)
     
     # df["main_landscape"] = df["main_landscape"].astype(str)
-    # st.write(df.shape)
-    area_cover_df =  get_area_covered_table(df ,sitesdf)
-    # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_df,1,"Country")) 
+    st.write(df.shape)
+    st.write(sitesdf.shape)
+    area_cover_region_df =  get_area_covered_table(df ,sitesdf)
+    # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_region_df,1,"Country")) 
     # st.write(df[["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","coverage_rate","year"]])
-    # st.write(area_cover_df)
-    # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_df,6,"Site","coverage_rate",sitesdf))
+    st.write(area_cover_region_df)
+    # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_region_df,6,"Site","coverage_rate",sitesdf))
     # st.write(landscapesdf)
     
-    # data = get_cumulative_max_area_covered_per_level_per_year(area_cover_df,1,"Region","area_covered")
+    # data = get_cumulative_max_area_covered_per_level_per_year(area_cover_region_df,1,"Region","area_covered")
     # print("Cumulative TRIDOM GAB",data)
-    # cumulativedf = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Site")
+    # cumulativedf = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Site")
    
-    species_field_mask = ["name","sites","sites_number", "priority"]
-    species_result_df = getspeciesByLevel(df,speciesdf,sitesdf,"region","species","site",1).sort_values(by=['sites_number'], ascending=[ False])
-    sites_result_df = getspeciesByLevel(df,sitesdf,speciesdf,"region","site","species",1).sort_values(by=['sites_number'], ascending=[ False])
-    species_result_df =species_result_df[species_field_mask]
-    sites_result_df =sites_result_df[species_field_mask]
-    sites_result_gdf = pd.merge(sites_result_df.sort_values(by=['sites_number'], ascending=[ True]), sitesgdf[['site', 'geometry']], left_on="name", right_on='site', how='left')
-    species_result_df =species_result_df.rename(
+    species_field_mask_region = ["name","sites","sites_number", "priority"]
+    species_result_df_region = getspeciesByLevel(df,speciesdf,sitesdf,"region","species","site",1).sort_values(by=['sites_number'], ascending=[ False])
+    sites_result_df_region = getspeciesByLevel(df,sitesdf,speciesdf,"region","site","species",1).sort_values(by=['sites_number'], ascending=[ False])
+    species_result_df_region =species_result_df_region[species_field_mask_region]
+    sites_result_df_region =sites_result_df_region[species_field_mask_region]
+    sites_result_gdf_region = pd.merge(sites_result_df_region.sort_values(by=['sites_number'], ascending=[ True]), sitesgdf[['site', 'geometry']], left_on="name", right_on='site', how='left')
+    species_result_df_region =species_result_df_region.rename(
         columns={
             "name": "Name",
             "priority": "Priority",
@@ -127,7 +128,7 @@ def wildlife_region(st,data,pd):
             
         }
     )
-    sites_result_df =sites_result_df.rename(
+    sites_result_df_region =sites_result_df_region.rename(
         columns={
             "name": "Name",
             "priority": "Priority",
@@ -135,7 +136,7 @@ def wildlife_region(st,data,pd):
             
         }
     )
-    sites_result_gdf =sites_result_gdf.rename(
+    sites_result_gdf_region =sites_result_gdf_region.rename(
         columns={
             "name": "Name",
             "priority": "Priority",
@@ -144,17 +145,16 @@ def wildlife_region(st,data,pd):
             
         }
     )
-    sites_result_gdf["Species list"] = sites_result_gdf["Species list"].apply(lambda x : 
+    sites_result_gdf_region["Species list"] = sites_result_gdf_region["Species list"].apply(lambda x : 
         """
     <p> <ul>"""+ "".join(["<li>"+l for l in x.split(",")])+""""</li> </p>""")
-    sites_result_gdf =gpd.GeoDataFrame(sites_result_gdf)
-    sites_result_gdf =sites_result_gdf.to_crs(sitesgdf.crs)
+    sites_result_gdf_region =gpd.GeoDataFrame(sites_result_gdf_region)
+    sites_result_gdf_region =sites_result_gdf_region.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
         i=0
         indicators_name =  {"species":"Species","country":"Countries","main_landscape":"Landscapes","site":"Sites"}
         indicators_metric = [ "species","country","main_landscape","site"]
-        col = st.columns((2,2,2,2))
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
         # st.write(len(metric_df["site"].unique()))
@@ -168,16 +168,16 @@ def wildlife_region(st,data,pd):
         #     with col[i]:
         #         st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
         #         i=i+1
-        # geo_chart = alt.Chart(sites_result_gdf, title="Vega-Altair").mark_geoshape().encode(
+        # geo_chart = alt.Chart(sites_result_gdf_region, title="Vega-Altair").mark_geoshape().encode(
         #     alt.Color("Number of species:N").scale(None)
         # ).project(type="identity", reflectY=True)
         # st.altair_chart(geo_chart)
-        map = naturalbreaksMap(sites_result_gdf,"Number of species",["Name","Number of species"])
+        map = naturalbreaksMap(sites_result_gdf_region,"Number of species",["Name","Number of species"])
         # folium.TileLayer("CartoDB positron", show=False).add_to(
         #     map
         # )
-        # st.write(sites_result_gdf.to_json())
-        # fig = px.choropleth(sites_result_gdf, geojson=sites_result_gdf.to_json(), locations="Name", color="Number of species").update_layout(
+        # st.write(sites_result_gdf_region.to_json())
+        # fig = px.choropleth(sites_result_gdf_region, geojson=sites_result_gdf_region.to_json(), locations="Name", color="Number of species").update_layout(
         #     template='plotly_dark',
         #     plot_bgcolor='rgba(0, 0, 0, 0)',
         #     paper_bgcolor='rgba(0, 0, 0, 0)',
@@ -189,11 +189,11 @@ def wildlife_region(st,data,pd):
         # st.plotly_chart(fig)
         
 
-        # alt.Chart(sites_result_gdf).mark_geoshape().encode(
+        # alt.Chart(sites_result_gdf_region).mark_geoshape().encode(
         #     color='Number of species:Q'
         # ).transform_lookup(
         #     lookup='id',
-        #     from_=alt.LookupData(sites_result_gdf, 'id', ['Number of species'])
+        #     from_=alt.LookupData(sites_result_gdf_region, 'id', ['Number of species'])
         # ).project(
         #     type='albersUsa'
         # ).properties(
@@ -215,7 +215,7 @@ def wildlife_region(st,data,pd):
                     # time.sleep(10)
                     # msg = ''
                     st.dataframe(
-                        sites_result_df,
+                        sites_result_df_region,
                         column_config={
                             "sites": st.column_config.ListColumn(
                                 "Species list ( **Double-click on each  cell to see all the species**)",
@@ -226,9 +226,9 @@ def wildlife_region(st,data,pd):
                                 "Number of species",
                                 
                                 help="Number of species present in the site",
-                                format="%f /"+str(len(species_result_df)),
+                                format="%f /"+str(len(species_result_df_region)),
                                 min_value=0,
-                                max_value=len(species_result_df),
+                                max_value=len(species_result_df_region),
                             ),
                             
                         },
@@ -241,14 +241,14 @@ def wildlife_region(st,data,pd):
                 st.markdown('#### Species occurence in site')
                 # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
                 st.dataframe(
-                    species_result_df,
+                    species_result_df_region,
                     column_config={
                         "sites_number": st.column_config.ProgressColumn(
                             "Number of site ",
                             help="Number of site where species is present",
-                            format="%f /"+str(len(sites_result_df)),
+                            format="%f /"+str(len(sites_result_df_region)),
                             min_value=0,
-                            max_value=len(sites_result_df),
+                            max_value=len(sites_result_df_region),
                         ),
                         "sites": st.column_config.ListColumn(
                             "List of sites ( **Double-click on each  cell to see all sites**)",
@@ -278,7 +278,7 @@ def wildlife_region(st,data,pd):
         )
         # st.write(resultype)
         if resultype =="Efforts":
-            # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf))
+            # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf))
             
             effort_indicators = ["Area covered (Km²)","Sampling transect effort (Km)"]
             col_indicator_effort,col_efffort_graph_type= st.columns(2)
@@ -287,7 +287,8 @@ def wildlife_region(st,data,pd):
             with col_efffort_graph_type:
                 selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
             if selected_effort_indicator =="Area covered (Km²)":
-                cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
+                cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf)
+                
                 cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
                 region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
                 region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()

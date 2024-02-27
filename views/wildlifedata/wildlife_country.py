@@ -13,7 +13,7 @@ import plotly.express as px
 def wildlife_country(st,country,data,pd):
     # st.title("Wildlfe "+country+" app")
     st.markdown(
-            ' <span style="font-size:2em;font-weight:bold;margin-left:0px;">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Wildlfe dashboard</span><br>',
+            ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Wildlfe dashboard</span><br>',
             unsafe_allow_html=True,
         )
     # st.subheader("wildlfe dashboard")
@@ -276,13 +276,13 @@ def wildlife_country(st,country,data,pd):
             with col_efffort_graph_type:
                 selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
             if selected_effort_indicator =="Area covered (Km²)":
-                cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
-                cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
-                region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
-                region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
-                region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
-                chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",450)
-                chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),490)
+                cumulative_country_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
+                cumulative_country_area_covered_df[selected_effort_indicator] = cumulative_country_area_covered_df["area_covered"]
+                country_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+                country_area_covered_df =country_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
+                country_area_covered_df[selected_effort_indicator] = country_area_covered_df["area_covered_km2"]
+                chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",450)
+                chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),490)
                 if selected_effort_graph_type == "Cumulative":
                     st.markdown('#### '+country.capitalize()+' cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
