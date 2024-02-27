@@ -147,7 +147,7 @@ def wildlife():
         font-weight: 25;
         font-size:1em;
     }
-    [data-testid="block-container"] {
+    [data-testid="block-container"],[data-testid="stAppViewBlockContainer"] {
         background-color: white;
         background: url(https://images.pexels.com/photos/7304987/pexels-photo-7304987.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
         background-size: cover;
