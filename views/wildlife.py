@@ -156,8 +156,8 @@ def wildlife():
         font-weight: bold;
         font-size:1.2em;
     }
-    [data-testid="manage-app-button"]{
-        display: none;
+    [data-testid="manage-app-button"],[data-testid="baseButton-headerNoPadding"],[data-testid="baseButton-header"]{
+        display: none !important;
     }
     [data-testid="block-container"],[data-testid="stAppViewBlockContainer"] {
         background-color: white;

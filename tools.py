@@ -32,7 +32,7 @@ def calculate_lenght_difference(input_df, input_year_start, input_year_end,selec
     
     
     difference = size_max- size_min
-    
+    difference = difference
     # st.write(selected_indicator,size_max,size_min,difference)
     return difference
     # return pd.concat([selected_year_data.states, selected_year_data.id, selected_year_data.population, selected_year_data.population_difference], axis=1).sort_values(by="population_difference", ascending=False)
@@ -619,6 +619,8 @@ def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end
     for indicator in indicators_metric:
                  
         difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
+        # metric_df[indicator] = metric_df[indicator].dropna()
+        # st.write(metric_df[indicator].unique())
         # st.dataframe(df_population_difference_sorted)
         first_state_name = "# **"+indicators_name[indicator]+ '** '
         first_state_population = format_number(len(metric_df[indicator].unique()))

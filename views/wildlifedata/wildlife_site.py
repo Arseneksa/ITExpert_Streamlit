@@ -144,7 +144,7 @@ def wildlife_site(st,selected_site,data,pd):
         indicators_name =  {"species":"Species","block2":"Blocks","sector2":"Sectors"}
         indicators_metric = [ "species","block2","sector2"]
         metric_df = df[df["site"]==site_id]
-        st.write(metric_df)
+        # st.write(metric_df)
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
     #     # geo_chart = alt.Chart(sites_result_gdf, title="Vega-Altair").mark_geoshape().encode(
     #     #     alt.Color("Number of species:N").scale(None)
