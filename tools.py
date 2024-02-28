@@ -503,12 +503,12 @@ def get_area_covered_table(df ,sitesdf):
     # df_coverage1 = df.merge(sitesdf, left_on="site", right_on='id', how="left")
     child_sites = sitesdf[sitesdf["is_child"]==True]["id"].to_list()
     # print(child_sites)
-    
+    # st.write(df["area_covered_km2"].unique())
     # st.write(df.shape)
     df["is_parent"] = df["site"].apply(lambda x :True if x not in child_sites else False)
     df=df[df["area_covered_km2"]!=-1]
     # print(df["site"].unique())
-    # st.write(df.shape)
+    # st.write(df["area_covered_km2"].unique())
     
     # df_coverage = df_coverage[df_coverage["level"].isin(child_sites) == False]
     # print(len(sitesdf[sitesdf["is_child"]==False]))
@@ -614,13 +614,16 @@ def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end
     # elif box_number == 1:
     #     col[0] = st.columns(box_number)
     col= st.columns(box_number)
+    
     metric_df = leveldf
     # st.write(col)
     # metric_df = df[df["site"].isin(leveldf["id"].unique())]
     # st.write(len(metric_df["site"].unique()))
     i=0
     for indicator in indicators_metric:
-                 
+        if indicator== "species":
+        
+            metric_df = metric_df.loc[metric_df["species"]!=53]
         difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
         metrics = metric_df.loc[metric_df[indicator]!="nan"][indicator].unique()
         
