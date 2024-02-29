@@ -314,7 +314,7 @@ def wildlife():
     levels = ["Region","Country","Landscape","Site"]
     
     species_df = species_df.loc[species_df["id"]!=53]
-    df = df.loc[df["species"]!=53]
+    #df = df.loc[df["species"]!=53]
     # st.write(df.loc[df["species"]==53])
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)

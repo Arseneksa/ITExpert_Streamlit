@@ -143,7 +143,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#DEDDC2").encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#DEDDC2", width=40).encode(
                 alt.X(x_label).title(abbreviations),
                 y=selected_indicator,
                 
@@ -202,7 +202,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
