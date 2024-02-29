@@ -185,7 +185,7 @@ def wildlife_site(st, selected_site, data, pd):
         tab_richness, tab_occurence = st.tabs(["# Species richness by site", "# Species occurence in site"])
 
         with tab_richness:
-            st.markdown('#### Species richness by site')
+            #st.markdown('#### Species richness by site')
             # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
 
             # with tabmap:
@@ -218,7 +218,7 @@ def wildlife_site(st, selected_site, data, pd):
             #     st_folium(map,height=650, use_container_width=True)
 
         with tab_occurence:
-            st.markdown('#### Species occurence in site')
+            #st.markdown('#### Species occurence in site')
             # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
             st.dataframe(
                 species_result_df,
@@ -286,15 +286,16 @@ def wildlife_site(st, selected_site, data, pd):
                                                              "Trend in Area covered in " + selected_site.capitalize(),
                                                              490)
                 if selected_effort_graph_type == "Cumulative":
-                    st.markdown('#### ' + selected_site.capitalize() + ' cumulative area covered ')
+                    ##st.markdown('#### ' + selected_site.capitalize() + ' cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
                 else:
-                    st.markdown('#### Trend in Area covered in  ' + selected_site.capitalize())
+                    #st.markdown('#### Trend in Area covered in  ' + selected_site.capitalize())
+                    st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
             if selected_effort_indicator == "Area coverege rate (%)":
                 cumulative_site_area_covered_df2 = get_cumulative_max_area_covered_per_level_per_year_table(
                     area_cover_df, "Site", "coverage_rate", sitesdf)
                 # st.write(cumulative_site_area_covered_df)
-                if len(cumulative_site_area_covered_df2 )> 0:
+                if len(cumulative_site_area_covered_df2) > 0:
                     cumulative_site_area_covered_df2[selected_effort_indicator] = cumulative_site_area_covered_df2[
                         "area_covered"]
                     site_area_covered_df2 = df.loc[(df["coverage_rate"] != -1) & (df["level"] == "Site")]
@@ -310,16 +311,16 @@ def wildlife_site(st, selected_site, data, pd):
                                                                  "Trend in Area covered in " + selected_site.capitalize(),
                                                                  490)
                     if selected_effort_graph_type == "Cumulative":
-                        st.markdown('#### ' + selected_site.capitalize() + ' cumulative area covered ')
+                        #st.markdown('#### ' + selected_site.capitalize() + ' cumulative area covered ')
                         st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
                     else:
-                        st.markdown('#### Trend in Area covered in  ' + selected_site.capitalize())
+                        #st.markdown('#### Trend in Area covered in  ' + selected_site.capitalize())
                         st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
             elif selected_effort_indicator == "Sampling transect effort (Km)":
 
                 sampling_effort_df = original_df.loc[original_df["sampling_effort_transect_Km"] != -1]
 
-                if len(sampling_effort_df )> 0:
+                if len(sampling_effort_df) > 0:
                     region_sampling_transect_effort_df = sampling_effort_df[
                         ["site", "year", "sampling_effort_transect_Km"]].groupby(["year"]).sum().reset_index()
 
@@ -337,167 +338,189 @@ def wildlife_site(st, selected_site, data, pd):
                                                                              490)
 
                     if selected_effort_graph_type == "Cumulative":
-                        st.markdown('#### Congo Basin cumulative area covered ')
+                        ##st.markdown('#### Congo Basin cumulative area covered ')
                         st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
                     else:
-                        st.markdown('#### Trend in Area covered in the Congo Basin ')
+                        ##st.markdown('#### Trend in Area covered in the Congo Basin ')
                         st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
         if resultype == "Trends in abundances":
-            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
+            abundance_indicators_name = ["Density (n/km²)", "Encounter Rate (n/km)", "Population Size (n)",
+                                         "Capture Rate", "Occupancy Rate"]
             abundance_indicators = {
-                "Density (n/km²)":"density",
-                "Encounter Rate (n/km)":"encounterRate",
-                "Population Size (n)":"populationSize",
-                "Capture Rate":"captureRate",
-                "Occupancy Rate":"occupancyRate"}
+                "Density (n/km²)": "density",
+                "Encounter Rate (n/km)": "encounterRate",
+                "Population Size (n)": "populationSize",
+                "Capture Rate": "captureRate",
+                "Occupancy Rate": "occupancyRate"}
             abundance_indicators_error = {
-                "density":{"min":"densityMinimumError","max":"density_maximumError"},
-                "encounterRate":{"min":"encounterRateMinimumError","max":"encounterRateMaximumError"},
-                "populationSize":{"min":"populationSizeMinimumError","max":"populationSizeMaximumError"},
-                "captureRate":{"min":"captureRateMinimumError","max":"captureRateMaximumError"},
-                "occupancyRate":{"min":"occupancyRateMinimumError","max":"occupancyRateMaximumError"}
-                }
-
-            level_df  ={
-                "Site":sitesdf,
-                "Block":blockdf,
-                "Sector":sectordf,
+                "density": {"min": "densityMinimumError", "max": "density_maximumError"},
+                "encounterRate": {"min": "encounterRateMinimumError", "max": "encounterRateMaximumError"},
+                "populationSize": {"min": "populationSizeMinimumError", "max": "populationSizeMaximumError"},
+                "captureRate": {"min": "captureRateMinimumError", "max": "captureRateMaximumError"},
+                "occupancyRate": {"min": "occupancyRateMinimumError", "max": "occupancyRateMaximumError"}
             }
-            col_indicator,col_level, col_species, col2_site= st.columns(4)
-            with col_indicator:
-                selected_abundace_indicator = st.selectbox('Select a indicator', abundance_indicators_name)
-                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]]!=-1]
-                abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
-                # st.write(abundance_df)
-            with col_level:
-                selected_level_indicator = st.selectbox('Select level', ["Site","Block","Sector"])
-                abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
-                speciesdf  = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
-                # st.write(abundance_df)
-            with col_species:
-                species = list(speciesdf["name"].unique())
-                if len(species)>0:
-                    selected_species = st.selectbox('Select species ( '+str(len(speciesdf))+' )',species )
-                    species_name_id = { x["name"]: x["id"] for x in speciesdf[["id","name"]].T.to_dict().values()}
-                    abundance_df = abundance_df.loc[abundance_df["species"] ==species_name_id[selected_species]]
-                    leveldf = level_df[selected_level_indicator]
-                    #st.write(abundance_df)
-                    if selected_level_indicator in ["Block","Sector"]:
-                        level_indicator = selected_level_indicator.lower()+"2"
-                        # abundance_df[level_indicator] = abundance_df[level_indicator].astype(str)
-                        # st.write(level_indicator)
-                        # st.write(abundance_df[level_indicator])
-                        # st.write(leveldf["id"])
-                        site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[level_indicator].astype(float).unique())]
-                        #st.write(site_abundance_df)
-                    else:
-                        level_indicator = selected_level_indicator.lower()
-                        #abundance_df[level_indicator] = abundance_df[level_indicator].astype(str)
-                        site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[selected_level_indicator.lower()].unique())]
-
-            #st.write(abundance_df)
-            with col2_site:
-                if len(species)>0:
-                    # st.write(site_abundance_df)
-                    # st.write(list(site_abundance_df["name"].unique()))
-                    selected_site_abundance = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(site_abundance_df))+' )', list(site_abundance_df["name"].unique()))
-            if len(species)>0:
-                sites_name_id = { x["name"]: x["id"] for x in site_abundance_df[["id","name"]].T.to_dict().values()}
-                #st.write(abundance_df)
-                #st.write(abundance_df.loc[abundance_df["block2"] =="12.0"])
-                if selected_level_indicator in ["Block", "Sector"]:
-                    abundance_df = abundance_df.loc[
-                        abundance_df[level_indicator] == str(float(sites_name_id[selected_site_abundance]))]
-                else:
-                    abundance_df = abundance_df.loc[abundance_df[level_indicator] ==sites_name_id[selected_site_abundance]]
-                #st.write(abundance_df)
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]])
-                st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
-                #st.write(abundance_df)
-                st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
-        if resultype == "Comparisons":
-            abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
-            abundance_indicators = {
-                "Density (n/km²)":"density",
-                "Encounter Rate (n/km)":"encounterRate",
-                "Population Size (n)":"populationSize",
-                "Capture Rate":"captureRate",
-                "Occupancy Rate":"occupancyRate"}
-            abundance_indicators_error = {
-                "density":{"min":"densityMinimumError","max":"density_maximumError"},
-                "encounterRate":{"min":"encounterRateMinimumError","max":"encounterRateMaximumError"},
-                "populationSize":{"min":"populationSizeMinimumError","max":"populationSizeMaximumError"},
-                "captureRate":{"min":"captureRateMinimumError","max":"captureRateMaximumError"},
-                "occupancyRate":{"min":"occupancyRateMinimumError","max":"occupancyRateMaximumError"}
-                }
 
             level_df = {
                 "Site": sitesdf,
                 "Block": blockdf,
                 "Sector": sectordf,
             }
-            col_indicator_bar,col_level_bar, col_species_bar= st.columns(3)
+            col_indicator, col_level, col_species, col2_site = st.columns(4)
+            with col_indicator:
+                selected_abundace_indicator = st.selectbox('Select a indicator', abundance_indicators_name)
+                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]] != -1]
+                abundance_df[selected_abundace_indicator] = abundance_df[
+                    abundance_indicators[selected_abundace_indicator]]
+                # st.write(abundance_df)
+            with col_level:
+                selected_level_indicator = st.selectbox('Select level', ["Site", "Block", "Sector"])
+                abundance_df = abundance_df.loc[abundance_df["level"] == selected_level_indicator]
+                speciesdf = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
+                # st.write(abundance_df)
+            with col_species:
+                species = list(speciesdf["name"].unique())
+                if len(species) > 0:
+                    selected_species = st.selectbox('Select species ( ' + str(len(speciesdf)) + ' )', species)
+                    species_name_id = {x["name"]: x["id"] for x in speciesdf[["id", "name"]].T.to_dict().values()}
+                    abundance_df = abundance_df.loc[abundance_df["species"] == species_name_id[selected_species]]
+                    leveldf = level_df[selected_level_indicator]
+                    # st.write(abundance_df)
+                    if selected_level_indicator in ["Block", "Sector"]:
+                        level_indicator = selected_level_indicator.lower() + "2"
+                        # abundance_df[level_indicator] = abundance_df[level_indicator].astype(str)
+                        # st.write(level_indicator)
+                        # st.write(abundance_df[level_indicator])
+                        # st.write(leveldf["id"])
+                        site_abundance_df = leveldf.loc[
+                            leveldf["id"].isin(abundance_df[level_indicator].astype(float).unique())]
+                        # st.write(site_abundance_df)
+                    else:
+                        level_indicator = selected_level_indicator.lower()
+                        # abundance_df[level_indicator] = abundance_df[level_indicator].astype(str)
+                        site_abundance_df = leveldf.loc[
+                            leveldf["id"].isin(abundance_df[selected_level_indicator.lower()].unique())]
+
+            # st.write(abundance_df)
+            with col2_site:
+                if len(species) > 0:
+                    # st.write(site_abundance_df)
+                    # st.write(list(site_abundance_df["name"].unique()))
+                    selected_site_abundance = st.selectbox(
+                        'Select ' + selected_level_indicator.lower() + ' ( ' + str(len(site_abundance_df)) + ' )',
+                        list(site_abundance_df["name"].unique()))
+            if len(species) > 0:
+                sites_name_id = {x["name"]: x["id"] for x in site_abundance_df[["id", "name"]].T.to_dict().values()}
+                # st.write(abundance_df)
+                # st.write(abundance_df.loc[abundance_df["block2"] =="12.0"])
+                if selected_level_indicator in ["Block", "Sector"]:
+                    abundance_df = abundance_df.loc[
+                        abundance_df[level_indicator] == str(float(sites_name_id[selected_site_abundance]))]
+                else:
+                    abundance_df = abundance_df.loc[
+                        abundance_df[level_indicator] == sites_name_id[selected_site_abundance]]
+                # st.write(abundance_df)
+                chart_line_abundace = altairErrorLineChart(alt, abundance_df, selected_abundace_indicator,
+                                                           "Trends in " + selected_species.lower() + " " + selected_abundace_indicator.lower() + " in " + selected_site_abundance.lower(),
+                                                           450, abundance_indicators_error[
+                                                               abundance_indicators[selected_abundace_indicator]])
+                ##st.markdown('#### Trends in  ' + selected_abundace_indicator.lower())
+                # st.write(abundance_df)
+                st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
+        if resultype == "Comparisons":
+            abundance_indicators_name = ["Density (n/km²)", "Encounter Rate (n/km)", "Population Size (n)",
+                                         "Capture Rate", "Occupancy Rate"]
+            abundance_indicators = {
+                "Density (n/km²)": "density",
+                "Encounter Rate (n/km)": "encounterRate",
+                "Population Size (n)": "populationSize",
+                "Capture Rate": "captureRate",
+                "Occupancy Rate": "occupancyRate"}
+            abundance_indicators_error = {
+                "density": {"min": "densityMinimumError", "max": "density_maximumError"},
+                "encounterRate": {"min": "encounterRateMinimumError", "max": "encounterRateMaximumError"},
+                "populationSize": {"min": "populationSizeMinimumError", "max": "populationSizeMaximumError"},
+                "captureRate": {"min": "captureRateMinimumError", "max": "captureRateMaximumError"},
+                "occupancyRate": {"min": "occupancyRateMinimumError", "max": "occupancyRateMaximumError"}
+            }
+
+            level_df = {
+                "Site": sitesdf,
+                "Block": blockdf,
+                "Sector": sectordf,
+            }
+            col_indicator_bar, col_level_bar, col_species_bar = st.columns(3)
             with col_indicator_bar:
                 selected_abundace_indicator = st.selectbox('Select a indicator', abundance_indicators_name)
-                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]]!=-1]
-                abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
+                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]] != -1]
+                abundance_df[selected_abundace_indicator] = abundance_df[
+                    abundance_indicators[selected_abundace_indicator]]
                 # st.write(abundance_df)
             with col_level_bar:
-                selected_level_indicator = st.selectbox('Select level', ["Site","Block","Sector"])
-                abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
-                speciesdf  = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
+                selected_level_indicator = st.selectbox('Select level', ["Site", "Block", "Sector"])
+                abundance_df = abundance_df.loc[abundance_df["level"] == selected_level_indicator]
+                speciesdf = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
                 # st.write(abundance_df)
             with col_species_bar:
                 species = list(speciesdf["name"].unique())
-                if len(species)>0:
-                    selected_species = st.selectbox('Select species ( '+str(len(speciesdf))+' )',species )
-                    species_name_id = { x["name"]: x["id"] for x in speciesdf[["id","name"]].T.to_dict().values()}
-                    abundance_df = abundance_df.loc[abundance_df["species"] ==species_name_id[selected_species]]
-                    #st.write(abundance_df)
+                if len(species) > 0:
+                    selected_species = st.selectbox('Select species ( ' + str(len(speciesdf)) + ' )', species)
+                    species_name_id = {x["name"]: x["id"] for x in speciesdf[["id", "name"]].T.to_dict().values()}
+                    abundance_df = abundance_df.loc[abundance_df["species"] == species_name_id[selected_species]]
+                    # st.write(abundance_df)
                     leveldf = level_df[selected_level_indicator]
-                    if selected_level_indicator in ["Block","Sector"]:
-                        level_indicator = selected_level_indicator.lower()+"2"
-                        #st.write(abundance_df[level_indicator].astype(float))
-                        site_abundance_df = leveldf.loc[leveldf["id"].isin(abundance_df[level_indicator].astype(float).unique())]
+                    if selected_level_indicator in ["Block", "Sector"]:
+                        level_indicator = selected_level_indicator.lower() + "2"
+                        # st.write(abundance_df[level_indicator].astype(float))
+                        site_abundance_df = leveldf.loc[
+                            leveldf["id"].isin(abundance_df[level_indicator].astype(float).unique())]
                     else:
                         level_indicator = selected_level_indicator.lower()
-                        site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[level_indicator].unique())]
-            #st.write(site_abundance_df)
+                        site_abundance_df = leveldf.loc[leveldf["id"].isin(abundance_df[level_indicator].unique())]
+            # st.write(site_abundance_df)
             # with col2_site:
             #     if len(species)>0:
-                    # selected_site_abundance = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(site_abundance_df))+' )', list(site_abundance_df["name"].unique()))
-            if len(species)>0:
-                if selected_level_indicator in ["Sector","Block"]:
-                    #st.write(site_abundance_df[["id","name"]].T.to_dict().values())
-                    sites_id_name = { x["id"]:x["name"]  for x in site_abundance_df[["id","name"]].T.to_dict().values()}
+            # selected_site_abundance = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(site_abundance_df))+' )', list(site_abundance_df["name"].unique()))
+            if len(species) > 0:
+                if selected_level_indicator in ["Sector", "Block"]:
+                    # st.write(site_abundance_df[["id","name"]].T.to_dict().values())
+                    sites_id_name = {x["id"]: x["name"] for x in site_abundance_df[["id", "name"]].T.to_dict().values()}
                     # sites_id_abbr = { x["id"]:}
-                    abbreviations = ["< " + x["short_name"] + " > " + ": " + x["name"] for x in site_abundance_df[["id", "short_name", "name"]].T.to_dict().values() ]
+                    abbreviations = ["< " + x["short_name"] + " > " + ": " + x["name"] for x in
+                                     site_abundance_df[["id", "short_name", "name"]].T.to_dict().values()]
                 else:
-                    sites_id_name = { x["id"]:x["short_name"]  for x in site_abundance_df[["id","short_name"]].T.to_dict().values()}
+                    sites_id_name = {x["id"]: x["short_name"] for x in
+                                     site_abundance_df[["id", "short_name"]].T.to_dict().values()}
                     # sites_id_abbr = { x["id"]:}
-                    abbreviations = ["< "+x["short_name"]+" > "+": "+x["name"]  for x in site_abundance_df[["id","short_name","name"]].T.to_dict().values() if x["short_name"] != x["name"] ]
-                #st.write(len(abbreviations))
-                #st.write(abbreviations)
-                if len(abbreviations)>35:
-                    size = int(len(abbreviations)/12)
+                    abbreviations = ["< " + x["short_name"] + " > " + ": " + x["name"] for x in
+                                     site_abundance_df[["id", "short_name", "name"]].T.to_dict().values() if
+                                     x["short_name"] != x["name"]]
+                # st.write(len(abbreviations))
+                # st.write(abbreviations)
+                if len(abbreviations) > 35:
+                    size = int(len(abbreviations) / 12)
                 elif len(abbreviations) > 22:
-                    size = int(len(abbreviations)/8)
+                    size = int(len(abbreviations) / 8)
                 elif len(abbreviations) > 18:
-                    size = int(len(abbreviations)/6)
-                elif len(abbreviations)>5:
-                    size = int(len(abbreviations)/2)
+                    size = int(len(abbreviations) / 6)
+                elif len(abbreviations) > 5:
+                    size = int(len(abbreviations) / 2)
                 else:
                     size = int(len(abbreviations))
-                if len(abbreviations)>0:
-                    abbreviations = [" ; ".join(abbreviations[x:x+size]) for x in range(0, len(abbreviations), size)]
+                if len(abbreviations) > 0:
+                    abbreviations = [" ; ".join(abbreviations[x:x + size]) for x in range(0, len(abbreviations), size)]
                     # st.write(abbreviations)
                     # abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                     # values = [abundance_indicators[selected_abundace_indicator]]
                     # st.write(values)
                     abundance_df["main_landscape"] = abundance_df["main_landscape"].astype(str)
-                    abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(str)
+                    abundance_df[[value for key, value in abundance_indicators_error[
+                        abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[
+                        [value for key, value in
+                         abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(
+                        str)
                     # index= ["region","country",'main_landscape','site',"landscape","level","species"]
-                    errors_mask = [value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]
+                    errors_mask = [value for key, value in abundance_indicators_error[
+                        abundance_indicators[selected_abundace_indicator]].items()]
                     # abundance_df = pd.pivot_table(abundance_df, values=values, index=index,
                     #        aggfunc={abundance_indicators[selected_abundace_indicator]: "max"}).reset_index()
                     # mask = index+values+errors_mask
@@ -508,21 +531,27 @@ def wildlife_site(st, selected_site, data, pd):
                     abundance_df[level_indicator] = abundance_df[level_indicator].astype(int)
                     # print(abundance_df.info())
                     # print(site_abundance_df.info())
-                    max_indicator_per_level_df= {"species":[],level_indicator:[],abundance_indicators[selected_abundace_indicator]: [], errors_mask[0]: [],errors_mask[1]: [],}
-                    #st.write(site_abundance_df["id"].unique())
+                    max_indicator_per_level_df = {"species": [], level_indicator: [],
+                                                  abundance_indicators[selected_abundace_indicator]: [],
+                                                  errors_mask[0]: [], errors_mask[1]: [], }
+                    # st.write(site_abundance_df["id"].unique())
                     for id in site_abundance_df["id"].unique():
-                        max_value = abundance_df.loc[abundance_df[level_indicator]==id][abundance_indicators[selected_abundace_indicator]].max()
-                        max_line = abundance_df.loc[(abundance_df[abundance_indicators[selected_abundace_indicator]]==max_value)&(abundance_df[level_indicator]==id)]
+                        max_value = abundance_df.loc[abundance_df[level_indicator] == id][
+                            abundance_indicators[selected_abundace_indicator]].max()
+                        max_line = abundance_df.loc[
+                            (abundance_df[abundance_indicators[selected_abundace_indicator]] == max_value) & (
+                                        abundance_df[level_indicator] == id)]
                         max_line_min = max_line[errors_mask[0]].min()
-                        max_err = max_line.loc[max_line[errors_mask[0]]==max_line_min]
+                        max_err = max_line.loc[max_line[errors_mask[0]] == max_line_min]
                         max_line = max_err
                         max_line_min2 = max_line[errors_mask[1]].min()
-                        max_err2 = max_line.loc[max_line[errors_mask[1]]==max_line_min2]
+                        max_err2 = max_line.loc[max_line[errors_mask[1]] == max_line_min2]
                         max_line = max_err2
-                        #st.write(max_line)
-                        #st.write(max_line[level_indicator].unique())
+                        # st.write(max_line)
+                        # st.write(max_line[level_indicator].unique())
                         max_indicator_per_level_df[level_indicator].append(max_line[level_indicator].unique()[0])
-                        max_indicator_per_level_df[abundance_indicators[selected_abundace_indicator]].append(max_line[abundance_indicators[selected_abundace_indicator]].unique()[0])
+                        max_indicator_per_level_df[abundance_indicators[selected_abundace_indicator]].append(
+                            max_line[abundance_indicators[selected_abundace_indicator]].unique()[0])
                         max_indicator_per_level_df[errors_mask[0]].append(max_line[errors_mask[0]].unique()[0])
                         max_indicator_per_level_df[errors_mask[1]].append(max_line[errors_mask[1]].unique()[0])
                         max_indicator_per_level_df["species"].append(max_line["species"].unique()[0])
@@ -532,13 +561,25 @@ def wildlife_site(st, selected_site, data, pd):
                     # st.write(abundance_df)
                     abundance_df = max_indicator_per_level_df
                     # abundance_df = abundance_df[mask].groupby(index).max().reset_index()
-                    abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
-                    abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(float)
+                    abundance_df[selected_abundace_indicator] = abundance_df[
+                        abundance_indicators[selected_abundace_indicator]]
+                    abundance_df[[value for key, value in abundance_indicators_error[
+                        abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[
+                        [value for key, value in
+                         abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(
+                        float)
 
-                    abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[level_indicator].apply( lambda x: sites_id_name[x])
+                    abundance_df[selected_level_indicator.lower() + ' name'] = abundance_df[level_indicator].apply(
+                        lambda x: sites_id_name[x])
                     # st.write(abundance_df)
-                    chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations)
-                    st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
+                    chart_bar_abundace = altairErrorBarChart(alt, abundance_df, selected_abundace_indicator,
+                                                             "Comparison between " + selected_level_indicator.lower() + "s : " + selected_species + " " + selected_abundace_indicator.lower() + " from " + str(
+                                                                 start_year) + " to " + str(end_year), 540,
+                                                             abundance_indicators_error[
+                                                                 abundance_indicators[selected_abundace_indicator]],
+                                                             selected_level_indicator.lower() + ' name', abbreviations,
+                                                             gethBarWidth(abundance_df))
+                    ##st.markdown('#### Comparison between ' + selected_level_indicator.lower() + "s")
                     # print(abundance_df.info())
                     # st.write(abundance_df)
                     st.altair_chart(chart_bar_abundace, theme=None, use_container_width=True)
