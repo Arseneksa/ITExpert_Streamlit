@@ -123,7 +123,7 @@ def wildlife_country(st,country,data,pd):
     species_result_df =species_result_df.rename(
         columns={
             "name": "Name",
-            "priority": "Priority",
+            #"priority": "Priority",
             # "scientific_name": "SPECIES_SN",
             
         }

@@ -315,6 +315,9 @@ def wildlife():
     levels = ["Region","Country","Landscape","Site"]
     
     species_df = species_df.loc[species_df["id"]!=53]
+    #st.write(species_df.loc[species_df["priority"]==1])
+    species_df["name"] = species_df["name"].apply(lambda x: x+" *" if x in species_df.loc[species_df["priority"]==1]["name"].unique() else x)
+    sites_df["name"] = sites_df["name"].apply(lambda x: x+" *" if x in sites_df.loc[sites_df["priority"]==1]["name"].unique() else x)
     # st.write(df.loc[df["species"]==53])
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)
