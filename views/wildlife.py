@@ -301,6 +301,7 @@ def wildlife():
     # st.write(data_dict)
 
     df = pd.json_normalize(data_dict["wildlife"])
+    
     sites_df = pd.json_normalize(data_dict["sites"])
     countries_df = pd.json_normalize(data_dict["countries"])
     species_df = pd.json_normalize(data_dict["species"])
@@ -314,7 +315,6 @@ def wildlife():
     levels = ["Region","Country","Landscape","Site"]
     
     species_df = species_df.loc[species_df["id"]!=53]
-    #df = df.loc[df["species"]!=53]
     # st.write(df.loc[df["species"]==53])
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)
@@ -322,6 +322,7 @@ def wildlife():
     # df["landscape"] = df["landscape"].astype(str)
     df["block2"] = df["block2"].astype(str)
     df["sector2"] = df["sector2"].astype(str)
+    # st.write(df["area_covered_km2"].unique())
     # df = df[df["species"].isin(species_df["id"].unique())]
     # df = df[df["country"].isin(countries_df["id"].unique())]
     # df = df[df["landscape"].isin(landscapes_df["id"].unique())]
