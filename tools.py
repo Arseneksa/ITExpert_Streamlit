@@ -51,7 +51,7 @@ def naturalbreaksMap(gdf,column,fields):
             )
     return map
 def altairLineChart(alt,df,selected_indicator,title,height):
-    title = title.replace(" *", '')
+    title = title.replace("*", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -87,7 +87,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     # )
     return chart+text
 def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
-    title = title.replace(" *", '')
+    title = title.replace("*", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -147,7 +147,7 @@ def gethBarWidth(df):
         width=50
     return width
 def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abbreviations,width):
-    title = title.replace(" *", '')
+    title = title.replace("*", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]

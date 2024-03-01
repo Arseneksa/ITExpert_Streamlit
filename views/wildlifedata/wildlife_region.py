@@ -42,6 +42,8 @@ def wildlife_region(st,data,pd):
     sampling_method_ids = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]["id"].unique()
     # st.write(sampling_method_ids,sampling_methods["id"].unique())
     # st.write(sampling_methods_list)
+    
+    # sampling_methods["name"] = sampling_methods["name"].apply(lambda x: x+" ("+df.loc[df["sampling_method"]==sampling_name_id[select_sampling_method]]+")")
     sampling_name_id = {x.replace("_"," "):sampling_methods.loc[sampling_methods["name"]==x]["id"].unique()[0] for x in sampling_methods["name"].unique() if x != None} 
     sampling_method_names = ["All"]+[key for key,value in sampling_name_id.items() ]
     with st.sidebar:
