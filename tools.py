@@ -24,14 +24,15 @@ def calculate_population_difference(input_df, input_year_start, input_year_end,s
 # @st.cache_data
 def calculate_lenght_difference(input_df, input_year_start, input_year_end,selected_indicator):
     input_df[selected_indicator] = input_df[selected_indicator].dropna()
+    input_df= input_df.loc[input_df[selected_indicator] != "nan"]
     # selected_year_data = input_df[input_df['year'] == str(input_year_end)]
     previous_year_data = input_df[input_df['year'] == str(input_year_start)]
     # st.write(selected_indicator,len(input_df[selected_indicator].unique()))
-    input_df= input_df.loc[input_df[selected_indicator] != "nan"]
+    
     size_max = len(input_df[selected_indicator].unique())
     size_min = len(previous_year_data[selected_indicator].unique())
     
-    #st.write(input_df[selected_indicator].unique(),size_max,size_min )
+    # st.write(input_df[selected_indicator].unique(),size_max,previous_year_data[selected_indicator],size_min )
     difference = size_max- size_min
     difference = difference
     # st.write(selected_indicator,size_max,size_min,difference)
@@ -621,6 +622,7 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
 
 
 def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end_year):
+    # st.write(df,indicators_name)
     box_number = len(indicators_metric)
     # col =[0,0,0,0]
     # if box_number == 4:

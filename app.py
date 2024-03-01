@@ -14,6 +14,7 @@ from streamlit_option_menu import option_menu
 #######################
 # Page configuration
 from views.communication import *
+from views.humanA import humanA
 from views.wildlife import wildlife
 
 st.set_page_config(
@@ -107,5 +108,8 @@ if selected_pillar =="communication":
 elif selected_pillar =="wildlife":
     
     wildlife()
+elif selected_pillar =="human activity":
+    
+    humanA()
 
     
