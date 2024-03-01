@@ -348,7 +348,7 @@ def get_max_area_covered(df,id):
     
     return max
 def get_max_area_covered_per_level(df,id,level,leveldf):
-    st.write(leveldf)
+    #st.write(leveldf)
     if level == "Site":
         level_id = "site"
         # df["total_area"] = df[level_id].apply(lambda x: level_df.loc[level_df["id"]==x]["total_area"].unique()[0])
@@ -612,7 +612,7 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df[selected_indicator])
     
     df = df[[level,"year",selected_indicator]].groupby([level,"year"]).sum().reset_index()
-    st.write(df)
+    #st.write(df)
     years = df["year"].unique()
     min_year = min(years)
     df["Sampling transect effort (Km)"] = df["year"].apply(lambda x : cumulative(df,x,min_year,selected_indicator))
