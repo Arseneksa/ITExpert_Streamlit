@@ -159,7 +159,7 @@ def wildlife():
     [data-testid="manage-app-button"],[data-testid="baseButton-headerNoPadding"],[data-testid="stActionButtonLabel"]{
         display: none !important;
     }
-    [data-testid="block-container"],[data-testid="stAppViewBlockContainer"]{
+    /*[data-testid="block-container"],[data-testid="stAppViewBlockContainer"]{
         background-color: white;
         /*background: url(https://images.pexels.com/photos/7304987/pexels-photo-7304987.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);*/
         background-size: cover;
@@ -167,7 +167,7 @@ def wildlife():
 
         min-height:100%;
         
-    }
+    }*/
     [stMarkdownContainer] {
         background: white;
         opacity: 0.97;
