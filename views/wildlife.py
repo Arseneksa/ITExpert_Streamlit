@@ -156,9 +156,9 @@ def wildlife():
         font-weight: bold;
         font-size:1.2em;
     }
-    [data-testid="manage-app-button"],[data-testid="baseButton-headerNoPadding"]{
+    /*[data-testid="manage-app-button"],[data-testid="baseButton-headerNoPadding"]{
         /*display: none !important;*/
-    }
+    }*/
     /*[data-testid="block-container"],[data-testid="stAppViewBlockContainer"]{
         background-color: white;
         /*background: url(https://images.pexels.com/photos/7304987/pexels-photo-7304987.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);*/
