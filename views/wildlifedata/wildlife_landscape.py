@@ -331,7 +331,7 @@ def wildlife_landscape(st,landscape,data,pd):
                 abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
                 # st.write(abundance_df)
             with col_level:
-                selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
+                selected_level_indicator = st.selectbox('Select level', ["Site"])
                 abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
                 speciesdf  = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
                 # st.write(abundance_df)
@@ -384,7 +384,7 @@ def wildlife_landscape(st,landscape,data,pd):
                 abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
                 # st.write(abundance_df)
             with col_level_bar:
-                selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
+                selected_level_indicator = st.selectbox('Select level', ["Site"])
                 abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
                 speciesdf  = speciesdf.loc[speciesdf["id"].isin(abundance_df["species"].unique())]
                 # st.write(abundance_df)
