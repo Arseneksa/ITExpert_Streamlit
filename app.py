@@ -86,7 +86,7 @@ alt.themes.enable("dark")
 
 
 pillars= [
-    "wildlife","communication","Human activity","law enforcement","spatial data and landcover","capacity building"
+    "Wildlife","Communication","Human activity","Law enforcement","Spatial data and landcover","Capacity building"
 ]
 with st.sidebar:
     # st.title('🏂 US Population Dashboard')
@@ -103,9 +103,9 @@ with st.sidebar:
     
     
 content = st.empty()
-if selected_pillar =="communication":
+if selected_pillar =="Communication":
     communication_page(st)
-elif selected_pillar =="wildlife":
+elif selected_pillar =="Wildlife":
     
     wildlife()
 elif selected_pillar =="Human activity":
