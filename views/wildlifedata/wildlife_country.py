@@ -123,7 +123,7 @@ def wildlife_country(st,country,data,pd):
     species_result_df =species_result_df.rename(
         columns={
             "name": "Name",
-            "priority": "Priority",
+            #"priority": "Priority",
             # "scientific_name": "SPECIES_SN",
             
         }
@@ -193,7 +193,7 @@ def wildlife_country(st,country,data,pd):
         tab_richness ,tab_occurence = st.tabs(["# Species richness by site","# Species occurence in site"])
         
         with tab_richness:
-            st.markdown('#### Species richness by site')
+            ##st.markdown('#### Species richness by site')
             # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
             
             # with tabmap:
@@ -227,7 +227,7 @@ def wildlife_country(st,country,data,pd):
                 st_folium(map,height=650, use_container_width=True)
                
         with tab_occurence:   
-            st.markdown('#### Species occurence in site')
+            ##st.markdown('#### Species occurence in site')
             # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
             st.dataframe(
                 species_result_df,
@@ -284,10 +284,10 @@ def wildlife_country(st,country,data,pd):
                 chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",450)
                 chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),490)
                 if selected_effort_graph_type == "Cumulative":
-                    st.markdown('#### '+country.capitalize()+' cumulative area covered ')
+                    ##st.markdown('#### '+country.capitalize()+' cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
                 else:
-                    st.markdown('#### Trend in Area covered in  '+country.capitalize())
+                    ##st.markdown('#### Trend in Area covered in  '+country.capitalize())
                     st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
             elif selected_effort_indicator =="Sampling transect effort (Km)":
                 
@@ -300,10 +300,10 @@ def wildlife_country(st,country,data,pd):
                 chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
                 
                 if selected_effort_graph_type == "Cumulative":
-                    st.markdown('#### Congo Basin cumulative area covered ')
+                    ##st.markdown('#### Congo Basin cumulative area covered ')
                     st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
                 else:
-                    st.markdown('#### Trend in Area covered in the Congo Basin ')
+                    ##st.markdown('#### Trend in Area covered in the Congo Basin ')
                     st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
         if resultype == "Trends in abundances":
             abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
@@ -355,7 +355,7 @@ def wildlife_country(st,country,data,pd):
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
                 chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]])
-                st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
+                ##st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
         if resultype == "Comparisons":
@@ -460,8 +460,8 @@ def wildlife_country(st,country,data,pd):
                 
                 abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(abundance_df)
-                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations)
-                st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
+                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df))
+                ###st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(abundance_df.info())
                 # st.write(abundance_df)
                 st.altair_chart(chart_bar_abundace, theme=None, use_container_width=True)

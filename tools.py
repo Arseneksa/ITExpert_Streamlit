@@ -27,10 +27,11 @@ def calculate_lenght_difference(input_df, input_year_start, input_year_end,selec
     # selected_year_data = input_df[input_df['year'] == str(input_year_end)]
     previous_year_data = input_df[input_df['year'] == str(input_year_start)]
     # st.write(selected_indicator,len(input_df[selected_indicator].unique()))
+    input_df= input_df.loc[input_df[selected_indicator] != "nan"]
     size_max = len(input_df[selected_indicator].unique())
     size_min = len(previous_year_data[selected_indicator].unique())
     
-    
+    #st.write(input_df[selected_indicator].unique(),size_max,size_min )
     difference = size_max- size_min
     difference = difference
     # st.write(selected_indicator,size_max,size_min,difference)
@@ -49,6 +50,7 @@ def naturalbreaksMap(gdf,column,fields):
             )
     return map
 def altairLineChart(alt,df,selected_indicator,title,height):
+    title = title.replace(" *", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -84,6 +86,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     # )
     return chart+text
 def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
+    title = title.replace(" *", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -129,7 +132,21 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error):
     #     url='image'
     # )
     return chart+text+error
-def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abbreviations):
+def gethBarWidth(df):
+    #st.write(len(df))
+    if len(df) >50:
+        width = 1
+    if len(df) >40:
+        width = 10
+    if len(df) >30:
+        width = 15
+    if len(df)>20:
+        width = 25
+    else:
+        width=50
+    return width
+def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abbreviations,width):
+    title = title.replace(" *", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -143,7 +160,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#DEDDC2").encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal",color="#DEDDC2", width=width).encode(
                 alt.X(x_label).title(abbreviations),
                 y=selected_indicator,
                 
@@ -192,6 +209,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     # )
     return chart+text+error
 def altairBarChart(alt,df,selected_indicator,title,height):
+    title = title.replace(" *",'')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -202,7 +220,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal",point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color="#DF7A0F",size=30),color="#DF7A0F",tension=0.6).encode(
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
@@ -632,7 +650,7 @@ def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end
         #     if metrics[0]== "nan" :
         #         size =0
             
-        # st.write(metrics,size)
+        #st.write(metrics,size)
         # st.dataframe(df_population_difference_sorted)
         first_state_name = "# **"+indicators_name[indicator]+ '** '
         first_state_population = format_number(size)

@@ -142,7 +142,7 @@ def wildlife():
         color:white
     }
     [data-testid="stWidgetLabel"]{
-        text-shadow: 0px 0px 2px white,
+        /*text-shadow: 0px 0px 2px white,
                 0px 0px 3px rgba(255, 255, 255, 1), 
                0px 0px 06px rgba(255, 255, 255, 1), 
 			   0px 0px 8px rgba(255, 255, 255, 1),
@@ -150,18 +150,18 @@ def wildlife():
 			   0px 0px 30px rgba(73, 255, 24, 1),
 			   0px 0px 40px rgba(73, 255, 24, 1),
 			   0px 0px 55px rgba(73, 255, 24, 1),
-			   0px 0px 75px rgba(73, 255, 24, 1);
+			   0px 0px 75px rgba(73, 255, 24, 1);*/
 			   
         color:#000;
         font-weight: bold;
         font-size:1.2em;
     }
     [data-testid="manage-app-button"],[data-testid="baseButton-headerNoPadding"],[data-testid="baseButton-header"]{
-        /*display: none !important;*/
+        display: none !important;
     }
-    [data-testid="block-container"],[data-testid="stAppViewBlockContainer"] {
+    [data-testid="block-container"],[data-testid="stAppViewBlockContainer"]{
         background-color: white;
-        background: url(https://images.pexels.com/photos/7304987/pexels-photo-7304987.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+        /*background: url(https://images.pexels.com/photos/7304987/pexels-photo-7304987.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);*/
         background-size: cover;
         overflow-y: scroll;
 
@@ -315,7 +315,9 @@ def wildlife():
     levels = ["Region","Country","Landscape","Site"]
     
     species_df = species_df.loc[species_df["id"]!=53]
-    
+    #st.write(species_df.loc[species_df["priority"]==1])
+    species_df["name"] = species_df["name"].apply(lambda x: x+" *" if x in species_df.loc[species_df["priority"]==1]["name"].unique() else x)
+    sites_df["name"] = sites_df["name"].apply(lambda x: x+" *" if x in sites_df.loc[sites_df["priority"]==1]["name"].unique() else x)
     # st.write(df.loc[df["species"]==53])
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)
