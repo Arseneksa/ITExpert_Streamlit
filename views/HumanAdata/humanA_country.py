@@ -152,7 +152,7 @@ def humanA_country(st,country,data,pd):
     # sites_result_gdf =sites_result_gdf.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
-        indicators_name =  {"activityType":"Species","country":"Countries","landscape":"Landscapes","site":"Sites"}
+        indicators_name =  {"activityType":"Activity types","country":"Countries","landscape":"Landscapes","site":"Sites"}
         indicators_metric = [ "activityType","landscape","site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
         # st.write(len(metric_df["site"].unique()))

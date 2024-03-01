@@ -154,7 +154,7 @@ def humanA_site(st, selected_site, data, pd):
     # sites_result_gdf = sites_result_gdf.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
-        indicators_name = {"activityType": "Species", "block2": "Blocks", "sector2": "Sectors"}
+        indicators_name = {"activityType": "Activity types", "block2": "Blocks", "sector2": "Sectors"}
         indicators_metric = ["activityType", "block2", "sector2"]
         metric_df = df[df["site"] == site_id]
         # st.write(metric_df)
