@@ -357,7 +357,7 @@ def wildlife():
         }
         wildlife_region(st,data,pd)
     if selected_level =="Country":
-        countries_df = countries_df.loc[countries_df["id"].isin(df["site"].unique())]
+        countries_df = countries_df.loc[countries_df["id"].isin(df["country"].unique())]
         countries = countries_df["name"].unique()
         with st.sidebar:
         # st.title('🏂 US Population Dashboard')
@@ -382,6 +382,32 @@ def wildlife():
         }
         
         wildlife_country(st,selected_country,data,pd)
+    if selected_level =="Landscape":
+        landscapes_df = landscapes_df.loc[landscapes_df["id"].isin(df["landscape"].unique())]
+        landscapes = landscapes_df["name"].unique()
+        with st.sidebar:
+        # st.title('🏂 US Population Dashboard')
+        # st.title('Filter')
+            selected_landscape = st.selectbox('Select a landscape', landscapes)
+        landscape_name_id = { x["name"]: x["id"] for x in landscapes_df[["id","name"]].T.to_dict().values()}
+        landscape_id = landscape_name_id[selected_landscape]
+        # landscapes_df  = landscapes_df.loc[landscapes_df["landscape"]==country_id]
+        sites_df  = sites_df.loc[sites_df["landscape"]==landscape_id]
+        df  = df.loc[df["landscape"]==landscape_id]
+        data = {
+            "wildlife":df,
+            "sites":sites_df,
+            "countries":countries_df,
+            "species":species_df,
+            "landscapes":landscapes_df,
+            "main_landscapes":main_landscapes_df,
+            "blocks":blocksdf,
+            "sectors":sectorsdf,
+            "sampling_method":sampling_method_df,
+            
+        }
+        
+        wildlife_landscape(st,selected_landscape,data,pd)
     if selected_level =="Site":
         sites_df2 = sites_df.loc[sites_df["id"].isin(df["site"].unique())]
         sites = sites_df2["name"].unique()
