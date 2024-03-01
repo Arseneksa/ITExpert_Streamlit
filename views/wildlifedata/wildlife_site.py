@@ -290,7 +290,7 @@ def wildlife_site(st,selected_site,data,pd):
             if selected_effort_indicator =="Area coverege rate (%)":
                 cumulative_site_area_covered_df2 = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Site","coverage_rate",sitesdf)
                 # st.write(cumulative_site_area_covered_df)
-                if len(cumulative_site_area_covered_df2>0):
+                if len(cumulative_site_area_covered_df2)>0:
                     cumulative_site_area_covered_df2[selected_effort_indicator] = cumulative_site_area_covered_df2["area_covered"]
                     site_area_covered_df2 = df.loc[(df["coverage_rate"]!=-1)&(df["level"]=="Site")]
                     # st.write(site_area_covered_df)
@@ -308,7 +308,7 @@ def wildlife_site(st,selected_site,data,pd):
                 
                 sampling_effort_df = original_df.loc[original_df["sampling_effort_transect_Km"]!=-1]
                     
-                if len(sampling_effort_df>0):
+                if len(sampling_effort_df)>0:
                     region_sampling_transect_effort_df =sampling_effort_df[["site","year","sampling_effort_transect_Km"]].groupby(["year"]).sum().reset_index()
                 
                     cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","site")
