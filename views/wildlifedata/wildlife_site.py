@@ -96,7 +96,7 @@ def wildlife_site(st, selected_site, data, pd):
                 start_year = end_year = st.selectbox('Year', years)
     df = df.loc[(df["year"] >= start_year) & (df["year"] <= end_year)]
     original_df = df
-
+    species_name_color = { x["name"]: x["color"] for x in speciesdf[["name","color"]].T.to_dict().values()}
     df["year"] = df["year"].astype(str)
 
     # df["main_landscape"] = df["main_landscape"].astype(str)
@@ -251,7 +251,7 @@ def wildlife_site(st, selected_site, data, pd):
                                     "container": {"padding": "0px !important", "max-width": "100%",
                                                   "background": "#fff"},
                                     # "icon": {"color": "orange", "font-size": "1em"},
-                                    "icon": {"color": "#DF7A0F", "font-size": "0.95em"},
+                                    "icon": {"color": "#D3A715", "font-size": "0.95em"},
                                     "nav-link": {"font-size": "0.95em", "text-align": "left", "color": "#000",
                                                  "margin": "0px", "--hover-color": "#DEDDC2"},
                                     "nav-link-selected": {"background": "#DEDDC2"},
@@ -422,7 +422,7 @@ def wildlife_site(st, selected_site, data, pd):
                 chart_line_abundace = altairErrorLineChart(alt, abundance_df, selected_abundace_indicator,
                                                            "Trends in " + selected_species.lower() + " " + selected_abundace_indicator.lower() + " in " + selected_site_abundance.lower(),
                                                            450, abundance_indicators_error[
-                                                               abundance_indicators[selected_abundace_indicator]])
+                                                               abundance_indicators[selected_abundace_indicator]],species_name_color[selected_species])
                 ##st.markdown('#### Trends in  ' + selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -578,7 +578,7 @@ def wildlife_site(st, selected_site, data, pd):
                                                              abundance_indicators_error[
                                                                  abundance_indicators[selected_abundace_indicator]],
                                                              selected_level_indicator.lower() + ' name', abbreviations,
-                                                             gethBarWidth(abundance_df))
+                                                             gethBarWidth(abundance_df),species_name_color[selected_species])
                     ##st.markdown('#### Comparison between ' + selected_level_indicator.lower() + "s")
                     # print(abundance_df.info())
                     # st.write(abundance_df)

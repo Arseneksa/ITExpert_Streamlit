@@ -10,14 +10,14 @@ from streamlit_folium import st_folium
 import plotly.express as px
 
 
-def humanA_country(st,country,data,pd):
+def lawEnforcement_country(st,country,data,pd):
     # st.title("Wildlfe "+country+" app")
     st.markdown(
         ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Human activities dashboard</span><br>',
         unsafe_allow_html=True,
     )
     # st.subheader("wildlfe dashboard")
-    df = data["humanA"]
+    df = data["lawEnforcement"]
     df = df.loc[df['year']!=-1]
     # df.to_csv("data/wildlife.csv")
     
@@ -354,7 +354,7 @@ def humanA_country(st,country,data,pd):
                 
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],"#b7a51d")
+                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]])
                 ##st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -460,7 +460,7 @@ def humanA_country(st,country,data,pd):
                 
                 abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(abundance_df)
-                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_activityType+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df),"#b7a51d")
+                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_activityType+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df))
                 ###st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(abundance_df.info())
                 # st.write(abundance_df)

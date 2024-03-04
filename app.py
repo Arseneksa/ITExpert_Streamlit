@@ -15,6 +15,7 @@ from streamlit_option_menu import option_menu
 # Page configuration
 from views.communication import *
 from views.humanA import humanA
+from views.law_enforcement_patrol_data import lawEnforcement
 from views.wildlife import wildlife
 
 st.set_page_config(
@@ -111,5 +112,8 @@ elif selected_pillar =="Wildlife":
 elif selected_pillar =="Human activity":
     
     humanA()
+elif selected_pillar =="Law enforcement":
+    
+    lawEnforcement()
 
     

@@ -45,6 +45,7 @@ def wildlife_region(st,data,pd):
     
     # sampling_methods["name"] = sampling_methods["name"].apply(lambda x: x+" ("+df.loc[df["sampling_method"]==sampling_name_id[select_sampling_method]]+")")
     sampling_name_id = {x.replace("_"," "):sampling_methods.loc[sampling_methods["name"]==x]["id"].unique()[0] for x in sampling_methods["name"].unique() if x != None} 
+    species_name_color = { x["name"]: x["color"] for x in speciesdf[["name","color"]].T.to_dict().values()}
     sampling_method_names = ["All"]+[key for key,value in sampling_name_id.items() ]
     with st.sidebar:
     # st.title('🏂 US Population Dashboard')
@@ -274,7 +275,7 @@ def wildlife_region(st,data,pd):
             styles={
                 "container": {"padding": "0px !important","max-width": "100%","background": "#fff"},
                 # "icon": {"color": "orange", "font-size": "1em"}, 
-                "icon": {"color": "#DF7A0F", "font-size": "0.95em"}, 
+                "icon": {"color": "#D3A715", "font-size": "0.95em"}, 
                 "nav-link": {"font-size": "0.95em", "text-align": "left","color":"#000", "margin":"0px", "--hover-color": "#DEDDC2"},
                 "nav-link-selected": {"background": "#DEDDC2"},
             }
@@ -369,7 +370,7 @@ def wildlife_region(st,data,pd):
                 
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]])
+                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],species_name_color[selected_species])
                 #st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -475,7 +476,7 @@ def wildlife_region(st,data,pd):
                 
                 abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(abundance_df)
-                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df))
+                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_species+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df),species_name_color[selected_species])
                 #st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(abundance_df.info())
                 # st.write(abundance_df)

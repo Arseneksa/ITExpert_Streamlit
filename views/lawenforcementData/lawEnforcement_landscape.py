@@ -8,16 +8,14 @@ import altair as alt
 import folium
 from streamlit_folium import st_folium
 import plotly.express as px
-
-
-def humanA_country(st,country,data,pd):
-    # st.title("Wildlfe "+country+" app")
+def lawEnforcement_landscape(st,landscape,data,pd):
+ # st.title("Wildlfe "+landscape+" app")
     st.markdown(
         ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Human activities dashboard</span><br>',
         unsafe_allow_html=True,
     )
     # st.subheader("wildlfe dashboard")
-    df = data["humanA"]
+    df = data["lawEnforcement"]
     df = df.loc[df['year']!=-1]
     # df.to_csv("data/wildlife.csv")
     
@@ -105,7 +103,7 @@ def humanA_country(st,country,data,pd):
     # st.write(df.shape)
     #area_cover_df =  get_area_covered_table(df ,sitesdf)
     # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_df,1,"Country")) 
-    # st.write(df[["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","coverage_rate","year"]])
+    # st.write(df[["region","landscape",'main_landscape',"landscape","site",'block2',"sector2","level","coverage_rate","year"]])
     # st.write(area_cover_df)
     # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_df,6,"Site","coverage_rate",sitesdf))
     # st.write(landscapesdf)
@@ -152,7 +150,7 @@ def humanA_country(st,country,data,pd):
     # sites_result_gdf =sites_result_gdf.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
-        indicators_name =  {"activityType":"Activity types","country":"Countries","landscape":"Landscapes","site":"Sites"}
+        indicators_name =  {"activityType":"Activity types","landscape":"Countries","landscape":"Landscapes","site":"Sites"}
         indicators_metric = [ "activityType","landscape","site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
         # st.write(len(metric_df["site"].unique()))
@@ -276,18 +274,18 @@ def humanA_country(st,country,data,pd):
         #     with col_efffort_graph_type:
         #         selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
         #     if selected_effort_indicator =="Area covered (Km²)":
-        #         cumulative_country_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
-        #         cumulative_country_area_covered_df[selected_effort_indicator] = cumulative_country_area_covered_df["area_covered"]
-        #         country_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
-        #         country_area_covered_df =country_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
-        #         country_area_covered_df[selected_effort_indicator] = country_area_covered_df["area_covered_km2"]
-        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",450)
-        #         chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),490)
+        #         cumulative_landscape_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
+        #         cumulative_landscape_area_covered_df[selected_effort_indicator] = cumulative_landscape_area_covered_df["area_covered"]
+        #         landscape_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+        #         landscape_area_covered_df =landscape_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
+        #         landscape_area_covered_df[selected_effort_indicator] = landscape_area_covered_df["area_covered_km2"]
+        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape.capitalize()+"cumulative area covered",450)
+        #         chart_trend_in_area_covered = altairBarChart(alt,landscape_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+landscape.capitalize(),490)
         #         if selected_effort_graph_type == "Cumulative":
-        #             ##st.markdown('#### '+country.capitalize()+' cumulative area covered ')
+        #             ##st.markdown('#### '+landscape.capitalize()+' cumulative area covered ')
         #             st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
         #         else:
-        #             ##st.markdown('#### Trend in Area covered in  '+country.capitalize())
+        #             ##st.markdown('#### Trend in Area covered in  '+landscape.capitalize())
         #             st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
         #     elif selected_effort_indicator =="Sampling transect effort (Km)":
                 
@@ -333,7 +331,7 @@ def humanA_country(st,country,data,pd):
                 abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
                 # st.write(abundance_df)
             with col_level:
-                selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
+                selected_level_indicator = st.selectbox('Select level', ["Site"])
                 abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
                 activityTypedf  = activityTypedf.loc[activityTypedf["id"].isin(abundance_df["activityType"].unique())]
                 # st.write(abundance_df)
@@ -354,7 +352,7 @@ def humanA_country(st,country,data,pd):
                 
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],"#b7a51d")
+                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]])
                 ##st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -386,7 +384,7 @@ def humanA_country(st,country,data,pd):
                 abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
                 # st.write(abundance_df)
             with col_level_bar:
-                selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
+                selected_level_indicator = st.selectbox('Select level', ["Site"])
                 abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
                 activityTypedf  = activityTypedf.loc[activityTypedf["id"].isin(abundance_df["activityType"].unique())]
                 # st.write(abundance_df)
@@ -424,7 +422,7 @@ def humanA_country(st,country,data,pd):
                 # st.write(values)
                 abundance_df["main_landscape"] = abundance_df["main_landscape"].astype(str)
                 abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(str)
-                # index= ["region","country",'main_landscape','site',"landscape","level","activityType"]
+                # index= ["region","landscape",'main_landscape','site',"landscape","level","activityType"]
                 errors_mask = [value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]
                 # abundance_df = pd.pivot_table(abundance_df, values=values, index=index,
                 #        aggfunc={abundance_indicators[selected_abundace_indicator]: "max"}).reset_index()
@@ -460,7 +458,7 @@ def humanA_country(st,country,data,pd):
                 
                 abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(abundance_df)
-                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_activityType+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df),"#b7a51d")
+                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_activityType+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df))
                 ###st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(abundance_df.info())
                 # st.write(abundance_df)

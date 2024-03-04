@@ -8,10 +8,11 @@ import altair as alt
 import folium
 from streamlit_folium import st_folium
 import plotly.express as px
-
-
-def humanA_country(st,country,data,pd):
-    # st.title("Wildlfe "+country+" app")
+# @st.cache_data(experimental_allow_widgets=True)
+# alt.themes.enable('powerbi')
+# alt.themes.enable('default')
+alt.themes.enable('none')
+def lawEnforcement_region(st,data,pd):
     st.markdown(
         ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Human activities dashboard</span><br>',
         unsafe_allow_html=True,
@@ -27,11 +28,9 @@ def humanA_country(st,country,data,pd):
         'name':["Congo Basin"],
         "total_area":[4048053]
     })
-    
-    countriesdf  = data["countries"]
     landscapesdf  = data["landscapes"]
     sitesdf  = data["sites"]
-
+    countriesdf  = data["countries"]
     activityTypedf  = data["activityType"]
     sitesgdf = gpd.read_file("data/All_site.shp",)
     sitesgdf["site"] = sitesgdf[sitesgdf["Level"]=="Site"]["Site_1"]
@@ -103,32 +102,26 @@ def humanA_country(st,country,data,pd):
     
     # df["main_landscape"] = df["main_landscape"].astype(str)
     # st.write(df.shape)
-    #area_cover_df =  get_area_covered_table(df ,sitesdf)
-    # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_df,1,"Country")) 
+    # st.write(sitesdf.shape)
+    
+    #area_cover_region_df =  get_area_covered_table(df ,sitesdf)
+    # print("TRIDOM GAB",get_max_area_covered_per_level(area_cover_region_df,1,"Country")) 
     # st.write(df[["region","country",'main_landscape',"landscape","site",'block2',"sector2","level","coverage_rate","year"]])
-    # st.write(area_cover_df)
-    # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_df,6,"Site","coverage_rate",sitesdf))
+    # st.write(area_cover_region_df)
+    # st.write(get_cumulative_max_area_covered_per_level_per_year(area_cover_region_df,6,"Site","coverage_rate",sitesdf))
     # st.write(landscapesdf)
     
-    # data = get_cumulative_max_area_covered_per_level_per_year(area_cover_df,1,"Region","area_covered")
+    # data = get_cumulative_max_area_covered_per_level_per_year(area_cover_region_df,1,"Region","area_covered")
     # print("Cumulative TRIDOM GAB",data)
-    # cumulativedf = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Site")
+    # cumulativedf = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Site")
    
-    # activityType_field_mask = ["name","sites","sites_number", "priority"]
-    # activityType_result_df = getactivityTypeByLevel(df,activityTypedf,sitesdf,"region","activityType","site",1).sort_values(by=['sites_number'], ascending=[ False])
-    # sites_result_df = getactivityTypeByLevel(df,sitesdf,activityTypedf,"region","site","activityType",1).sort_values(by=['sites_number'], ascending=[ False])
-    # activityType_result_df =activityType_result_df[activityType_field_mask]
-    # sites_result_df =sites_result_df[activityType_field_mask]
-    # sites_result_gdf = pd.merge(sites_result_df.sort_values(by=['sites_number'], ascending=[ True]), sitesgdf[['site', 'geometry']], left_on="name", right_on='site', how='left')
-    # activityType_result_df =activityType_result_df.rename(
-    #     columns={
-    #         "name": "Name",
-    #         #"priority": "Priority",
-    #         # "scientific_name": "SPECIES_SN",
-            
-    #     }
-    # )
-    # sites_result_df =sites_result_df.rename(
+    # activityType_field_mask_region = ["name","sites","sites_number", "priority"]
+    # # activityType_result_df_region = getactivityTypeByLevel(df,activityTypedf,sitesdf,"region","activityType","site",1).sort_values(by=['sites_number'], ascending=[ False])
+    # # sites_result_df_region = getactivityTypeByLevel(df,sitesdf,activityTypedf,"region","site","activityType",1).sort_values(by=['sites_number'], ascending=[ False])
+    # activityType_result_df_region =activityType_result_df_region[activityType_field_mask_region]
+    # sites_result_df_region =sites_result_df_region[activityType_field_mask_region]
+    # sites_result_gdf_region = pd.merge(sites_result_df_region.sort_values(by=['sites_number'], ascending=[ True]), sitesgdf[['site', 'geometry']], left_on="name", right_on='site', how='left')
+    # activityType_result_df_region =activityType_result_df_region.rename(
     #     columns={
     #         "name": "Name",
     #         "priority": "Priority",
@@ -136,7 +129,15 @@ def humanA_country(st,country,data,pd):
             
     #     }
     # )
-    # sites_result_gdf =sites_result_gdf.rename(
+    # sites_result_df_region =sites_result_df_region.rename(
+    #     columns={
+    #         "name": "Name",
+    #         "priority": "Priority",
+    #         # "scientific_name": "SPECIES_SN",
+            
+    #     }
+    # )
+    # sites_result_gdf_region =sites_result_gdf_region.rename(
     #     columns={
     #         "name": "Name",
     #         "priority": "Priority",
@@ -145,28 +146,39 @@ def humanA_country(st,country,data,pd):
             
     #     }
     # )
-    # sites_result_gdf["Species list"] = sites_result_gdf["Species list"].apply(lambda x : 
+    # sites_result_gdf_region["Species list"] = sites_result_gdf_region["Species list"].apply(lambda x : 
     #     """
     # <p> <ul>"""+ "".join(["<li>"+l for l in x.split(",")])+""""</li> </p>""")
-    # sites_result_gdf =gpd.GeoDataFrame(sites_result_gdf)
-    # sites_result_gdf =sites_result_gdf.to_crs(sitesgdf.crs)
+    # sites_result_gdf_region =gpd.GeoDataFrame(sites_result_gdf_region)
+    # sites_result_gdf_region =sites_result_gdf_region.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
-        indicators_name =  {"activityType":"Activity types","country":"Countries","landscape":"Landscapes","site":"Sites"}
-        indicators_metric = [ "activityType","landscape","site"]
+        i=0
+        indicators_name =  {"activityType":"Activity types","country":"Countries","main_landscape":"Landscapes","site":"Sites"}
+        indicators_metric = [ "activityType","country","main_landscape","site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
-        # st.write(len(metric_df["site"].unique()))
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
-        # geo_chart = alt.Chart(sites_result_gdf, title="Vega-Altair").mark_geoshape().encode(
+        # st.write(len(metric_df["site"].unique()))
+        # for indicator in indicators_metric:
+                        
+        #     difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
+        #     # st.dataframe(df_population_difference_sorted)
+        #     first_state_name = "# **"+indicators_name[indicator]+ '** '
+        #     first_state_population = format_number(len(metric_df[indicator].unique()))
+        #     first_state_delta = format_number(difference)
+        #     with col[i]:
+        #         st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
+        #         i=i+1
+        # geo_chart = alt.Chart(sites_result_gdf_region, title="Vega-Altair").mark_geoshape().encode(
         #     alt.Color("Number of activityType:N").scale(None)
         # ).project(type="identity", reflectY=True)
         # st.altair_chart(geo_chart)
-        # map = naturalbreaksMap(sites_result_gdf,"Number of activityType",["Name","Number of activityType"])
+        # map = naturalbreaksMap(sites_result_gdf_region,"Number of activityType",["Name","Number of activityType"])
         # folium.TileLayer("CartoDB positron", show=False).add_to(
         #     map
         # )
-        # st.write(sites_result_gdf.to_json())
-        # fig = px.choropleth(sites_result_gdf, geojson=sites_result_gdf.to_json(), locations="Name", color="Number of activityType").update_layout(
+        # st.write(sites_result_gdf_region.to_json())
+        # fig = px.choropleth(sites_result_gdf_region, geojson=sites_result_gdf_region.to_json(), locations="Name", color="Number of activityType").update_layout(
         #     template='plotly_dark',
         #     plot_bgcolor='rgba(0, 0, 0, 0)',
         #     paper_bgcolor='rgba(0, 0, 0, 0)',
@@ -178,75 +190,75 @@ def humanA_country(st,country,data,pd):
         # st.plotly_chart(fig)
         
 
-        # alt.Chart(sites_result_gdf).mark_geoshape().encode(
+        # alt.Chart(sites_result_gdf_region).mark_geoshape().encode(
         #     color='Number of activityType:Q'
         # ).transform_lookup(
         #     lookup='id',
-        #     from_=alt.LookupData(sites_result_gdf, 'id', ['Number of activityType'])
+        #     from_=alt.LookupData(sites_result_gdf_region, 'id', ['Number of activityType'])
         # ).project(
         #     type='albersUsa'
         # ).properties(
         #     width=500,
         #     height=300
         # )
-        # col = st.columns((4,4))
-        # tab_richness ,tab_occurence = st.tabs(["# Species richness by site","# Species occurence in site"])
-        
-        # with tab_richness:
-        #     ##st.markdown('#### Species richness by site')
-        #     # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
+        # with st.container():
+        #     tab_richness ,tab_occurence = st.tabs(["# Species richness by site","# Species occurence in site"])
             
-        #     # with tabmap:
-             
-        #     with st.expander("Table"):
+        #     with tab_richness:
+        #         #st.markdown('#### Species richness by site')
+        #         # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
                 
-        #         # st.success('Double-click in the activityType list cell to see all the activityType', icon="ℹ️")
-        #         # time.sleep(10)
-        #         # msg = ''
+        #         # with tabmap:
+                
+        #         with st.expander("Table"):
+                    
+        #             # st.success('Double-click in the activityType list cell to see all the activityType', icon="ℹ️")
+        #             # time.sleep(10)
+        #             # msg = ''
+        #             st.dataframe(
+        #                 sites_result_df_region,
+        #                 column_config={
+        #                     "sites": st.column_config.ListColumn(
+        #                         "Species list ( **Double-click on each  cell to see all the activityType**)",
+        #                         help="List of activityType present in the site",
+        #                         width="large",
+        #                     ),
+        #                     "sites_number": st.column_config.ProgressColumn(
+        #                         "Number of activityType",
+                                
+        #                         help="Number of activityType present in the site",
+        #                         format="%f /"+str(len(activityType_result_df_region)),
+        #                         min_value=0,
+        #                         max_value=len(activityType_result_df_region),
+        #                     ),
+                            
+        #                 },
+        #                 hide_index=True,height=350, use_container_width=True
+        #             )
+        #         with st.expander("Map",expanded=True):
+        #             st_folium(map,height=650, use_container_width=True)
+                
+        #     with tab_occurence:   
+        #         #st.markdown('#### Species occurence in site')
+        #         # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
         #         st.dataframe(
-        #             sites_result_df,
+        #             activityType_result_df_region,
         #             column_config={
+        #                 "sites_number": st.column_config.ProgressColumn(
+        #                     "Number of site ",
+        #                     help="Number of site where activityType is present",
+        #                     format="%f /"+str(len(sites_result_df_region)),
+        #                     min_value=0,
+        #                     max_value=len(sites_result_df_region),
+        #                 ),
         #                 "sites": st.column_config.ListColumn(
-        #                     "Species list ( **Double-click on each  cell to see all the activityType**)",
-        #                     help="List of activityType present in the site",
+        #                     "List of sites ( **Double-click on each  cell to see all sites**)",
+        #                     help="List of sites where the activityType is present",
         #                     width="large",
         #                 ),
-        #                 "sites_number": st.column_config.ProgressColumn(
-        #                     "Number of activityType",
-                            
-        #                     help="Number of activityType present in the site",
-        #                     format="%f /"+str(len(activityType_result_df)),
-        #                     min_value=0,
-        #                     max_value=len(activityType_result_df),
-        #                 ),
-                        
         #             },
-        #             hide_index=True,height=350, use_container_width=True
+        #             hide_index=True, use_container_width=True
         #         )
-        #     with st.expander("Map",expanded=True):
-        #         st_folium(map,height=650, use_container_width=True)
-               
-        # with tab_occurence:   
-        #     ##st.markdown('#### Species occurence in site')
-        #     # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
-        #     st.dataframe(
-        #         activityType_result_df,
-        #         column_config={
-        #             "sites_number": st.column_config.ProgressColumn(
-        #                 "Number of site ",
-        #                 help="Number of site where activityType is present",
-        #                 format="%f /"+str(len(sites_result_df)),
-        #                 min_value=0,
-        #                 max_value=len(sites_result_df),
-        #             ),
-        #             "sites": st.column_config.ListColumn(
-        #                 "List of sites ( **Double-click on each  cell to see all sites**)",
-        #                 help="List of sites where the activityType is present",
-        #                 width="large",
-        #             ),
-        #         },
-        #         hide_index=True, use_container_width=True
-        #     )
         #     # with tabTable:
             
             
@@ -267,7 +279,7 @@ def humanA_country(st,country,data,pd):
         )
         # st.write(resultype)
         # if resultype =="Efforts":
-        #     # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf))
+        #     # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf))
             
         #     effort_indicators = ["Area covered (Km²)","Sampling transect effort (Km)"]
         #     col_indicator_effort,col_efffort_graph_type= st.columns(2)
@@ -276,18 +288,19 @@ def humanA_country(st,country,data,pd):
         #     with col_efffort_graph_type:
         #         selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
         #     if selected_effort_indicator =="Area covered (Km²)":
-        #         cumulative_country_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
-        #         cumulative_country_area_covered_df[selected_effort_indicator] = cumulative_country_area_covered_df["area_covered"]
-        #         country_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
-        #         country_area_covered_df =country_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
-        #         country_area_covered_df[selected_effort_indicator] = country_area_covered_df["area_covered_km2"]
-        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",450)
-        #         chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),490)
+        #         cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf)
+                
+        #         cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
+        #         region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+        #         region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
+        #         region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
+        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",450)
+        #         chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",490)
         #         if selected_effort_graph_type == "Cumulative":
-        #             ##st.markdown('#### '+country.capitalize()+' cumulative area covered ')
+        #             #st.markdown('#### Congo Basin cumulative area covered ')
         #             st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
         #         else:
-        #             ##st.markdown('#### Trend in Area covered in  '+country.capitalize())
+        #             #st.markdown('#### Trend in Area covered in the Congo Basin ')
         #             st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
         #     elif selected_effort_indicator =="Sampling transect effort (Km)":
                 
@@ -300,13 +313,14 @@ def humanA_country(st,country,data,pd):
         #         chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
                 
         #         if selected_effort_graph_type == "Cumulative":
-        #             ##st.markdown('#### Congo Basin cumulative area covered ')
+        #             #st.markdown('#### Congo Basin cumulative area covered ')
         #             st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
         #         else:
-        #             ##st.markdown('#### Trend in Area covered in the Congo Basin ')
+        #             #st.markdown('#### Trend in Area covered in the Congo Basin ')
         #             st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
         if resultype == "Trends in abundances":
             abundance_indicators_name = ["Encounter Rate (n/km)"]
+            # abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
             abundance_indicators = {
                 "Density (n/km²)":"density",
                 "Encounter Rate (n/km)":"encounterRate",
@@ -355,7 +369,7 @@ def humanA_country(st,country,data,pd):
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
                 chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],"#b7a51d")
-                ##st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
+                #st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
         if resultype == "Comparisons":
@@ -461,7 +475,7 @@ def humanA_country(st,country,data,pd):
                 abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(abundance_df)
                 chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_activityType+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df),"#b7a51d")
-                ###st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
+                #st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(abundance_df.info())
                 # st.write(abundance_df)
                 st.altair_chart(chart_bar_abundace, theme=None, use_container_width=True)

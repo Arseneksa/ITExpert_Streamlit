@@ -5,10 +5,11 @@ import pandas as pd
 import altair as alt
 import plotly.express as px
 from data.load_data import *
-from views.wildlifedata.wildlife_region import wildlife_region
-from views.wildlifedata.wildlife_country import *
-from views.wildlifedata.wildlife_landscape import *
-from views.wildlifedata.wildlife_site import *
+
+from views.lawenforcementData.lawEnforcement_country import lawEnforcement_country
+from views.lawenforcementData.lawEnforcement_site import lawEnforcement_site
+from views.lawenforcementData.lawEnforcement_landscape import lawEnforcement_landscape
+from views.lawenforcementData.lawEnforcement_region import lawEnforcement_region
 #######################
 # Plots
 
@@ -94,7 +95,7 @@ def calculate_population_difference(input_df, input_year):
 
 #######################
 # Page configurationmax_ymax_year
-def wildlife():
+def lawEnforcement():
     # st.set_page_config(
     #     page_title="US Population Dashboard",
     #     page_icon="🏂",
@@ -274,38 +275,38 @@ def wildlife():
     # Load data
     localurl = "http://localhost:8000"
     onlineurl = "https://biomonitoringwebsite.herokuapp.com"
-    dataurl =onlineurl+"/api/wildlife/"
+    dataurl =onlineurl+"/api/lawEnformentPatrolData/"
     sites_url =onlineurl+"/api/sites/"
     countries_url =onlineurl+"/api/countries/"
-    species_url =onlineurl+"/api/species/"
-    sampling_method_url =onlineurl+"/api/samplingMethod/"
+    # activityType_url =onlineurl+"/api/human_activities_types/"
+    # sampling_method_url =onlineurl+"/api/samplingMethod/"
     landscapes_url =onlineurl+"/api/landscapes/"
     main_landscapes_url =onlineurl+"/api/main_Landscapes/"
     urlblock =onlineurl+"/api/blocks/"
     urlsectors =onlineurl+"/api/sectors/"
     # regional_data_url =onlineurl+"/api/info_pillar/Region/1"
     url_dict  = {
-        "wildlife":dataurl,
+        "lawEnforcement":dataurl,
         "sites":sites_url,
         "countries":countries_url,
-        "species":species_url,
+        # #"activityType":activityType_url,
         "landscapes":landscapes_url,
         "main_landscapes":main_landscapes_url,
         "blocks":urlblock,
         "sectors":urlsectors,
-        "sampling_method":sampling_method_url,
+        # #"sampling_method":sampling_method_url,
         # "region_data":regional_data_url,
     }
    
     data_dict= load_data(url_dict,st)
     # st.write(data_dict)
 
-    df = pd.json_normalize(data_dict["wildlife"])
+    df = pd.json_normalize(data_dict["lawEnforcement"])
     
     sites_df = pd.json_normalize(data_dict["sites"])
     countries_df = pd.json_normalize(data_dict["countries"])
-    species_df = pd.json_normalize(data_dict["species"])
-    sampling_method_df = pd.json_normalize(data_dict["sampling_method"])
+    # activityType_df = pd.json_normalize(data_dict[#"activityType"])
+    # sampling_method_df = pd.json_normalize(data_dict[#"sampling_method"])
     landscapes_df = pd.json_normalize(data_dict["landscapes"])
     main_landscapes_df = pd.json_normalize(data_dict["main_landscapes"])
     blocksdf = pd.json_normalize(data_dict["blocks"])
@@ -314,11 +315,12 @@ def wildlife():
     sites = sites_df["name"].unique()
     levels = ["Region","Country","Landscape","Site"]
     
-    species_df = species_df.loc[species_df["id"]!=53]
-    #st.write(species_df.loc[species_df["priority"]==1])
-    species_df["name"] = species_df["name"].apply(lambda x: x+" *" if x in species_df.loc[species_df["priority"]==1]["name"].unique() else x)
+    # activityType_df = activityType_df.loc[activityType_df["id"]!=3]
+    # st.write(activityType_df)
+    #st.write(activityType_df.loc[activityType_df["priority"]==1])
+    # activityType_df["name"] = activityType_df["name"].apply(lambda x: x+" *" if x in activityType_df.loc[activityType_df["priority"]==1]["name"].unique() else x)
     sites_df["name"] = sites_df["name"].apply(lambda x: x+" *" if x in sites_df.loc[sites_df["priority"]==1]["name"].unique() else x)
-    # st.write(df.loc[df["species"]==53])
+    # st.write(df.loc[df[#"activityType"]==53])
     # df["region"] = df["region"].astype(str)
     df["country"] = df["country"].astype(int)
     # df["main_landscape"] = df["main_landscape"].astype(str)
@@ -326,11 +328,11 @@ def wildlife():
     df["block2"] = df["block2"].astype(str)
     df["sector2"] = df["sector2"].astype(str)
     # st.write(df["area_covered_km2"].unique())
-    # df = df[df["species"].isin(species_df["id"].unique())]
+    # df = df[df[#"activityType"].isin(activityType_df["id"].unique())]
     # df = df[df["country"].isin(countries_df["id"].unique())]
     # df = df[df["landscape"].isin(landscapes_df["id"].unique())]
     # df = df[df["main_landscape"].isin(main_landscapes_df["id"].unique())]
-    # df = df[df["sampling_method"].isin(sampling_method_df["id"].unique())]
+    # df = df[df[#"sampling_method"].isin(sampling_method_df["id"].unique())]
     # df = df[df["sector2"].isin(sectorsdf["id"].unique())]
     # df = df[df["block2"].isin(blocksdf["id"].unique())]
     #######################
@@ -342,20 +344,20 @@ def wildlife():
     if selected_level =="Region":
         
         # df = pd.json_normalize(region_data)
-        # wildlife_region(st,df,data,pd)
+        # lawEnforcement_region(st,df,data,pd)
         data = {
-            "wildlife":df,
+            "lawEnforcement":df,
             "sites":sites_df,
             "countries":countries_df,
-            "species":species_df,
+            # #"activityType":activityType_df,
             "landscapes":landscapes_df,
             "main_landscapes":main_landscapes_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,
-            "sampling_method":sampling_method_df,
+            # #"sampling_method":sampling_method_df,
             
         }
-        wildlife_region(st,data,pd)
+        lawEnforcement_region(st,data,pd)
     if selected_level =="Country":
         countries_df = countries_df.loc[countries_df["id"].isin(df["country"].unique())]
         countries = countries_df["name"].unique()
@@ -369,19 +371,19 @@ def wildlife():
         sites_df  = sites_df.loc[sites_df["country"]==country_id]
         df  = df.loc[df["country"]==country_id]
         data = {
-            "wildlife":df,
+            "lawEnforcement":df,
             "sites":sites_df,
             "countries":countries_df,
-            "species":species_df,
+            #"activityType":activityType_df,
             "landscapes":landscapes_df,
             "main_landscapes":main_landscapes_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,
-            "sampling_method":sampling_method_df,
+            #"sampling_method":sampling_method_df,
             
         }
         
-        wildlife_country(st,selected_country,data,pd)
+        lawEnforcement_country(st,selected_country,data,pd)
     if selected_level =="Landscape":
         landscapes_df = landscapes_df.loc[landscapes_df["id"].isin(df["landscape"].unique())]
         landscapes = landscapes_df["name"].unique()
@@ -395,19 +397,19 @@ def wildlife():
         sites_df  = sites_df.loc[sites_df["landscape"]==landscape_id]
         df  = df.loc[df["landscape"]==landscape_id]
         data = {
-            "wildlife":df,
+            "lawEnforcement":df,
             "sites":sites_df,
             "countries":countries_df,
-            "species":species_df,
+            #"activityType":activityType_df,
             "landscapes":landscapes_df,
             "main_landscapes":main_landscapes_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,
-            "sampling_method":sampling_method_df,
+            #"sampling_method":sampling_method_df,
             
         }
         
-        wildlife_landscape(st,selected_landscape,data,pd)
+        lawEnforcement_landscape(st,selected_landscape,data,pd)
     if selected_level =="Site":
         sites_df2 = sites_df.loc[sites_df["id"].isin(df["site"].unique())]
         sites = sites_df2["name"].unique()
@@ -421,14 +423,14 @@ def wildlife():
         sectorsdf  = sectorsdf.loc[sectorsdf["site"]==site_id]
         df  = df.loc[df["site"]==site_id]
         data = {
-            "wildlife":df,
+            "lawEnforcement":df,
             "sites":sites_df2,
-            "species":species_df,
+            #"activityType":activityType_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,
-            "sampling_method":sampling_method_df,
+            #"sampling_method":sampling_method_df,
             
         }
         
-        wildlife_site(st,selected_site,data,pd)
+        lawEnforcement_site(st,selected_site,data,pd)
        

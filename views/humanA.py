@@ -180,7 +180,7 @@ def humanA():
 
     [data-testid="stMetric"] {
         /*background-color: #91B384;*/
-        background-color: #C8D8C0;
+        background-color: #C0DEB1;
         text-align: center;
         padding: 6px 0;
         border-radius:10px !important;
@@ -195,7 +195,7 @@ def humanA():
         
     }
     [role="tab"] {
-        /*background-color: #C8D8C0;*/
+        /*background-color: #C0DEB1;*/
         padding:5px  !important;
         text-align: center;
         border-radius: 3px;
@@ -221,7 +221,7 @@ def humanA():
         
     }*/
     /*[data-testid="stArrowVegaLiteChart"] {
-        background-color: #C8D8C0;
+        background-color: #C0DEB1;
         border-radius:10px !important;
         text-align: center;
         color: #000;
@@ -235,7 +235,7 @@ def humanA():
         
         padding:2px;
         background: white;
-        border: 0.1px solid #DF7A0F;
+        border: 0.1px solid #D3A715;
         margin-left: 8px;
         margin-right: 8px;
         border-radius:5px
