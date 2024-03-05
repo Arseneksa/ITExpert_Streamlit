@@ -190,10 +190,14 @@ def wildlife_site(st, selected_site, data, pd):
 
             # with tabmap:
 
-            with st.expander("Table", True):
+            # with st.expander("Table", True):
                 # st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
                 # time.sleep(10)
                 # msg = ''
+            tab_richness_map ,tab_richness_table = st.tabs(["# Map","# Table"])
+            # with tab_richness_map:
+            #     st_folium(map,height=450, use_container_width=True)
+            with tab_richness_table:
                 st.dataframe(
                     sites_result_df,
                     column_config={
@@ -281,10 +285,10 @@ def wildlife_site(st, selected_site, data, pd):
                 chart_cumulative_area_covered = altairLineChart(alt, cumulative_site_area_covered_df,
                                                                 selected_effort_indicator,
                                                                 selected_site.capitalize() + "cumulative area covered",
-                                                                450)
+                                                                450,"#b7a51d")
                 chart_trend_in_area_covered = altairBarChart(alt, site_area_covered_df, selected_effort_indicator,
                                                              "Trend in Area covered in " + selected_site.capitalize(),
-                                                             490)
+                                                             450,"#b7a51d")
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### ' + selected_site.capitalize() + ' cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
@@ -306,10 +310,10 @@ def wildlife_site(st, selected_site, data, pd):
                     chart_cumulative_area_covered = altairLineChart(alt, cumulative_site_area_covered_df2,
                                                                     selected_effort_indicator,
                                                                     selected_site.capitalize() + "cumulative area covered",
-                                                                    450)
+                                                                    450,"#b7a51d")
                     chart_trend_in_area_covered = altairBarChart(alt, site_area_covered_df2, selected_effort_indicator,
                                                                  "Trend in Area covered in " + selected_site.capitalize(),
-                                                                 490)
+                                                                 450,"#b7a51d")
                     if selected_effort_graph_type == "Cumulative":
                         #st.markdown('#### ' + selected_site.capitalize() + ' cumulative area covered ')
                         st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
@@ -331,11 +335,11 @@ def wildlife_site(st, selected_site, data, pd):
                     chart_cumulative_sampling_transect_effort = altairLineChart(alt, cumulmative_effort_km,
                                                                                 selected_effort_indicator,
                                                                                 "Congo Basin cumulative " + selected_effort_indicator.lower(),
-                                                                                450)
+                                                                                450,"#b7a51d")
                     chart_trend_in_sampling_transect_effort = altairBarChart(alt, region_sampling_transect_effort_df,
                                                                              selected_effort_indicator,
                                                                              "Trend in " + selected_effort_indicator.lower() + " in the Congo Basin ",
-                                                                             490)
+                                                                             450,"#b7a51d")
 
                     if selected_effort_graph_type == "Cumulative":
                         ##st.markdown('#### Congo Basin cumulative area covered ')

@@ -1,3 +1,10 @@
+
+[theme]
+base="light"
+primaryColor="#D3A715"
+backgroundColor="#fff"
+secondaryBackgroundColor="#C0DEB1"
+textColor="#000"
 #[theme]
 #primaryColor = "#f63366"
 # backgroundColor = "#10344b"
@@ -21,12 +28,8 @@
 [server]
 enableStaticServing = true
 #[theme]
-#base="light"
+
 #primaryColor="#59914f"
 #secondaryBackgroundColor="#b7a51d"
 #font="serif"
-[theme]
-primaryColor="#D3A715"
-backgroundColor="#fff"
-secondaryBackgroundColor="#C0DEB1"
-textColor="#000"
+

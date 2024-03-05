@@ -11,14 +11,13 @@ import plotly.express as px
 # @st.cache_data(experimental_allow_widgets=True)
 # alt.themes.enable('powerbi')
 # alt.themes.enable('default')
-alt.themes.enable('none')
 def lawEnforcement_region(st,data,pd):
     st.markdown(
-        ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Human activities dashboard</span><br>',
+        ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Law enforcement patrol data dashboard</span><br>',
         unsafe_allow_html=True,
     )
     # st.subheader("wildlfe dashboard")
-    df = data["humanA"]
+    df = data["lawEnforcement"]
     df = df.loc[df['year']!=-1]
     # df.to_csv("data/wildlife.csv")
     
@@ -31,70 +30,24 @@ def lawEnforcement_region(st,data,pd):
     landscapesdf  = data["landscapes"]
     sitesdf  = data["sites"]
     countriesdf  = data["countries"]
-    activityTypedf  = data["activityType"]
-    sitesgdf = gpd.read_file("data/All_site.shp",)
-    sitesgdf["site"] = sitesgdf[sitesgdf["Level"]=="Site"]["Site_1"]
-    sampling_methods  = data["sampling_method"]
-    sampling_method_ids  = df[df["site"].isin(sitesdf["id"].unique())]["sampling_method"].dropna().unique()
-    # st.write(sampling_method_ids,sampling_methods["id"].unique())
-    sampling_methods = sampling_methods.loc[sampling_methods["id"].isin(sampling_method_ids)][["name","id"]].drop_duplicates()
-    sampling_methods = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]
-    sampling_method_ids = sampling_methods.loc[sampling_methods["id"].isin(df["sampling_method"].unique())]["id"].unique()
-    # st.write(sampling_method_ids,sampling_methods["id"].unique())
-    # st.write(sampling_methods_list)
-    sampling_name_id = {x.replace("_"," "):sampling_methods.loc[sampling_methods["name"]==x]["id"].unique()[0] for x in sampling_methods["name"].unique() if x != None} 
-    sampling_method_names = ["All"]+[key for key,value in sampling_name_id.items() ]
+    # sitesgdf = gpd.read_file("data/All_site.shp",)
+    # sitesgdf["site"] = sitesgdf[sitesgdf["Level"]=="Site"]["Site_1"]
+    
+    years = df['year'].unique()
+    min_year = df['year'].min()
+    max_year = df['year'].max()
+        # st.write(df)
     with st.sidebar:
     # st.title('🏂 US Population Dashboard')
     # st.title('Filter')
-        select_sampling_method = st.selectbox(
-            'Select sampling method',
-            options=sampling_method_names
-        )
-        # start_year, end_year = st.select_slider(
-        #     'Select year range',
-        #     options=years,
-        #     value=(min_year, max_year)
-        # )
-        
-    
-    if select_sampling_method != "All":
-        # st.write(sampling_name_id[select_sampling_method])
-        
-        df = df.loc[df["sampling_method"]==sampling_name_id[select_sampling_method]]
-        years = df['year'].unique()
-        min_year = df['year'].min()
-        max_year = df['year'].max()
-        # st.write(df)
-        with st.sidebar:
-    # st.title('🏂 US Population Dashboard')
-    # st.title('Filter')
-
-            if(min_year<max_year):
-                start_year, end_year = st.select_slider(
-                    'Select year range',
-                    options=years,
-                    value=(min_year, max_year)
-                )
-            else:
-                start_year=end_year = st.selectbox('Year', years)
-        
-    else:
-        years = df['year'].unique()
-        min_year = df['year'].min()
-        max_year = df['year'].max()
-        # st.write(df)
-        with st.sidebar:
-    # st.title('🏂 US Population Dashboard')
-    # st.title('Filter')
-            if(min_year<max_year):
-                start_year, end_year = st.select_slider(
-                    'Select year range',
-                    options=years,
-                    value=(min_year, max_year)
-                )
-            else:
-                start_year=end_year = st.selectbox('Year', years)
+        if(min_year<max_year):
+            start_year, end_year = st.select_slider(
+                'Select year range',
+                options=years,
+                value=(min_year, max_year)
+            )
+        else:
+            start_year=end_year = st.selectbox('Year', years)
     df = df.loc[(df["year"]>=start_year)&(df["year"]<=end_year)]
     original_df = df
     
@@ -154,118 +107,16 @@ def lawEnforcement_region(st,data,pd):
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
         i=0
-        indicators_name =  {"activityType":"Activity types","country":"Countries","main_landscape":"Landscapes","site":"Sites"}
-        indicators_metric = [ "activityType","country","main_landscape","site"]
+        indicators_name =  {"country":"Countries","main_landscape":"Landscapes","site":"Sites"}
+        indicators_metric = ["country","main_landscape","site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
-        # st.write(len(metric_df["site"].unique()))
-        # for indicator in indicators_metric:
-                        
-        #     difference = calculate_lenght_difference( metric_df, start_year, end_year,indicator)
-        #     # st.dataframe(df_population_difference_sorted)
-        #     first_state_name = "# **"+indicators_name[indicator]+ '** '
-        #     first_state_population = format_number(len(metric_df[indicator].unique()))
-        #     first_state_delta = format_number(difference)
-        #     with col[i]:
-        #         st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
-        #         i=i+1
-        # geo_chart = alt.Chart(sites_result_gdf_region, title="Vega-Altair").mark_geoshape().encode(
-        #     alt.Color("Number of activityType:N").scale(None)
-        # ).project(type="identity", reflectY=True)
-        # st.altair_chart(geo_chart)
-        # map = naturalbreaksMap(sites_result_gdf_region,"Number of activityType",["Name","Number of activityType"])
-        # folium.TileLayer("CartoDB positron", show=False).add_to(
-        #     map
-        # )
-        # st.write(sites_result_gdf_region.to_json())
-        # fig = px.choropleth(sites_result_gdf_region, geojson=sites_result_gdf_region.to_json(), locations="Name", color="Number of activityType").update_layout(
-        #     template='plotly_dark',
-        #     plot_bgcolor='rgba(0, 0, 0, 0)',
-        #     paper_bgcolor='rgba(0, 0, 0, 0)',
-        #     margin=dict(l=0, r=0, t=0, b=0),
-        #     height=350
-        # )
-        # fig.update_geos(fitbounds="locations", visible=False)
-
-        # st.plotly_chart(fig)
         
-
-        # alt.Chart(sites_result_gdf_region).mark_geoshape().encode(
-        #     color='Number of activityType:Q'
-        # ).transform_lookup(
-        #     lookup='id',
-        #     from_=alt.LookupData(sites_result_gdf_region, 'id', ['Number of activityType'])
-        # ).project(
-        #     type='albersUsa'
-        # ).properties(
-        #     width=500,
-        #     height=300
-        # )
-        # with st.container():
-        #     tab_richness ,tab_occurence = st.tabs(["# Species richness by site","# Species occurence in site"])
-            
-        #     with tab_richness:
-        #         #st.markdown('#### Species richness by site')
-        #         # tabmap, tabTable = st.tabs(["Map", "Species list per site"])
-                
-        #         # with tabmap:
-                
-        #         with st.expander("Table"):
-                    
-        #             # st.success('Double-click in the activityType list cell to see all the activityType', icon="ℹ️")
-        #             # time.sleep(10)
-        #             # msg = ''
-        #             st.dataframe(
-        #                 sites_result_df_region,
-        #                 column_config={
-        #                     "sites": st.column_config.ListColumn(
-        #                         "Species list ( **Double-click on each  cell to see all the activityType**)",
-        #                         help="List of activityType present in the site",
-        #                         width="large",
-        #                     ),
-        #                     "sites_number": st.column_config.ProgressColumn(
-        #                         "Number of activityType",
-                                
-        #                         help="Number of activityType present in the site",
-        #                         format="%f /"+str(len(activityType_result_df_region)),
-        #                         min_value=0,
-        #                         max_value=len(activityType_result_df_region),
-        #                     ),
-                            
-        #                 },
-        #                 hide_index=True,height=350, use_container_width=True
-        #             )
-        #         with st.expander("Map",expanded=True):
-        #             st_folium(map,height=650, use_container_width=True)
-                
-        #     with tab_occurence:   
-        #         #st.markdown('#### Species occurence in site')
-        #         # st.success('Double-click in the site list cell to see all the sites', icon="ℹ️")
-        #         st.dataframe(
-        #             activityType_result_df_region,
-        #             column_config={
-        #                 "sites_number": st.column_config.ProgressColumn(
-        #                     "Number of site ",
-        #                     help="Number of site where activityType is present",
-        #                     format="%f /"+str(len(sites_result_df_region)),
-        #                     min_value=0,
-        #                     max_value=len(sites_result_df_region),
-        #                 ),
-        #                 "sites": st.column_config.ListColumn(
-        #                     "List of sites ( **Double-click on each  cell to see all sites**)",
-        #                     help="List of sites where the activityType is present",
-        #                     width="large",
-        #                 ),
-        #             },
-        #             hide_index=True, use_container_width=True
-        #         )
-        #     # with tabTable:
-            
             
     with tab2:
         # st.write(st.config["secondaryBackgroundColor"])
         # 3. CSS style definitions
-        resultype = option_menu(None, ["Trends in abundances",  "Comparisons"], 
+        resultype = option_menu(None, ["Trends in patrols",  "Comparisons"], 
             # icons=['house', 'cloud-upload', "list-task", 'gear'], 
             # menu_icon="cast"
             default_index=0, orientation="horizontal",
@@ -277,63 +128,18 @@ def lawEnforcement_region(st,data,pd):
                 "nav-link-selected": {"background": "#DEDDC2"},
             }
         )
-        # st.write(resultype)
-        # if resultype =="Efforts":
-        #     # st.write(get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf))
-            
-        #     effort_indicators = ["Area covered (Km²)","Sampling transect effort (Km)"]
-        #     col_indicator_effort,col_efffort_graph_type= st.columns(2)
-        #     with col_indicator_effort:
-        #         selected_effort_indicator = st.selectbox('Select a indicator', effort_indicators)
-        #     with col_efffort_graph_type:
-        #         selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
-        #     if selected_effort_indicator =="Area covered (Km²)":
-        #         cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf)
-                
-        #         cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
-        #         region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
-        #         region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
-        #         region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
-        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",450)
-        #         chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",490)
-        #         if selected_effort_graph_type == "Cumulative":
-        #             #st.markdown('#### Congo Basin cumulative area covered ')
-        #             st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
-        #         else:
-        #             #st.markdown('#### Trend in Area covered in the Congo Basin ')
-        #             st.altair_chart(chart_trend_in_area_covered, theme=None, use_container_width=True)
-        #     elif selected_effort_indicator =="Sampling transect effort (Km)":
-                
-        #         sampling_effort_df = original_df.loc[original_df["sampling_effort_transect_Km"]!=-1]
-        #         region_sampling_transect_effort_df =sampling_effort_df[["region","year","sampling_effort_transect_Km"]].groupby(["year"]).sum().reset_index()
-            
-        #         cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
-        #         region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
-        #         chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450)
-        #         chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
-                
-        #         if selected_effort_graph_type == "Cumulative":
-        #             #st.markdown('#### Congo Basin cumulative area covered ')
-        #             st.altair_chart(chart_cumulative_sampling_transect_effort, theme=None, use_container_width=True)
-        #         else:
-        #             #st.markdown('#### Trend in Area covered in the Congo Basin ')
-        #             st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
-        if resultype == "Trends in abundances":
-            abundance_indicators_name = ["Encounter Rate (n/km)"]
-            # abundance_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
-            abundance_indicators = {
-                "Density (n/km²)":"density",
-                "Encounter Rate (n/km)":"encounterRate",
-                "Population Size (n)":"populationSize", 
-                "Capture Rate":"captureRate", 
-                "Occupancy Rate":"occupancyRate"}
-            abundance_indicators_error = {
-                "density":{"min":"densityMinimumError","max":"density_maximumError"},
-                "encounterRate":{"min":"encounterRateMinimumError","max":"encounterRateMaximumError"},
-                "populationSize":{"min":"populationSizeMinimumError","max":"populationSizeMaximumError"}, 
-                "captureRate":{"min":"captureRateMinimumError","max":"captureRateMaximumError"}, 
-                "occupancyRate":{"min":"occupancyRateMinimumError","max":"occupancyRateMaximumError"}
-                }
+        
+        if resultype == "Trends in patrols ":
+            patrol_indicators_name = ["Encounter Rate (n/km)"]
+            # patrol_indicators_name = ["Density (n/km²)","Encounter Rate (n/km)","Population Size (n)", "Capture Rate", "Occupancy Rate"]
+            patrol_indicators = {
+                "Spatial coverage rate (%)":"spatial_coverage_rate",
+                "Effort foot patrol (km)":"effort_foot_patrol_km",
+                "Effort active hour (hour)":"effort_active_hour", 
+                "Effective patrol days (days)":"effective_patrol_days", 
+                "Man days (days)":"man_days", 
+                "Number of patrol":"number_Patrol", 
+                "Total patrol days (days)":"total_patrol_days"}
            
             
             level_df  ={
@@ -342,52 +148,45 @@ def lawEnforcement_region(st,data,pd):
             }
             col_indicator,col_level, col_activityType, col2_site= st.columns(4)
             with col_indicator:
-                selected_abundace_indicator = st.selectbox('Select a indicator', abundance_indicators_name)
-                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]]!=-1]
-                abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
-                # st.write(abundance_df)
+                selected_patrol_indicator = st.selectbox('Select a indicator', patrol_indicators_name)
+                patrol_df = original_df.loc[original_df[patrol_indicators[selected_patrol_indicator]]!=-1]
+                patrol_df[selected_patrol_indicator]=patrol_df[patrol_indicators[selected_patrol_indicator]]
+                # st.write(patrol_df)
             with col_level:
                 selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
-                abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
-                activityTypedf  = activityTypedf.loc[activityTypedf["id"].isin(abundance_df["activityType"].unique())]
-                # st.write(abundance_df)
-            with col_activityType:
-                activityType = list(activityTypedf["name"].unique())
-                if len(activityType)>0:
-                    selected_activityType = st.selectbox('Select activityType ( '+str(len(activityTypedf))+' )',activityType )
-                    activityType_name_id = { x["name"]: x["id"] for x in activityTypedf[["id","name"]].T.to_dict().values()}
-                    abundance_df = abundance_df.loc[abundance_df["activityType"] ==activityType_name_id[selected_activityType]]
-                    leveldf = level_df[selected_level_indicator]
-                    site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[selected_level_indicator.lower()].unique())]
-            # st.write(abundance_df)
+                patrol_df = patrol_df.loc[patrol_df["level"] ==selected_level_indicator]
+                # st.write(patrol_df)
+            # with col_activityType:
+            #     activityType = list(activityTypedf["name"].unique())
+            #     if len(activityType)>0:
+            #         selected_activityType = st.selectbox('Select activityType ( '+str(len(activityTypedf))+' )',activityType )
+            #         activityType_name_id = { x["name"]: x["id"] for x in activityTypedf[["id","name"]].T.to_dict().values()}
+            #         patrol_df = patrol_df.loc[patrol_df["activityType"] ==activityType_name_id[selected_activityType]]
+            #         leveldf = level_df[selected_level_indicator]
+            #         patrol_df  = leveldf.loc[leveldf["id"].isin(patrol_df[selected_level_indicator.lower()].unique())]
+            # st.write(patrol_df)
             with col2_site:
-                if len(activityType)>0:
-                    selected_site_abundance = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(site_abundance_df))+' )', list(site_abundance_df["name"].unique()))
+                if len(patrol_df)>0:
+                    selected_site_patrol = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(patrol_df))+' )', list(patrol_df["name"].unique()))
             if len(activityType)>0:
-                sites_name_id = { x["name"]: x["id"] for x in site_abundance_df[["id","name"]].T.to_dict().values()}
+                sites_name_id = { x["name"]: x["id"] for x in patrol_df[["id","name"]].T.to_dict().values()}
                 
-                abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
+                patrol_df = patrol_df.loc[patrol_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_patrol]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],"#b7a51d")
-                #st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
-                # st.write(abundance_df)
-                st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
+                chart_line_patrol = altairLineChart(alt,patrol_df,selected_patrol_indicator,"Trends in "+selected_activityType.lower() +" "+selected_patrol_indicator.lower()+" in "+selected_site_patrol.lower(),450,"#b7a51d")
+                #st.markdown('#### Trends in  '+ selected_patrol_indicator.lower())
+                # st.write(patrol_df)
+                st.altair_chart(chart_line_patrol, theme=None, use_container_width=True)
         if resultype == "Comparisons":
-            abundance_indicators_name = ["Encounter Rate (n/km)"]
-            abundance_indicators = {
-                "Density (n/km²)":"density",
-                "Encounter Rate (n/km)":"encounterRate",
-                "Population Size (n)":"populationSize", 
-                "Capture Rate":"captureRate", 
-                "Occupancy Rate":"occupancyRate"}
-            abundance_indicators_error = {
-                "density":{"min":"densityMinimumError","max":"density_maximumError"},
-                "encounterRate":{"min":"encounterRateMinimumError","max":"encounterRateMaximumError"},
-                "populationSize":{"min":"populationSizeMinimumError","max":"populationSizeMaximumError"}, 
-                "captureRate":{"min":"captureRateMinimumError","max":"captureRateMaximumError"}, 
-                "occupancyRate":{"min":"occupancyRateMinimumError","max":"occupancyRateMaximumError"}
-                }
-           
+            patrol_indicators_name = ["Encounter Rate (n/km)"]
+            patrol_indicators = {
+                "Spatial coverage rate (%)":"spatial_coverage_rate",
+                "Effort foot patrol (km)":"effort_foot_patrol_km",
+                "Effort active hour (hour)":"effort_active_hour", 
+                "Effective patrol days (days)":"effective_patrol_days", 
+                "Man days (days)":"man_days", 
+                "Number of patrol":"number_Patrol", 
+                "Total patrol days (days)":"total_patrol_days"}
             
             level_df  ={
                 "Site":sitesdf,
@@ -395,31 +194,31 @@ def lawEnforcement_region(st,data,pd):
             }
             col_indicator_bar,col_level_bar, col_activityType_bar= st.columns(3)
             with col_indicator_bar:
-                selected_abundace_indicator = st.selectbox('Select a indicator', abundance_indicators_name)
-                abundance_df = original_df.loc[original_df[abundance_indicators[selected_abundace_indicator]]!=-1]
-                abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
-                # st.write(abundance_df)
+                selected_patrol_indicator = st.selectbox('Select a indicator', patrol_indicators_name)
+                patrol_df = original_df.loc[original_df[patrol_indicators[selected_patrol_indicator]]!=-1]
+                patrol_df[selected_patrol_indicator]=patrol_df[patrol_indicators[selected_patrol_indicator]]
+                # st.write(patrol_df)
             with col_level_bar:
                 selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
-                abundance_df = abundance_df.loc[abundance_df["level"] ==selected_level_indicator]
-                activityTypedf  = activityTypedf.loc[activityTypedf["id"].isin(abundance_df["activityType"].unique())]
-                # st.write(abundance_df)
-            with col_activityType_bar:
-                activityType = list(activityTypedf["name"].unique())
-                if len(activityType)>0:
-                    selected_activityType = st.selectbox('Select activityType ( '+str(len(activityTypedf))+' )',activityType )
-                    activityType_name_id = { x["name"]: x["id"] for x in activityTypedf[["id","name"]].T.to_dict().values()}
-                    abundance_df = abundance_df.loc[abundance_df["activityType"] ==activityType_name_id[selected_activityType]]
-                    leveldf = level_df[selected_level_indicator]
-                    site_abundance_df  = leveldf.loc[leveldf["id"].isin(abundance_df[selected_level_indicator.lower()].unique())]
-            # st.write(abundance_df)
-            # with col2_site:
+                patrol_df = patrol_df.loc[patrol_df["level"] ==selected_level_indicator]
+                # activityTypedf  = activityTypedf.loc[activityTypedf["id"].isin(patrol_df["activityType"].unique())]
+                # st.write(patrol_df)
+            # with col_activityType_bar:
+            #     activityType = list(activityTypedf["name"].unique())
             #     if len(activityType)>0:
-                    # selected_site_abundance = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(site_abundance_df))+' )', list(site_abundance_df["name"].unique()))
-            if len(activityType)>0:
-                sites_id_name = { x["id"]:x["short_name"]  for x in site_abundance_df[["id","short_name"]].T.to_dict().values()}
+            #         selected_activityType = st.selectbox('Select activityType ( '+str(len(activityTypedf))+' )',activityType )
+            #         activityType_name_id = { x["name"]: x["id"] for x in activityTypedf[["id","name"]].T.to_dict().values()}
+            #         patrol_df = patrol_df.loc[patrol_df["activityType"] ==activityType_name_id[selected_activityType]]
+            #         leveldf = level_df[selected_level_indicator]
+            #         patrol_df  = leveldf.loc[leveldf["id"].isin(patrol_df[selected_level_indicator.lower()].unique())]
+            # st.write(patrol_df)
+            # with col2_site:
+            #     if len(patrol_df)>0:
+            #         selected_site_patrol = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(patrol_df))+' )', list(patrol_df["name"].unique()))
+            if len(patrol_df)>0:
+                sites_id_name = { x["id"]:x["short_name"]  for x in patrol_df[["id","short_name"]].T.to_dict().values()}
                 # sites_id_abbr = { x["id"]:}
-                abbreviations = ["< "+x["short_name"]+" > "+": "+x["name"]  for x in site_abundance_df[["id","short_name","name"]].T.to_dict().values() if x["short_name"] != x["name"] ]
+                abbreviations = ["< "+x["short_name"]+" > "+": "+x["name"]  for x in patrol_df[["id","short_name","name"]].T.to_dict().values() if x["short_name"] != x["name"] ]
                 # st.write(len(abbreviations))
                 if len(abbreviations)>35:
                     size = int(len(abbreviations)/12)
@@ -433,53 +232,53 @@ def lawEnforcement_region(st,data,pd):
                     size = int(len(abbreviations))
                 abbreviations = [" ; ".join(abbreviations[x:x+size]) for x in range(0, len(abbreviations), size)]
                 # st.write(abbreviations)
-                # abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
-                # values = [abundance_indicators[selected_abundace_indicator]]
+                # patrol_df = patrol_df.loc[patrol_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_patrol]]
+                # values = [patrol_indicators[selected_patrol_indicator]]
                 # st.write(values)
-                abundance_df["main_landscape"] = abundance_df["main_landscape"].astype(str)
-                abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(str)
+                patrol_df["main_landscape"] = patrol_df["main_landscape"].astype(str)
+                # patrol_df[[value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]] = patrol_df[[value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]].astype(str)
                 # index= ["region","country",'main_landscape','site',"landscape","level","activityType"]
-                errors_mask = [value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]
-                # abundance_df = pd.pivot_table(abundance_df, values=values, index=index,
-                #        aggfunc={abundance_indicators[selected_abundace_indicator]: "max"}).reset_index()
+                # errors_mask = [value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]
+                # patrol_df = pd.pivot_table(patrol_df, values=values, index=index,
+                #        aggfunc={patrol_indicators[selected_patrol_indicator]: "max"}).reset_index()
                 # mask = index+values+errors_mask 
                 # st.write(mask)
                 # st.write(index)
-                max_indicator_per_level_df= {"activityType":[],selected_level_indicator.lower():[],abundance_indicators[selected_abundace_indicator]: [], errors_mask[0]: [],errors_mask[1]: [],}
-                # st.write(site_abundance_df["id"].unique())
-                for id in site_abundance_df["id"].unique():
-                    max_value = abundance_df.loc[abundance_df[selected_level_indicator.lower()]==id][abundance_indicators[selected_abundace_indicator]].max()
-                    max_line = abundance_df.loc[(abundance_df[abundance_indicators[selected_abundace_indicator]]==max_value)&(abundance_df[selected_level_indicator.lower()]==id)]
-                    max_line_min = max_line[errors_mask[0]].min()
-                    max_err = max_line.loc[max_line[errors_mask[0]]==max_line_min]
-                    max_line = max_err
-                    max_line_min2 = max_line[errors_mask[1]].min()
-                    max_err2 = max_line.loc[max_line[errors_mask[1]]==max_line_min2]
-                    max_line = max_err2
+                max_indicator_per_level_df= {selected_level_indicator.lower():[],patrol_indicators[selected_patrol_indicator]: []}
+                # st.write(patrol_df["id"].unique())
+                for id in patrol_df["id"].unique():
+                    max_value = patrol_df.loc[patrol_df[selected_level_indicator.lower()]==id][patrol_indicators[selected_patrol_indicator]].max()
+                    max_line = patrol_df.loc[(patrol_df[patrol_indicators[selected_patrol_indicator]]==max_value)&(patrol_df[selected_level_indicator.lower()]==id)]
+                    # max_line_min = max_line[errors_mask[0]].min()
+                    # max_err = max_line.loc[max_line[errors_mask[0]]==max_line_min]
+                    # max_line = max_err
+                    # max_line_min2 = max_line[errors_mask[1]].min()
+                    # max_err2 = max_line.loc[max_line[errors_mask[1]]==max_line_min2]
+                    # max_line = max_err2
                     # st.write(max_line)
                     max_indicator_per_level_df[selected_level_indicator.lower()].append(max_line[selected_level_indicator.lower()].unique()[0])
-                    max_indicator_per_level_df[abundance_indicators[selected_abundace_indicator]].append(max_line[abundance_indicators[selected_abundace_indicator]].unique()[0])
-                    max_indicator_per_level_df[errors_mask[0]].append(max_line[errors_mask[0]].unique()[0])
-                    max_indicator_per_level_df[errors_mask[1]].append(max_line[errors_mask[1]].unique()[0])
-                    max_indicator_per_level_df["activityType"].append(max_line["activityType"].unique()[0])
+                    max_indicator_per_level_df[patrol_indicators[selected_patrol_indicator]].append(max_line[patrol_indicators[selected_patrol_indicator]].unique()[0])
+                    # max_indicator_per_level_df[errors_mask[0]].append(max_line[errors_mask[0]].unique()[0])
+                    # max_indicator_per_level_df[errors_mask[1]].append(max_line[errors_mask[1]].unique()[0])
+                    # max_indicator_per_level_df["activityType"].append(max_line["activityType"].unique()[0])
                 max_indicator_per_level_df = pd.DataFrame(max_indicator_per_level_df).drop_duplicates()  
                 # st.write(max_indicator_per_level_df)
                     
-                # st.write(abundance_df)
-                abundance_df = max_indicator_per_level_df
-                # abundance_df = abundance_df[mask].groupby(index).max().reset_index()
-                abundance_df[selected_abundace_indicator]=abundance_df[abundance_indicators[selected_abundace_indicator]]
-                abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]] = abundance_df[[value for key , value in abundance_indicators_error[abundance_indicators[selected_abundace_indicator]].items()]].astype(float)
+                # st.write(patrol_df)
+                patrol_df = max_indicator_per_level_df
+                # patrol_df = patrol_df[mask].groupby(index).max().reset_index()
+                patrol_df[selected_patrol_indicator]=patrol_df[patrol_indicators[selected_patrol_indicator]]
+                # patrol_df[[value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]] = patrol_df[[value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]].astype(float)
 
                 
-                abundance_df[selected_level_indicator.lower()+' name'] = abundance_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
-                # st.write(abundance_df)
-                chart_bar_abundace = altairErrorBarChart(alt,abundance_df,selected_abundace_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_activityType+" "+selected_abundace_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),540,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],selected_level_indicator.lower()+' name',abbreviations,gethBarWidth(abundance_df),"#b7a51d")
+                patrol_df[selected_level_indicator.lower()+' name'] = patrol_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
+                # st.write(patrol_df)
+                chart_bar_patrol = altairBarChart(alt,patrol_df,selected_patrol_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_patrol_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),450,"#b7a51d")
                 #st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
-                # print(abundance_df.info())
-                # st.write(abundance_df)
-                st.altair_chart(chart_bar_abundace, theme=None, use_container_width=True)
-        # result_tab = st.tabs(["# EFFORT ", "# TRENDS IN ABUNDANCES ", "# COMPARISONS "])
+                # print(patrol_df.info())
+                # st.write(patrol_df)
+                st.altair_chart(chart_bar_patrol, theme=None, use_container_width=True)
+        # result_tab = st.tabs(["# EFFORT ", "# TRENDS IN patrolS ", "# COMPARISONS "])
         # with result_tab[0]:
 
         #     st.write("Result page")

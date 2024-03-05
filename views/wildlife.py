@@ -107,7 +107,22 @@ def wildlife():
     # CSS styling
     st.markdown("""
     <style>
-
+    .vega-embed .vega-actions a, .stDeployButton {
+        display: none !important;
+    }
+    .vega-embed .vega-actions a[target="_blank"]{
+        display: block !important;
+    }
+   .vega-embed summary svg{
+        color: black !important;
+        margin: 5px !important;
+    }
+    [data-testid="StyledFullScreenButton"]{
+        color: black !important;
+        margin-top: 5px !important;
+        margin-right: 80px !important;
+        
+    }
     [data-testid="block-container"] {
         padding-left: 2rem;
         padding-right: 2rem;

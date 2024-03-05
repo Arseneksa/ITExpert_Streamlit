@@ -160,7 +160,10 @@ def wildlife_landscape(st,landscape,data,pd):
         #     alt.Color("Number of species:N").scale(None)
         # ).project(type="identity", reflectY=True)
         # st.altair_chart(geo_chart)
-        map = naturalbreaksMap(sites_result_gdf,"Number of species",["Name","Number of species"])
+        sites_result_gdf_region = sites_result_gdf_region.loc[sites_result_gdf_region["geometry"]!=None]
+        # st.write(sites_result_gdf_region,len(sites_result_gdf_region) )
+        if len(sites_result_gdf_region) >0:
+            map = naturalbreaksMap(sites_result_gdf_region,"Number of species",["Name","Number of species"])
         # folium.TileLayer("CartoDB positron", show=False).add_to(
         #     map
         # )
@@ -197,11 +200,16 @@ def wildlife_landscape(st,landscape,data,pd):
             
             # with tabmap:
              
-            with st.expander("Table"):
+            # with st.expander("Table"):
                 
                 # st.success('Double-click in the species list cell to see all the species', icon="ℹ️")
                 # time.sleep(10)
                 # msg = ''
+            tab_richness_map ,tab_richness_table = st.tabs(["# Map","# Table"])
+            if len(sites_result_gdf_region) >0:
+                with tab_richness_map:
+                    st_folium(map,height=450, use_container_width=True)
+            with tab_richness_table:
                 st.dataframe(
                     sites_result_df,
                     column_config={
@@ -222,8 +230,6 @@ def wildlife_landscape(st,landscape,data,pd):
                     },
                     hide_index=True,height=350, use_container_width=True
                 )
-            with st.expander("Map",expanded=True):
-                st_folium(map,height=650, use_container_width=True)
                
         with tab_occurence:   
             ##st.markdown('#### Species occurence in site')
@@ -280,8 +286,8 @@ def wildlife_landscape(st,landscape,data,pd):
                 landscape_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
                 landscape_area_covered_df =landscape_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
                 landscape_area_covered_df[selected_effort_indicator] = landscape_area_covered_df["area_covered_km2"]
-                chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape.capitalize()+"cumulative area covered",450)
-                chart_trend_in_area_covered = altairBarChart(alt,landscape_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+landscape.capitalize(),490)
+                chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape.capitalize()+"cumulative area covered",450,"#b7a51d")
+                chart_trend_in_area_covered = altairBarChart(alt,landscape_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+landscape.capitalize(),450,"#b7a51d")
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### '+landscape.capitalize()+' cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
@@ -295,8 +301,8 @@ def wildlife_landscape(st,landscape,data,pd):
             
                 cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
                 region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
-                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450)
-                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
+                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450,"#b7a51d")
+                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",450,"#b7a51d")
                 
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### Congo Basin cumulative area covered ')

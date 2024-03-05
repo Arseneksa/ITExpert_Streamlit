@@ -1,6 +1,8 @@
 from datetime import datetime
 import pandas as pd
 import streamlit as st 
+import plotly.express as px
+import numpy as np
 
 def format_number(num):
     if num > 1000000:
@@ -13,6 +15,7 @@ def format_number(num):
         return f'{round(num,2)} '
 # @st.cache_data
 # Calculation year-over-year population migrations
+theme = "vox"
 def calculate_population_difference(input_df, input_year_start, input_year_end,selected_indicator):
     input_df[selected_indicator] = input_df[selected_indicator].apply(lambda x: 0 if x ==-1 else x)
     selected_year_data = input_df[input_df['year'] == str(input_year_end)].reset_index()
@@ -50,7 +53,8 @@ def naturalbreaksMap(gdf,column,fields):
             legend_kwds=dict(colorbar=True),
             )
     return map
-def altairLineChart(alt,df,selected_indicator,title,height):
+def altairLineChart(alt,df,selected_indicator,title,height,color):
+    alt.themes.enable(theme)
     title = title.replace("*", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
@@ -62,7 +66,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#D3A715",size=30),color="#D3A715",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
                 x="year:O",
                 # alt.X("year(year):T").scale(zero=False).title("Year"),
                 y=selected_indicator,
@@ -87,6 +91,7 @@ def altairLineChart(alt,df,selected_indicator,title,height):
     # )
     return chart+text
 def altairErrorLineChart(alt,df,selected_indicator,title,height,error,color):
+    alt.themes.enable(theme)
     title = title.replace("*", '')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
@@ -147,7 +152,9 @@ def gethBarWidth(df):
         width=50
     return width
 def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abbreviations,width, color):
+    alt.themes.enable(theme)
     title = title.replace("*", '')
+    
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
@@ -189,27 +196,29 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
             title=alt.Title(title,color=color, fontSize=16,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
-    chart.configure_legend(
-            strokeColor='gray',
-            fillColor='#EEEEEE',
-            padding=10,
-            cornerRadius=10,
-            orient='top-right'
-        )
-    chart.configure_view(
-        continuousHeight=200,
-        continuousWidth=200,
-        strokeWidth=4,
-        fill='#FFEEDD',
-        stroke='red',
-    )
+    # chart.configure_legend(
+    #         strokeColor='gray',
+    #         fillColor='#EEEEEE',
+    #         padding=10,
+    #         cornerRadius=10,
+    #         orient='top-right'
+    #     )
+    # chart.configure_view(
+    #     continuousHeight=200,
+    #     continuousWidth=200,
+    #     strokeWidth=4,
+    #     fill='#FFEEDD',
+    #     stroke='red',
+    # )
+   
     # img = alt.Chart(source).mark_image(width=50, height=75).encode(
     #     x='year',
     #     y=selected_indicator,
     #     url='image'
     # )
     return chart+text+error
-def altairBarChart(alt,df,selected_indicator,title,height):
+def altairBarChart(alt,df,selected_indicator,title,height,color):
+    alt.themes.enable(theme)
     title = title.replace(" *",'')
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
@@ -221,7 +230,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color="#D3A715",size=30),color="#D3A715",tension=0.6).encode(
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
                 x="year:O",
                 y=selected_indicator,
                 # color=publication_types[0]
@@ -245,6 +254,7 @@ def altairBarChart(alt,df,selected_indicator,title,height):
     # )
     return chart+text
 def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggregation,x_label):
+    alt.themes.enable(theme)
     # years = df["year"].unique()
     # year = years[int(len(years)/2)]
     # value = df.loc[df["year"]==year][selected_indicator]
