@@ -294,7 +294,7 @@ def humanA_region(st,data,pd):
         #         region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
         #         region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
         #         region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
-        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",450)
+        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",480)
         #         chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",490)
         #         if selected_effort_graph_type == "Cumulative":
         #             #st.markdown('#### Congo Basin cumulative area covered ')
@@ -309,7 +309,7 @@ def humanA_region(st,data,pd):
             
         #         cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
         #         region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
-        #         chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450)
+        #         chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),480)
         #         chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",490)
                 
         #         if selected_effort_graph_type == "Cumulative":
@@ -368,7 +368,7 @@ def humanA_region(st,data,pd):
                 
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],"#b7a51d")
+                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_activityType.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),480,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],"#b7a51d")
                 #st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -425,9 +425,12 @@ def humanA_region(st,data,pd):
                     size = int(len(abbreviations)/12)
                 elif len(abbreviations) > 22:
                     size = int(len(abbreviations)/8)
+                
                 elif len(abbreviations) > 18:
                     size = int(len(abbreviations)/6)
-                elif len(abbreviations)>5:
+                elif len(abbreviations) > 6:
+                    size = int(len(abbreviations)/3)
+                elif len(abbreviations)>3:
                     size = int(len(abbreviations)/2)
                 else:
                     size = int(len(abbreviations))

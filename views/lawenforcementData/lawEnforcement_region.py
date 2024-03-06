@@ -173,7 +173,7 @@ def lawEnforcement_region(st,data,pd):
                 
                 patrol_df = patrol_df.loc[patrol_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_patrol]]
                 
-                chart_line_patrol = altairLineChart(alt,patrol_df,selected_patrol_indicator,"Trends in "+selected_activityType.lower() +" "+selected_patrol_indicator.lower()+" in "+selected_site_patrol.lower(),450,"#b7a51d")
+                chart_line_patrol = altairLineChart(alt,patrol_df,selected_patrol_indicator,"Trends in "+selected_activityType.lower() +" "+selected_patrol_indicator.lower()+" in "+selected_site_patrol.lower(),480,"#b7a51d")
                 #st.markdown('#### Trends in  '+ selected_patrol_indicator.lower())
                 # st.write(patrol_df)
                 st.altair_chart(chart_line_patrol, theme=None, use_container_width=True)
@@ -224,9 +224,12 @@ def lawEnforcement_region(st,data,pd):
                     size = int(len(abbreviations)/12)
                 elif len(abbreviations) > 22:
                     size = int(len(abbreviations)/8)
+                
                 elif len(abbreviations) > 18:
                     size = int(len(abbreviations)/6)
-                elif len(abbreviations)>5:
+                elif len(abbreviations) > 6:
+                    size = int(len(abbreviations)/3)
+                elif len(abbreviations)>3:
                     size = int(len(abbreviations)/2)
                 else:
                     size = int(len(abbreviations))
@@ -273,7 +276,7 @@ def lawEnforcement_region(st,data,pd):
                 
                 patrol_df[selected_level_indicator.lower()+' name'] = patrol_df[selected_level_indicator.lower()].apply( lambda x: sites_id_name[x])
                 # st.write(patrol_df)
-                chart_bar_patrol = altairBarChart(alt,patrol_df,selected_patrol_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_patrol_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),450,"#b7a51d")
+                chart_bar_patrol = altairBarChart(alt,patrol_df,selected_patrol_indicator,"Comparison between "+selected_level_indicator.lower() +"s : "+selected_patrol_indicator.lower() +" from "+str(start_year)+" to "+str(end_year),480,"#b7a51d")
                 #st.markdown('#### Comparison between '+selected_level_indicator.lower()+"s")
                 # print(patrol_df.info())
                 # st.write(patrol_df)

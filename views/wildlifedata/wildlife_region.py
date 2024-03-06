@@ -6,6 +6,9 @@ from streamlit_option_menu import option_menu
 import geopandas as gpd
 import altair as alt
 import folium
+from colour import Color
+
+
 from streamlit_folium import st_folium
 import plotly.express as px
 # @st.cache_data(experimental_allow_widgets=True)
@@ -160,7 +163,23 @@ def wildlife_region(st,data,pd):
         indicators_name =  {"species":"Species","country":"Countries","main_landscape":"Landscapes","site":"Sites"}
         indicators_metric = [ "species","country","main_landscape","site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
+        metric_df = df[df["sampling_method"].isin(sampling_methods["id"].unique())]
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
+        # st.write(metric_df["sampling_method"].drop_duplicates().apply(lambda x: sampling_methods.dropna().loc[sampling_methods["id"]==x]["name"].unique() if x !=None else -1))
+        metric_df["sampling method"] =metric_df["sampling_method"].apply(lambda x: sampling_methods.loc[sampling_methods["id"]==x]["name"].unique()[0] if x != None else None)
+        start = Color("#a2d986")
+        end = Color("#f1f6ef")
+        ramp = ["%s"% x for x in list(start.range_to(end, len(sampling_methods)))]
+        c = alt.Chart(metric_df).mark_arc(innerRadius=50, cornerRadius=1,outerRadius=120).encode(
+        theta='sum(sampling_method)',
+        color=alt.Color(field="sampling method", type="nominal",scale=alt.Scale(
+                                        #domain=['A', 'B'],
+                                        domain=metric_df["sampling method"].unique(),
+                                        range=ramp),  # 31333F
+                                        )).properties(
+                    title=alt.Title("Wildlife sampling method breakdown",subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+                )
+        st.altair_chart(c, theme=None, use_container_width=True)
         # st.write(len(metric_df["site"].unique()))
         # for indicator in indicators_metric:
                         
@@ -224,7 +243,7 @@ def wildlife_region(st,data,pd):
                 tab_richness_map ,tab_richness_table = st.tabs(["# Map","# Table"])
                 if len(sites_result_gdf_region) >0:
                     with tab_richness_map:
-                        st_folium(map,height=450, use_container_width=True)
+                        st_folium(map,height=480, use_container_width=True)
                 with tab_richness_table:
                 
                     st.dataframe(
@@ -304,11 +323,11 @@ def wildlife_region(st,data,pd):
                 cumulative_region_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Region","area_covered",regiondf)
                 
                 cumulative_region_area_covered_df[selected_effort_indicator] = cumulative_region_area_covered_df["area_covered"]
-                region_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+                region_area_covered_df = original_df.loc[(original_df["area_covered_km2"]!=-1)&(original_df["level"]=="Site")]
                 region_area_covered_df =region_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
                 region_area_covered_df[selected_effort_indicator] = region_area_covered_df["area_covered_km2"]
-                chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",450,"#b7a51d")
-                chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",450,"#b7a51d")
+                chart_cumulative_area_covered = altairLineChart(alt,cumulative_region_area_covered_df,selected_effort_indicator,"Congo Basin cumulative area covered",480,"#b7a51d")
+                chart_trend_in_area_covered = altairBarChart(alt,region_area_covered_df,selected_effort_indicator,"Trend in Area covered in the Congo Basin ",480,"#b7a51d")
                 if selected_effort_graph_type == "Cumulative":
                     #st.markdown('#### Congo Basin cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
@@ -322,8 +341,8 @@ def wildlife_region(st,data,pd):
             
                 cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
                 region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
-                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450,"#b7a51d")
-                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",450,"#b7a51d")
+                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),480,"#b7a51d")
+                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",480,"#b7a51d")
                 
                 if selected_effort_graph_type == "Cumulative":
                     #st.markdown('#### Congo Basin cumulative area covered ')
@@ -380,7 +399,7 @@ def wildlife_region(st,data,pd):
                 
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],species_name_color[selected_species])
+                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),480,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],species_name_color[selected_species])
                 #st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -437,12 +456,16 @@ def wildlife_region(st,data,pd):
                     size = int(len(abbreviations)/12)
                 elif len(abbreviations) > 22:
                     size = int(len(abbreviations)/8)
+                
                 elif len(abbreviations) > 18:
                     size = int(len(abbreviations)/6)
-                elif len(abbreviations)>5:
+                elif len(abbreviations) > 6:
+                    size = int(len(abbreviations)/3)
+                elif len(abbreviations)>3:
                     size = int(len(abbreviations)/2)
                 else:
                     size = int(len(abbreviations))
+                # st.write(size)
                 abbreviations = [" ; ".join(abbreviations[x:x+size]) for x in range(0, len(abbreviations), size)]
                 # st.write(abbreviations)
                 # abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]

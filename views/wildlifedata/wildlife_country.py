@@ -162,10 +162,10 @@ def wildlife_country(st,country,data,pd):
         #     alt.Color("Number of species:N").scale(None)
         # ).project(type="identity", reflectY=True)
         # st.altair_chart(geo_chart)
-        sites_result_gdf_region = sites_result_gdf_region.loc[sites_result_gdf_region["geometry"]!=None]
-        # st.write(sites_result_gdf_region,len(sites_result_gdf_region) )
-        if len(sites_result_gdf_region) >0:
-            map = naturalbreaksMap(sites_result_gdf_region,"Number of species",["Name","Number of species"])
+        sites_result_gdf = sites_result_gdf.loc[sites_result_gdf["geometry"]!=None]
+        # st.write(sites_result_gdf,len(sites_result_gdf) )
+        if len(sites_result_gdf) >0:
+            map = naturalbreaksMap(sites_result_gdf,"Number of species",["Name","Number of species"])
         # folium.TileLayer("CartoDB positron", show=False).add_to(
         #     map
         # )
@@ -208,9 +208,9 @@ def wildlife_country(st,country,data,pd):
                 # time.sleep(10)
                 # msg = ''
             tab_richness_map ,tab_richness_table = st.tabs(["# Map","# Table"])
-            if len(sites_result_gdf_region) >0:
+            if len(sites_result_gdf) >0:
                 with tab_richness_map:
-                    st_folium(map,height=450, use_container_width=True)
+                    st_folium(map,height=480, use_container_width=True)
             with tab_richness_table:
             
                 st.dataframe(
@@ -288,11 +288,11 @@ def wildlife_country(st,country,data,pd):
             if selected_effort_indicator =="Area covered (Km²)":
                 cumulative_country_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Region","area_covered",regiondf)
                 cumulative_country_area_covered_df[selected_effort_indicator] = cumulative_country_area_covered_df["area_covered"]
-                country_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
+                country_area_covered_df = original_df.loc[(original_df["area_covered_km2"]!=-1)&(original_df["level"]=="Site")]
                 country_area_covered_df =country_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
                 country_area_covered_df[selected_effort_indicator] = country_area_covered_df["area_covered_km2"]
-                chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",450,"#b7a51d")
-                chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),450,"#b7a51d")
+                chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",480,"#b7a51d")
+                chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),480,"#b7a51d")
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### '+country.capitalize()+' cumulative area covered ')
                     st.altair_chart(chart_cumulative_area_covered, theme=None, use_container_width=True)
@@ -306,8 +306,8 @@ def wildlife_country(st,country,data,pd):
             
                 cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
                 region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
-                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),450,"#b7a51d")
-                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",450,"#b7a51d")
+                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),480,"#b7a51d")
+                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",480,"#b7a51d")
                 
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### Congo Basin cumulative area covered ')
@@ -364,7 +364,7 @@ def wildlife_country(st,country,data,pd):
                 
                 abundance_df = abundance_df.loc[abundance_df[selected_level_indicator.lower()] ==sites_name_id[selected_site_abundance]]
                 
-                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),450,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],species_name_color[selected_species])
+                chart_line_abundace = altairErrorLineChart(alt,abundance_df,selected_abundace_indicator,"Trends in "+selected_species.lower() +" "+selected_abundace_indicator.lower()+" in "+selected_site_abundance.lower(),480,abundance_indicators_error[abundance_indicators[selected_abundace_indicator]],species_name_color[selected_species])
                 ##st.markdown('#### Trends in  '+ selected_abundace_indicator.lower())
                 # st.write(abundance_df)
                 st.altair_chart(chart_line_abundace, theme=None, use_container_width=True)
@@ -421,9 +421,12 @@ def wildlife_country(st,country,data,pd):
                     size = int(len(abbreviations)/12)
                 elif len(abbreviations) > 22:
                     size = int(len(abbreviations)/8)
+                
                 elif len(abbreviations) > 18:
                     size = int(len(abbreviations)/6)
-                elif len(abbreviations)>5:
+                elif len(abbreviations) > 6:
+                    size = int(len(abbreviations)/3)
+                elif len(abbreviations)>3:
                     size = int(len(abbreviations)/2)
                 else:
                     size = int(len(abbreviations))

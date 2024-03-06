@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st 
 import plotly.express as px
 import numpy as np
-
+@st.cache_data
 def format_number(num):
     if num > 1000000:
         if not num % 1000000:
@@ -16,6 +16,7 @@ def format_number(num):
 # @st.cache_data
 # Calculation year-over-year population migrations
 theme = "vox"
+@st.cache_data
 def calculate_population_difference(input_df, input_year_start, input_year_end,selected_indicator):
     input_df[selected_indicator] = input_df[selected_indicator].apply(lambda x: 0 if x ==-1 else x)
     selected_year_data = input_df[input_df['year'] == str(input_year_end)].reset_index()
@@ -24,7 +25,7 @@ def calculate_population_difference(input_df, input_year_start, input_year_end,s
     return selected_year_data.sort_values(by="difference", ascending=False)
     # return pd.concat([selected_year_data.states, selected_year_data.id, selected_year_data.population, selected_year_data.population_difference], axis=1).sort_values(by="population_difference", ascending=False)
 
-# @st.cache_data
+@st.cache_data
 def calculate_lenght_difference(input_df, input_year_start, input_year_end,selected_indicator):
     input_df[selected_indicator] = input_df[selected_indicator].dropna()
     input_df= input_df.loc[input_df[selected_indicator] != "nan"]
@@ -53,6 +54,7 @@ def naturalbreaksMap(gdf,column,fields):
             legend_kwds=dict(colorbar=True),
             )
     return map
+# @st.cache_data
 def altairLineChart(alt,df,selected_indicator,title,height,color):
     alt.themes.enable(theme)
     title = title.replace("*", '')
@@ -67,14 +69,14 @@ def altairLineChart(alt,df,selected_indicator,title,height,color):
     alt.renderers.set_embed_options(actions={"editor": False})
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
-                x="year:O",
-                # alt.X("year(year):T").scale(zero=False).title("Year"),
-                y=selected_indicator,
+                
+                alt.X("year:O", axis=alt.Axis(title="Year",titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+    text = chart.mark_text(align="center",fontSize=13,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
+            title=alt.Title(title, color=color, fontWeight="bold",fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -90,6 +92,7 @@ def altairLineChart(alt,df,selected_indicator,title,height,color):
     #     url='image'
     # )
     return chart+text
+# @st.cache_data
 def altairErrorLineChart(alt,df,selected_indicator,title,height,error,color):
     alt.themes.enable(theme)
     title = title.replace("*", '')
@@ -104,11 +107,12 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error,color):
     df[error["min"]] = df[error["min"]].apply(lambda x: int(0) if x ==-1 else x)
     df[error["max"]] = df[error["max"]].apply(lambda x: int(0) if x ==-1 else x)
     df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
-    alt.renderers.set_embed_options(actions={"editor": False})
+    # alt.renderers.set_embed_options(actions={"editor": False})
     
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color=color,size=35),color=color,tension=0.6).encode(
-                alt.X("year(year):T").title("Year"),
-                y=selected_indicator,
+                alt.X("year(year):T", axis=alt.Axis(title="Year",titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+            
                 
                 # color=publication_types[0]
             ).interactive()
@@ -121,8 +125,8 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error,color):
                 # color=publication_types[0]
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
-    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title, color=color, fontSize=16,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+    text = chart.mark_text(align="center",fontSize=14,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
+            title=alt.Title(title, color=color, fontWeight="bold",fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -138,6 +142,7 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error,color):
     #     url='image'
     # )
     return chart+text+error
+@st.cache_data
 def gethBarWidth(df):
     #st.write(len(df))
     if len(df) >50:
@@ -151,6 +156,7 @@ def gethBarWidth(df):
     else:
         width=50
     return width
+# @st.cache_data
 def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abbreviations,width, color):
     alt.themes.enable(theme)
     title = title.replace("*", '')
@@ -169,8 +175,9 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     alt.renderers.set_embed_options(actions={"editor": False})
     
     chart = alt.Chart(df).mark_bar(interpolate="cardinal",color=color, width=width).encode(
-                alt.X(x_label).title(abbreviations),
-                y=selected_indicator,
+                
+                alt.X(x_label, axis=alt.Axis(title=abbreviations,titleFontSize=14,labelFontSize=14,gridColor="lightgrey",titleFontWeight=500)),
+                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
                 
                 # color=publication_types[0]
             ).interactive()
@@ -193,7 +200,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title,color=color, fontSize=16,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     # chart.configure_legend(
@@ -217,6 +224,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
     #     url='image'
     # )
     return chart+text+error
+# @st.cache_data
 def altairBarChart(alt,df,selected_indicator,title,height,color):
     alt.themes.enable(theme)
     title = title.replace(" *",'')
@@ -231,13 +239,14 @@ def altairBarChart(alt,df,selected_indicator,title,height,color):
     alt.renderers.set_embed_options(actions={"editor": False})
     
     chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
-                x="year:O",
-                y=selected_indicator,
+               
+                alt.X("year:O", axis=alt.Axis(title="Year",titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -253,6 +262,7 @@ def altairBarChart(alt,df,selected_indicator,title,height,color):
     #     url='image'
     # )
     return chart+text
+# @st.cache_data
 def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggregation,x_label):
     alt.themes.enable(theme)
     # years = df["year"].unique()
@@ -289,6 +299,34 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
     #     url='image'
     # )
     return chart
+# def pieChart():
+    start = Color("#D3A715")
+    end = Color("#F9DFC5")
+    ramp = ["%s"% x for x in list(start.range_to(end, len(value)))]
+    source = pd.DataFrame(interestScoreBreakdown)
+    source = source.sort_values(by='value', ascending=False)
+    source["Topic"] = source["Topic"].astype(str)+' ( '+source["value"].astype(str)+' %) '
+    topics = source["Topic"].unique()
+    # st.dataframe(source)
+    # plot = alt.Chart(source).mark_arc(innerRadius=50, cornerRadius=8).encode(
+    #     theta=alt.Theta("value:Q").stack(True),
+    #     color= alt.Color("Topic:N",
+    #                     scale=alt.Scale(
+    #                         #domain=['A', 'B'],
+    #                         domain=topics,
+    #                         # range=['#29b5e8', '#155F7A']),  # 31333F
+    #                         ),
+    #                     legend=None),
+    # ).properties(width=230, height=30)
+    # plot = alt.Chart(source).mark_arc(innerRadius=50, cornerRadius=1,outerRadius=120).encode(
+    #     theta=alt.Theta(field="value", type="quantitative"),
+    #     color=alt.Color(field="Topic", type="nominal",scale=alt.Scale(
+    #                         #domain=['A', 'B'],
+    #                         domain=topics,
+    #                         range=ramp),  # 31333F
+    #                         )).properties(
+    #     title=alt.Title("Research Interest Score Breakdown",subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+    # )
 # def make_choropleth(px,input_df, input_id, selected_indicator, input_color_theme):
 #         choropleth = px.choropleth(input_df, locations=input_id, color=selected_indicator, locationmode="USA-states",
 #                             color_continuous_scale=input_color_theme,
@@ -407,8 +445,10 @@ def get_area_covered_and_site_list_per_year(df,year,prec_site_list):
     # area_covered = sum([df.loc[df["site"]==x]["area_covered_km2"].max() for x in site_list])
     # print(prec_site_list)
     # print(actual_site_list)
-    coverage = round(area_covered*100/df["total_area"].max(),2)
+    # print(df["total_area"])
     # print(area_covered)
+    coverage = round((area_covered*100)/df["total_area"].max(),2)
+    # print(coverage)
     return {
         "year": year,
         "site_list": site_list,
@@ -436,6 +476,7 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
         # df["total_area"] = df[level_id].apply(lambda x: Region.objects.get(id=x).total_area)
     # if level != "Region":
     df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0] if x in leveldf["id"].unique() else None)
+    # st.write(df)
     level_df  = df.loc[df[level_id]==id]
     years = sorted(level_df["year"].unique())
     i=0 
@@ -447,6 +488,7 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
         prec_site_list = datadict["site_list"]
         i=i+1
     # print(data)
+    
     if type == "coverage_rate":
         graph_data = [{"label": k["year"], "x":int(k["year"]), "y":k["coverage"]}
                     for k in data]
@@ -455,6 +497,7 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
                     for k in data]
     # print(graph_data)
     # max = round(level_df["total_coverage_km2"].sum()*100/level_df["total_area"].max(),2)
+    # st.write(graph_data)
     return graph_data
 def set_cumulative_by_year(id,level,df,type,leveldf):
     years = df["year"].unique()
@@ -473,6 +516,8 @@ def set_cumulative_by_year(id,level,df,type,leveldf):
     # df = df.loc[df[level_id]==id]
     
     data = get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
+    
+    # st.write(data)
     year_area_covered_dict ={ x["label"] : x["y"] for x in data}
     # print (id)
     # print (year_area_covered_dict)
@@ -482,7 +527,7 @@ def set_cumulative_by_year(id,level,df,type,leveldf):
 #     year_area_covered_dict = set_cumulative_by_year(row["id"],level,df)
 #     return year_area_covered_dict[row["year"]]
     # print(row)
-    
+# @st.cache_data
 def get_cumulative_max_area_covered_per_level_per_year_table(df,level,type,leveldf):
     
     if level == "Site":
@@ -505,13 +550,19 @@ def get_cumulative_max_area_covered_per_level_per_year_table(df,level,type,level
     
     # st.write(leveldf.loc[leveldf["id"]==None]["total_area"])
     # leveldf["total_area"] = leveldf["total_area"].fillna(0)
-    # st.write(leveldf["total_area"])
+    # st.write(leveldf)
     df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0] if int(x) in leveldf["id"].unique() else None)
+    df["total_level_coverage"] = round((df["total_coverage_km2"]/df["total_area"]*100),2)
+    # st.write(df)
+    # st.write(df["total_area"].unique())
+    # st.write(df["total_coverage_km2"].unique())
     # data = { x["label"] : x["y"] for x in data}
+    
     level_ids = df[level_id].unique()
     years = df["year"].unique()
     # df = df.apply(lambda x : map_cumulative_area_covered_level_year(x,level,df))
     result = {"year":[],"area_covered":[],"level_id":[],"level":[]}
+    
     for id in level_ids:
         for year , area in set_cumulative_by_year(id,level,df,type,leveldf).items():
             result["level_id"].append(id)
@@ -519,14 +570,18 @@ def get_cumulative_max_area_covered_per_level_per_year_table(df,level,type,level
             # result["level_id"].append(level_id)
             result["level"].append(level)
             result["area_covered"].append(area)
+            # result["total_level_coverage"].append(area)
+            # st.write(df)
         # set_cumulative_by_year(id,level,df)
     resultdf = pd.DataFrame(result)
+    
     # resultdf.to_excel('cumulative_by_year.xlsx')
     # print (resultdf.head())
     return resultdf
 
 """Construction de la fonction de création de la table du taux de couverture au niveau block et secteur
 """
+# @st.cache_data
 def get_area_covered_table(df ,sitesdf):
     max_areadf =  df[["region","country",'main_landscape','site',"landscape","area_covered_km2","level","year"]].groupby(["region","country",'main_landscape',"landscape","site","level"]).max().reset_index()
     # df_coverage1 = df.merge(sitesdf, left_on="site", right_on='id', how="left")
@@ -607,6 +662,7 @@ def get_area_covered_table(df ,sitesdf):
     # print(max_areadf_year.info())
     # print(max_areadf_year.head(30)
     return max_areadf_year
+@st.cache_data
 def cumulative(df,element,min_year,selected_indicator):
     # st.write(element)
     element = int(element)
@@ -616,6 +672,7 @@ def cumulative(df,element,min_year,selected_indicator):
     else:
         value = sum(df.loc[(df["year"]>=int(min_year))&(df["year"]<=element)][selected_indicator])
     return value
+@st.cache_data
 def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df[selected_indicator].unique())
     df = df.loc[df[selected_indicator]!=-1]
@@ -630,7 +687,7 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df)
     return df
 
-
+@st.cache_data
 def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end_year):
     # st.write(df,indicators_name)
     box_number = len(indicators_metric)

@@ -281,7 +281,7 @@ def humanA_site(st, selected_site, data, pd):
         #         chart_cumulative_area_covered = altairLineChart(alt, cumulative_site_area_covered_df,
         #                                                         selected_effort_indicator,
         #                                                         selected_site.capitalize() + "cumulative area covered",
-        #                                                         450)
+        #                                                         480)
         #         chart_trend_in_area_covered = altairBarChart(alt, site_area_covered_df, selected_effort_indicator,
         #                                                      "Trend in Area covered in " + selected_site.capitalize(),
         #                                                      490)
@@ -306,7 +306,7 @@ def humanA_site(st, selected_site, data, pd):
         #             chart_cumulative_area_covered = altairLineChart(alt, cumulative_site_area_covered_df2,
         #                                                             selected_effort_indicator,
         #                                                             selected_site.capitalize() + "cumulative area covered",
-        #                                                             450)
+        #                                                             480)
         #             chart_trend_in_area_covered = altairBarChart(alt, site_area_covered_df2, selected_effort_indicator,
         #                                                          "Trend in Area covered in " + selected_site.capitalize(),
         #                                                          490)
@@ -331,7 +331,7 @@ def humanA_site(st, selected_site, data, pd):
         #             chart_cumulative_sampling_transect_effort = altairLineChart(alt, cumulmative_effort_km,
         #                                                                         selected_effort_indicator,
         #                                                                         "Congo Basin cumulative " + selected_effort_indicator.lower(),
-        #                                                                         450)
+        #                                                                         480)
         #             chart_trend_in_sampling_transect_effort = altairBarChart(alt, region_sampling_transect_effort_df,
         #                                                                      selected_effort_indicator,
         #                                                                      "Trend in " + selected_effort_indicator.lower() + " in the Congo Basin ",
@@ -420,7 +420,7 @@ def humanA_site(st, selected_site, data, pd):
                 # st.write(abundance_df)
                 chart_line_abundace = altairErrorLineChart(alt, abundance_df, selected_abundace_indicator,
                                                            "Trends in " + selected_activityType.lower() + " " + selected_abundace_indicator.lower() + " in " + selected_site_abundance.lower(),
-                                                           450, abundance_indicators_error[
+                                                           480, abundance_indicators_error[
                                                                abundance_indicators[selected_abundace_indicator]],"#b7a51d")
                 ##st.markdown('#### Trends in  ' + selected_abundace_indicator.lower())
                 # st.write(abundance_df)
