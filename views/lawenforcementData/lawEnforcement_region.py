@@ -226,7 +226,7 @@ def lawEnforcement_region(st,data,pd):
             # st.write(patrol_df)
             with col_year:
                 if len(patrol_df)>0:
-                    selected_year_patrol = st.selectbox('Select '+selected_level_indicator.lower()+' ( '+str(len(patrol_df["year"].unique()))+' )', list(patrol_df["year"].unique()))
+                    selected_year_patrol = st.selectbox('Select year ( '+str(len(patrol_df["year"].unique()))+' )', list(patrol_df["year"].unique()))
                     
                     patrol_df =patrol_df.loc[patrol_df["year"] == selected_year_patrol]
                     leveldf = level_df[selected_level_indicator]
