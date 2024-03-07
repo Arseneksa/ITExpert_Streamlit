@@ -470,6 +470,8 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
             # df["total_area"] = df[level_id].apply(lambda x: Landscape.objects.get(id=x).total_area)
     elif level == "Country":
         level_id = "country"
+    elif level == "Main_landscape":
+        level_id = "main_landscape"
         # df["total_area"] = df[level_id].apply(lambda x: Country.objects.get(id=x).total_area)
     elif level == "Region":
         level_id = "region"
@@ -501,18 +503,18 @@ def get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
     return graph_data
 def set_cumulative_by_year(id,level,df,type,leveldf):
     years = df["year"].unique()
-    # if level == "Site":
-    #     level_id = "site"
-    # elif level == "Landscape" :
-    #     df = df.loc[df["is_parent"]==True]
-    #     if id in [1884,1843,1839]:
-    #         level_id = "main_landscape"
-    #     else:
-    #         level_id = "landscape"
-    # elif level == "Country":
-    #     level_id = "country"
-    # elif level == "Region":
-    #     level_id = "region"
+    if level == "Site":
+        level_id = "site"
+    elif level == "Landscape" :
+        df = df.loc[df["is_parent"]==True]
+        if id in [1884,1843,1839]:
+            level_id = "main_landscape"
+        else:
+            level_id = "landscape"
+    elif level == "Country":
+        level_id = "country"
+    elif level == "Region":
+        level_id = "region"
     # df = df.loc[df[level_id]==id]
     
     data = get_cumulative_max_area_covered_per_level_per_year(df,id,level,type,leveldf)
@@ -536,21 +538,24 @@ def get_cumulative_max_area_covered_per_level_per_year_table(df,level,type,level
     elif level == "Landscape" :
         df = df.loc[df["is_parent"]==True]
         # if id in [1884,1843,1839]:
-        #     level_id = "main_landscape"
-        #     # df["total_area"] = df[level_id].apply(lambda x: Main_Landscape.objects.get(id=x).total_area)
+            # level_id = "main_landscape"
+            # df["total_area"] = df[level_id].apply(lambda x: Main_Landscape.objects.get(id=x).total_area)
         # else:
         level_id = "landscape"
             # df["total_area"] = df[level_id].apply(lambda x: Landscape.objects.get(id=x).total_area)
     elif level == "Country":
         level_id = "country"
+    elif level == "Main_landscape":
+        level_id = "main_landscape"
     elif level == "Region":
         level_id = "region"
+    # st.write(df[level_id])
         # df["total_area"] = df[level_id].apply(lambda x: Country.objects.get(id=x).total_area)
     # st.write(df[level_id].unique())
     
     # st.write(leveldf.loc[leveldf["id"]==None]["total_area"])
     # leveldf["total_area"] = leveldf["total_area"].fillna(0)
-    # st.write(leveldf)
+    
     df["total_area"] = df[level_id].apply(lambda x: leveldf.loc[leveldf["id"]==x]["total_area"].unique()[0] if int(x) in leveldf["id"].unique() else None)
     df["total_level_coverage"] = round((df["total_coverage_km2"]/df["total_area"]*100),2)
     # st.write(df)
@@ -561,11 +566,11 @@ def get_cumulative_max_area_covered_per_level_per_year_table(df,level,type,level
     level_ids = df[level_id].unique()
     years = df["year"].unique()
     # df = df.apply(lambda x : map_cumulative_area_covered_level_year(x,level,df))
-    result = {"year":[],"area_covered":[],"level_id":[],"level":[]}
+    result = {"year":[],"area_covered":[],level_id:[],"level":[]}
     
     for id in level_ids:
         for year , area in set_cumulative_by_year(id,level,df,type,leveldf).items():
-            result["level_id"].append(id)
+            result[level_id].append(id)
             result["year"].append(year)
             # result["level_id"].append(level_id)
             result["level"].append(level)

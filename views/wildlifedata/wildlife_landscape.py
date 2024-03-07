@@ -28,7 +28,9 @@ def wildlife_landscape(st,landscape,data,pd):
     
     countriesdf  = data["countries"]
     landscapesdf  = data["landscapes"]
+    m_landscapesdf  = data["main_landscapes"]
     sitesdf  = data["sites"]
+    h_level  = data["level"]
 
     speciesdf  = data["species"]
     sitesgdf = gpd.read_file("data/All_site.shp",)
@@ -151,10 +153,11 @@ def wildlife_landscape(st,landscape,data,pd):
     sites_result_gdf =sites_result_gdf.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
-        indicators_name =  {"species":"Species","landscape":"Countries","landscape":"Landscapes","site":"Sites"}
-        indicators_metric = [ "species","landscape","site"]
+        indicators_name =  {"species":"Species",h_level:"Landscapes","site":"Sites"}
+        indicators_metric = [ "species",h_level,"site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
         # st.write(len(metric_df["site"].unique()))
+        # st.write(df)
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
         # geo_chart = alt.Chart(sites_result_gdf, title="Vega-Altair").mark_geoshape().encode(
         #     alt.Color("Number of species:N").scale(None)
@@ -281,17 +284,23 @@ def wildlife_landscape(st,landscape,data,pd):
             with col_efffort_graph_type:
                 selected_effort_graph_type = st.selectbox('Select graph type', ["Cumulative","Trends"])
             # st.write(area_cover_df)
+            if h_level == "landscape":
+                leveldf = landscapesdf
+                level = "Landscape"
+            elif h_level == "main_landscape":
+                leveldf =m_landscapesdf
+                level = "Main_landscape"
             if selected_effort_indicator =="Area covered (Km²)":
                 # st.write(area_cover_df)
-                cumulative_landscape_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Landscape","area_covered",landscapesdf)
+                cumulative_landscape_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,level,"area_covered",leveldf)
                 # st.write(cumulative_landscape_area_covered_df)
                 cumulative_landscape_area_covered_df[selected_effort_indicator] = cumulative_landscape_area_covered_df["area_covered"]
                 
                 landscape_area_covered_df = area_cover_df.loc[(area_cover_df["area_covered_km2"]!=-1)&(area_cover_df["level"]=="Site")]
-                landscape_area_covered_df["landscape"] = landscape_area_covered_df["landscape"].astype(str)
+                landscape_area_covered_df[h_level] = landscape_area_covered_df[h_level].astype(str)
                 landscape_area_covered_df["region"] = landscape_area_covered_df["region"].astype(str)
                 # st.write(landscape_area_covered_df)
-                landscape_area_covered_df =landscape_area_covered_df[["landscape","year","area_covered_km2"]].groupby(["landscape","year"]).sum().reset_index()
+                landscape_area_covered_df =landscape_area_covered_df[[h_level,"year","area_covered_km2"]].groupby([h_level,"year"]).sum().reset_index()
                 # st.write(landscape_area_covered_df)
                 landscape_area_covered_df[selected_effort_indicator] = landscape_area_covered_df["area_covered_km2"]
                 chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape.capitalize()+" cumulative area covered",480,"#b7a51d")
@@ -309,8 +318,8 @@ def wildlife_landscape(st,landscape,data,pd):
             
                 cumulmative_effort_km = simple_cumlative_data_per_year(sampling_effort_df,"sampling_effort_transect_Km","region")
                 region_sampling_transect_effort_df[selected_effort_indicator] = region_sampling_transect_effort_df["sampling_effort_transect_Km"]
-                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,"Congo Basin cumulative "+selected_effort_indicator.lower(),480,"#b7a51d")
-                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in the Congo Basin ",480,"#b7a51d")
+                chart_cumulative_sampling_transect_effort = altairLineChart(alt,cumulmative_effort_km,selected_effort_indicator,landscape.capitalize()+" cumulative "+selected_effort_indicator.lower(),480,"#b7a51d")
+                chart_trend_in_sampling_transect_effort = altairBarChart(alt,region_sampling_transect_effort_df,selected_effort_indicator,"Trend in "+selected_effort_indicator.lower()+" in "+landscape.capitalize(),480,"#b7a51d")
                 
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### Congo Basin cumulative area covered ')
@@ -319,8 +328,8 @@ def wildlife_landscape(st,landscape,data,pd):
                     ##st.markdown('#### Trend in Area covered in the Congo Basin ')
                     st.altair_chart(chart_trend_in_sampling_transect_effort, theme=None, use_container_width=True)
             elif selected_effort_indicator == "Area coverege rate (%)":
-                cumulative_landscape_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Landscape","coverage_rate",landscapesdf)
-                cumulative_landscape_area_covered_df2 = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,"Landscape","area_covered",landscapesdf)
+                cumulative_landscape_area_covered_df = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,level,"coverage_rate",leveldf)
+                cumulative_landscape_area_covered_df2 = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_df,level,"area_covered",leveldf)
                 
                 cumulative_landscape_area_covered_df[selected_effort_indicator] = cumulative_landscape_area_covered_df["area_covered"]
                 cumulative_landscape_area_covered_df2[selected_effort_indicator] = cumulative_landscape_area_covered_df2["area_covered"]
@@ -330,10 +339,10 @@ def wildlife_landscape(st,landscape,data,pd):
                 # st.write(cumulative_landscape_area_covered_df2)
                 landscape_area_covered_df = original_df.loc[(original_df["area_covered_km2"]!=-1)&(original_df["level"]=="Site")]
                 # st.write(landscape_area_covered_df)
-                landscape_area_covered_df["coverage_rate"] = landscape_area_covered_df["area_covered_km2"].apply(lambda x: (x*100)/landscapesdf.loc[landscapesdf["name"]==landscape]["total_area"].unique()[0])
-                landscape_area_covered_df["landscape"] = landscape_area_covered_df["landscape"].astype(str)
+                landscape_area_covered_df["coverage_rate"] = landscape_area_covered_df["area_covered_km2"].apply(lambda x: (x*100)/leveldf.loc[leveldf["name"]==landscape]["total_area"].unique()[0])
+                landscape_area_covered_df[h_level] = landscape_area_covered_df[h_level].astype(str)
                 # st.write(landscape_area_covered_df)
-                landscape_area_covered_df =landscape_area_covered_df[["landscape","year","coverage_rate","area_covered_km2"]].groupby(["landscape","year"]).sum().reset_index()
+                landscape_area_covered_df =landscape_area_covered_df[[h_level,"year","coverage_rate","area_covered_km2"]].groupby([h_level,"year"]).sum().reset_index()
                 # st.write(landscape_area_covered_df[["landscape","year","coverage_rate","area_covered_km2"]])
                 landscape_area_covered_df[selected_effort_indicator] = landscape_area_covered_df["coverage_rate"]
                 chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape.capitalize()+" cumulative coverage rate ",480,"#b7a51d")
@@ -363,7 +372,7 @@ def wildlife_landscape(st,landscape,data,pd):
             
             level_df  ={
                 "Site":sitesdf,
-                "Landscape":landscapesdf,
+                "landscape":landscapesdf,
             }
             col_indicator,col_level, col_species, col2_site= st.columns(4)
             with col_indicator:
@@ -416,7 +425,7 @@ def wildlife_landscape(st,landscape,data,pd):
             
             level_df  ={
                 "Site":sitesdf,
-                "Landscape":landscapesdf,
+                "landscape":landscapesdf,
             }
             col_indicator_bar,col_level_bar, col_species_bar= st.columns(3)
             with col_indicator_bar:

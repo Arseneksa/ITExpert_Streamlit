@@ -29,7 +29,7 @@ def humanA_landscape(st,landscape,data,pd):
     countriesdf  = data["countries"]
     landscapesdf  = data["landscapes"]
     sitesdf  = data["sites"]
-
+    h_level  = data["level"]
     activityTypedf  = data["activityType"]
     sitesgdf = gpd.read_file("data/All_site.shp",)
     sitesgdf["site"] = sitesgdf[sitesgdf["Level"]=="Site"]["Site_1"]
@@ -150,8 +150,9 @@ def humanA_landscape(st,landscape,data,pd):
     # sites_result_gdf =sites_result_gdf.to_crs(sitesgdf.crs)
     tab1, tab2 = st.tabs(["# GENERAL INFORMATIONS", "# RESULT BY INDICATORS"])
     with tab1:
-        indicators_name =  {"activityType":"Activity types","landscape":"Countries","landscape":"Landscapes","site":"Sites"}
-        indicators_metric = [ "activityType","landscape","site"]
+        indicators_name =  {"activityType":"Activity types",h_level:"Landscapes","site":"Sites"}
+        # st.write(df[h_level])
+        indicators_metric = [ "activityType",h_level,"site"]
         metric_df = df[df["site"].isin(sitesdf["id"].unique())]
         # st.write(len(metric_df["site"].unique()))
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)

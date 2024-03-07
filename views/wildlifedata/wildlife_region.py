@@ -177,9 +177,10 @@ def wildlife_region(st,data,pd):
                                         domain=metric_df["sampling method"].unique(),
                                         range=ramp),  # 31333F
                                         )).properties(
-                    title=alt.Title("Wildlife sampling method breakdown",subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+                    title=alt.Title("Wildlife surveys sampling method breakdown",subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
                 )
-        st.altair_chart(c, theme=None, use_container_width=True)
+        if select_sampling_method =="All":
+            st.altair_chart(c, theme=None, use_container_width=True)
         # st.write(len(metric_df["site"].unique()))
         # for indicator in indicators_metric:
                         
