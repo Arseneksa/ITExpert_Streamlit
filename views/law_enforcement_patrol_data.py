@@ -340,8 +340,8 @@ def lawEnforcement():
     df["country"] = df["country"].astype(int)
     # df["main_landscape"] = df["main_landscape"].astype(str)
     # df["landscape"] = df["landscape"].astype(str)
-    df["block2"] = df["block2"].astype(str)
-    df["sector2"] = df["sector2"].astype(str)
+    # df["block2"] = df["block2"].astype(str)
+    # df["sector2"] = df["sector2"].astype(str)
     # st.write(df["area_covered_km2"].unique())
     # df = df[df[#"activityType"].isin(activityType_df["id"].unique())]
     # df = df[df["country"].isin(countries_df["id"].unique())]

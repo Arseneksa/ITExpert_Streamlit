@@ -187,7 +187,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
                 alt.X(x_label).axis(
                     title=abbreviations,
                     titleAngle=0,
-                    gridColor="black"
+                    
                     # titleAlign="left",
                     # titleY=-2,
                     # titleX=0,
@@ -241,6 +241,43 @@ def altairBarChart(alt,df,selected_indicator,title,height,color):
     chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
                
                 alt.X("year:O", axis=alt.Axis(title="Year",titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                # color=publication_types[0]
+            ).interactive()
+    df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
+    text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
+            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            height=height
+        )
+    chart.configure_legend(
+            strokeColor='gray',
+            fillColor='#EEEEEE',
+            padding=10,
+            cornerRadius=10,
+            orient='top-right'
+        )
+    # img = alt.Chart(source).mark_image(width=50, height=75).encode(
+    #     x='year',
+    #     y=selected_indicator,
+    #     url='image'
+    # )
+    return chart+text
+def altairBarChartWithLabel(alt,df,selected_indicator,title,height,color,label,abbreviations):
+    alt.themes.enable(theme)
+    title = title.replace(" *",'')
+    # years = df["year"].unique()
+    # year = years[int(len(years)/2)]
+    # value = df.loc[df["year"]==year][selected_indicator]
+    # source = pd.DataFrame.from_records(
+    #     [
+    #         {'year': year,selected_indicator:value,  'image': './app/static/logo.jpg'},
+    #     ]
+    # )
+    alt.renderers.set_embed_options(actions={"editor": False})
+    
+    chart = alt.Chart(df).mark_bar(interpolate="cardinal", width=40,point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
+               
+                alt.X(label+":O", axis=alt.Axis(title=abbreviations,titleFontSize=14,labelFontSize=15,gridColor="lightgrey")),
                 alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
                 # color=publication_types[0]
             ).interactive()
