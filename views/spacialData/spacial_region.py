@@ -8,15 +8,16 @@ import altair as alt
 import folium
 from streamlit_folium import st_folium
 import plotly.express as px
-
-
-def lawEnforcement_country(st,country,data,pd):
+# @st.cache_data(experimental_allow_widgets=True)
+# alt.themes.enable('powerbi')
+# alt.themes.enable('default')
+def spacial_region(st,data,pd):
     st.markdown(
-        ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Law enforcement patrol data dashboard</span><br>',
+        ' <span style="font-size:2em;font-weight:bold;margin-left:0px;background:white; opacity:0.97">Congo Basin Monitoring and Evaluation Database</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Spatial data and landcover dashboard</span><br>',
         unsafe_allow_html=True,
     )
     # st.subheader("wildlfe dashboard")
-    df = data["lawEnforcement"]
+    df = data["spacial"]
     df = df.loc[df['year']!=-1]
     # df.to_csv("data/wildlife.csv")
     
@@ -67,13 +68,13 @@ def lawEnforcement_country(st,country,data,pd):
     # print("Cumulative TRIDOM GAB",data)
     # cumulativedf = get_cumulative_max_area_covered_per_level_per_year_table(area_cover_region_df,"Site")
    
-    # lawEnforcement_field_mask_region = ["name","sites","sites_number", "priority"]
-    # # lawEnforcement_result_df_region = getlawEnforcementByLevel(df,lawEnforcementdf,sitesdf,"region","lawEnforcement","site",1).sort_values(by=['sites_number'], ascending=[ False])
-    # # sites_result_df_region = getlawEnforcementByLevel(df,sitesdf,lawEnforcementdf,"region","site","lawEnforcement",1).sort_values(by=['sites_number'], ascending=[ False])
-    # lawEnforcement_result_df_region =lawEnforcement_result_df_region[lawEnforcement_field_mask_region]
-    # sites_result_df_region =sites_result_df_region[lawEnforcement_field_mask_region]
+    # spacial_field_mask_region = ["name","sites","sites_number", "priority"]
+    # # spacial_result_df_region = getspacialByLevel(df,spacialdf,sitesdf,"region","spacial","site",1).sort_values(by=['sites_number'], ascending=[ False])
+    # # sites_result_df_region = getspacialByLevel(df,sitesdf,spacialdf,"region","site","spacial",1).sort_values(by=['sites_number'], ascending=[ False])
+    # spacial_result_df_region =spacial_result_df_region[spacial_field_mask_region]
+    # sites_result_df_region =sites_result_df_region[spacial_field_mask_region]
     # sites_result_gdf_region = pd.merge(sites_result_df_region.sort_values(by=['sites_number'], ascending=[ True]), sitesgdf[['site', 'geometry']], left_on="name", right_on='site', how='left')
-    # lawEnforcement_result_df_region =lawEnforcement_result_df_region.rename(
+    # spacial_result_df_region =spacial_result_df_region.rename(
     #     columns={
     #         "name": "Name",
     #         "priority": "Priority",
@@ -93,7 +94,7 @@ def lawEnforcement_country(st,country,data,pd):
     #     columns={
     #         "name": "Name",
     #         "priority": "Priority",
-    #         "sites_number": "Number of lawEnforcement",
+    #         "sites_number": "Number of spacial",
     #         "sites": "Species list",
             
     #     }
@@ -109,7 +110,9 @@ def lawEnforcement_country(st,country,data,pd):
         i=0
         indicators_name =  {"country":"Countries","main_landscape":"Landscapes","site":"Sites"}
         indicators_metric = ["country","main_landscape","site"]
-        metric_df = df[df["site"].isin(sitesdf["id"].unique())]
+        metric_df = df
+        # metric_df = df[df["site"].isin(sitesdf["id"].unique())]
+        st.write(metric_df)
         generate_metrics(df,metric_df,indicators_name,indicators_metric,start_year,end_year)
         
             
@@ -195,7 +198,6 @@ def lawEnforcement_country(st,country,data,pd):
                 "Man-days (days)":"man_days", 
                 "Number of patrol":"number_Patrol", 
                 "Total patrol (days)":"total_patrol_days"}
-                
             
             level_df  ={
                 "Site":sitesdf,
@@ -211,14 +213,14 @@ def lawEnforcement_country(st,country,data,pd):
                 selected_level_indicator = st.selectbox('Select level', ["Site","Landscape"])
                 patrol_df = patrol_df.loc[patrol_df["level"] ==selected_level_indicator]
                 
-                # lawEnforcementdf  = lawEnforcementdf.loc[lawEnforcementdf["id"].isin(patrol_df["lawEnforcement"].unique())]
+                # spacialdf  = spacialdf.loc[spacialdf["id"].isin(patrol_df["spacial"].unique())]
                 # st.write(patrol_df)
-            # with col_lawEnforcement_bar:
-            #     lawEnforcement = list(lawEnforcementdf["name"].unique())
-            #     if len(lawEnforcement)>0:
-            #         selected_lawEnforcement = st.selectbox('Select lawEnforcement ( '+str(len(lawEnforcementdf))+' )',lawEnforcement )
-            #         lawEnforcement_name_id = { x["name"]: x["id"] for x in lawEnforcementdf[["id","name"]].T.to_dict().values()}
-            #         patrol_df = patrol_df.loc[patrol_df["lawEnforcement"] ==lawEnforcement_name_id[selected_lawEnforcement]]
+            # with col_spacial_bar:
+            #     spacial = list(spacialdf["name"].unique())
+            #     if len(spacial)>0:
+            #         selected_spacial = st.selectbox('Select spacial ( '+str(len(spacialdf))+' )',spacial )
+            #         spacial_name_id = { x["name"]: x["id"] for x in spacialdf[["id","name"]].T.to_dict().values()}
+            #         patrol_df = patrol_df.loc[patrol_df["spacial"] ==spacial_name_id[selected_spacial]]
             #         leveldf = level_df[selected_level_indicator]
             #         patrol_df  = leveldf.loc[leveldf["id"].isin(patrol_df[selected_level_indicator.lower()].unique())]
             # st.write(patrol_df)
@@ -255,7 +257,7 @@ def lawEnforcement_country(st,country,data,pd):
                 # st.write(values)
                 patrol_df["main_landscape"] = patrol_df["main_landscape"].astype(str)
                 # patrol_df[[value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]] = patrol_df[[value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]].astype(str)
-                # index= ["region","country",'main_landscape','site',"landscape","level","lawEnforcement"]
+                # index= ["region","country",'main_landscape','site',"landscape","level","spacial"]
                 # errors_mask = [value for key , value in patrol_indicators_error[patrol_indicators[selected_patrol_indicator]].items()]
                 # patrol_df = pd.pivot_table(patrol_df, values=values, index=index,
                 #        aggfunc={patrol_indicators[selected_patrol_indicator]: "max"}).reset_index()
@@ -283,7 +285,7 @@ def lawEnforcement_country(st,country,data,pd):
                     max_indicator_per_level_df[patrol_indicators[selected_patrol_indicator]].append(max_line[patrol_indicators[selected_patrol_indicator]].unique()[0])
                     # max_indicator_per_level_df[errors_mask[0]].append(max_line[errors_mask[0]].unique()[0])
                     # max_indicator_per_level_df[errors_mask[1]].append(max_line[errors_mask[1]].unique()[0])
-                    # max_indicator_per_level_df["lawEnforcement"].append(max_line["lawEnforcement"].unique()[0])
+                    # max_indicator_per_level_df["spacial"].append(max_line["spacial"].unique()[0])
                 max_indicator_per_level_df = pd.DataFrame(max_indicator_per_level_df).drop_duplicates()  
                 # st.write(max_indicator_per_level_df)
                     
@@ -312,5 +314,3 @@ def lawEnforcement_country(st,country,data,pd):
         # with result_tab[2]:
             
         #     st.write("Result page")
-
-    

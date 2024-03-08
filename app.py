@@ -16,6 +16,7 @@ from streamlit_option_menu import option_menu
 from views.communication import *
 from views.humanA import humanA
 from views.law_enforcement_patrol_data import lawEnforcement
+from views.spatial_data_and_landcover import spacialData
 from views.wildlife import wildlife
 
 st.set_page_config(
@@ -115,5 +116,8 @@ elif selected_pillar =="Human activity":
 elif selected_pillar =="Law enforcement":
     
     lawEnforcement()
+elif selected_pillar =="Spatial data and landcover":
+    
+    spacialData()
 
     

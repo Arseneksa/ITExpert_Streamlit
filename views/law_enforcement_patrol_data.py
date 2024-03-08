@@ -401,16 +401,25 @@ def lawEnforcement():
         lawEnforcement_country(st,selected_country,data,pd)
     if selected_level =="Landscape":
         landscapes_df = landscapes_df.loc[landscapes_df["id"].isin(df["landscape"].unique())]
-        landscapes = landscapes_df["name"].unique()
+        m_landscape = main_landscapes_df.loc[main_landscapes_df["id"].isin([1839,1843])]
+        m_landscapes = list(m_landscape["name"].unique())
+        landscapes = list(landscapes_df["name"].unique())
+        landscapes_list = m_landscapes+landscapes
         with st.sidebar:
         # st.title('🏂 US Population Dashboard')
         # st.title('Filter')
-            selected_landscape = st.selectbox('Select a landscape', landscapes)
-        landscape_name_id = { x["name"]: x["id"] for x in landscapes_df[["id","name"]].T.to_dict().values()}
+            selected_landscape = st.selectbox('Select a landscape', landscapes_list)
+        if selected_landscape in landscapes:
+            landscape_name_id = { x["name"]: x["id"] for x in landscapes_df[["id","name"]].T.to_dict().values()}
+            level ="landscape"
+        elif selected_landscape in m_landscapes:
+            landscape_name_id = { x["name"]: x["id"] for x in m_landscape[["id","name"]].T.to_dict().values()}
+            level ="main_landscape"
         landscape_id = landscape_name_id[selected_landscape]
+        # df[level] = df[level].astype(str)
         # landscapes_df  = landscapes_df.loc[landscapes_df["landscape"]==country_id]
-        sites_df  = sites_df.loc[sites_df["landscape"]==landscape_id]
-        df  = df.loc[df["landscape"]==landscape_id]
+        sites_df  = sites_df.loc[sites_df[level]==landscape_id]
+        df  = df.loc[df[level]==landscape_id]
         data = {
             "lawEnforcement":df,
             "sites":sites_df,
@@ -420,6 +429,7 @@ def lawEnforcement():
             "main_landscapes":main_landscapes_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,
+            "level":level,
             #"sampling_method":sampling_method_df,
             
         }
@@ -439,13 +449,18 @@ def lawEnforcement():
         df  = df.loc[df["site"]==site_id]
         data = {
             "lawEnforcement":df,
-            "sites":sites_df2,
+            "sites":sites_df,
+            "countries":countries_df,
             #"activityType":activityType_df,
+            "landscapes":landscapes_df,
+            "main_landscapes":main_landscapes_df,
             "blocks":blocksdf,
             "sectors":sectorsdf,
+            # "level":level,
             #"sampling_method":sampling_method_df,
             
         }
+        
         
         lawEnforcement_site(st,selected_site,data,pd)
        

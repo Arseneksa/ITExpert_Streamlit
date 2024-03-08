@@ -280,7 +280,7 @@ def humanA_landscape(st,landscape,data,pd):
         #         landscape_area_covered_df = df.loc[df["area_covered_km2"]!=-1]
         #         landscape_area_covered_df =landscape_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
         #         landscape_area_covered_df[selected_effort_indicator] = landscape_area_covered_df["area_covered_km2"]
-        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape.capitalize()+"cumulative area covered",480)
+        #         chart_cumulative_area_covered = altairLineChart(alt,cumulative_landscape_area_covered_df,selected_effort_indicator,landscape     .capitalize()+" cumulative area covered",480)
         #         chart_trend_in_area_covered = altairBarChart(alt,landscape_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+landscape.capitalize(),490)
         #         if selected_effort_graph_type == "Cumulative":
         #             ##st.markdown('#### '+landscape.capitalize()+' cumulative area covered ')

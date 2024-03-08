@@ -135,19 +135,19 @@ def lawEnforcement_region(st,data,pd):
             patrol_indicators_name = [
                 "Spatial coverage rate (%)",
                 "Effort foot patrol (km)",
-                "Effort active hour (hour)", 
-                "Effective patrol days (days)", 
-                "Man days (days)", 
+                "Effort active  (hour)", 
+                "Effective patrol  (days)", 
+                "Man-days (days)", 
                 "Number of patrol", 
-                "Total patrol days (days)"]
+                "Total patrol  (days)"]
             patrol_indicators = {
                 "Spatial coverage rate (%)":"spatial_coverage_rate",
                 "Effort foot patrol (km)":"effort_foot_patrol_km",
-                "Effort active hour (hour)":"effort_active_hour", 
-                "Effective patrol days (days)":"effective_patrol_days", 
-                "Man days (days)":"man_days", 
+                "Effort active (hour)":"effort_active_hour", 
+                "Effective patrol (days)":"effective_patrol_days", 
+                "Man-days (days)":"man_days", 
                 "Number of patrol":"number_Patrol", 
-                "Total patrol days (days)":"total_patrol_days"}
+                "Total patrol (days)":"total_patrol_days"}
            
             
             level_df  ={
@@ -183,21 +183,19 @@ def lawEnforcement_region(st,data,pd):
             patrol_indicators_name = [
                 "Spatial coverage rate (%)",
                 "Effort foot patrol (km)",
-                "Effort active hour (hour)", 
-                "Effective patrol days (days)", 
-                "Man days (days)", 
+                "Effort active  (hour)", 
+                "Effective patrol  (days)", 
+                "Man-days (days)", 
                 "Number of patrol", 
-                "Total patrol days (days)"]
+                "Total patrol  (days)"]
             patrol_indicators = {
                 "Spatial coverage rate (%)":"spatial_coverage_rate",
                 "Effort foot patrol (km)":"effort_foot_patrol_km",
-                "Effort active hour (hour)":"effort_active_hour", 
-                "Effective patrol days (days)":"effective_patrol_days", 
-                "Man days (days)":"man_days", 
+                "Effort active (hour)":"effort_active_hour", 
+                "Effective patrol (days)":"effective_patrol_days", 
+                "Man-days (days)":"man_days", 
                 "Number of patrol":"number_Patrol", 
-                "Total patrol days (days)":"total_patrol_days"
-                }
-                
+                "Total patrol (days)":"total_patrol_days"}
             
             level_df  ={
                 "Site":sitesdf,

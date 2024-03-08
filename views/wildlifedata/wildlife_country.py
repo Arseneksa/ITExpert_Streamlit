@@ -291,7 +291,7 @@ def wildlife_country(st,country,data,pd):
                 country_area_covered_df = original_df.loc[(original_df["area_covered_km2"]!=-1)&(original_df["level"]=="Site")]
                 country_area_covered_df =country_area_covered_df[["region","year","area_covered_km2"]].groupby(["year"]).sum().reset_index()
                 country_area_covered_df[selected_effort_indicator] = country_area_covered_df["area_covered_km2"]
-                chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+"cumulative area covered",480,"#b7a51d")
+                chart_cumulative_area_covered = altairLineChart(alt,cumulative_country_area_covered_df,selected_effort_indicator,country.capitalize()+" cumulative area covered",480,"#b7a51d")
                 chart_trend_in_area_covered = altairBarChart(alt,country_area_covered_df,selected_effort_indicator,"Trend in Area covered in "+country.capitalize(),480,"#b7a51d")
                 if selected_effort_graph_type == "Cumulative":
                     ##st.markdown('#### '+country.capitalize()+' cumulative area covered ')
