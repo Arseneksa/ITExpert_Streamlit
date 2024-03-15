@@ -13,14 +13,14 @@ import datetime
 from streamlit_option_menu import option_menu
 #######################
 # Page configuration
-from views.communication import *
+from views.human_wc import *
 from views.humanA import humanA
 from views.law_enforcement_patrol_data import lawEnforcement
 from views.spatial_data_and_landcover import spacialData
 from views.wildlife import wildlife
 
 st.set_page_config(
-    page_title="Congo Basin Monitoring and Evaluation database",
+    page_title="IT Expert test",
     page_icon="./app/static/logo.png",
     layout="wide",
     initial_sidebar_state="expanded")
@@ -88,7 +88,7 @@ alt.themes.enable("dark")
 
 
 pillars= [
-    "Wildlife","Communication","Human activity","Law enforcement","Spatial data and landcover","Capacity building"
+    "Human wildlife conflict","Wildlife survey",#"Human activity","Law enforcement","Spatial data and landcover","Capacity building"
 ]
 with st.sidebar:
     # st.title('🏂 US Population Dashboard')
@@ -105,9 +105,9 @@ with st.sidebar:
     
     
 content = st.empty()
-if selected_pillar =="Communication":
-    communication_page(st)
-elif selected_pillar =="Wildlife":
+if selected_pillar =="Human wildlife conflict":
+    Human_WC_page(st)
+elif selected_pillar =="Wildlife survey":
     
     wildlife()
 elif selected_pillar =="Human activity":

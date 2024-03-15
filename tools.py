@@ -16,16 +16,19 @@ def format_number(num):
 # @st.cache_data
 # Calculation year-over-year population migrations
 theme = "vox"
-@st.cache_data
+# @st.cache_data
 def calculate_population_difference(input_df, input_year_start, input_year_end,selected_indicator):
     input_df[selected_indicator] = input_df[selected_indicator].apply(lambda x: 0 if x ==-1 else x)
     selected_year_data = input_df[input_df['year'] == str(input_year_end)].reset_index()
     previous_year_data = input_df[input_df['year'] == str(input_year_start)].reset_index()
+    # st.write(previous_year_data)
+    # st.write(selected_year_data)
     selected_year_data['difference'] = selected_year_data[selected_indicator].sub(previous_year_data[selected_indicator], fill_value=0)
+    # st.write(selected_year_data)
     return selected_year_data.sort_values(by="difference", ascending=False)
     # return pd.concat([selected_year_data.states, selected_year_data.id, selected_year_data.population, selected_year_data.population_difference], axis=1).sort_values(by="population_difference", ascending=False)
 
-@st.cache_data
+# @st.cache_data
 def calculate_lenght_difference(input_df, input_year_start, input_year_end,selected_indicator):
     input_df[selected_indicator] = input_df[selected_indicator].dropna()
     input_df= input_df.loc[input_df[selected_indicator] != "nan"]
@@ -70,13 +73,13 @@ def altairLineChart(alt,df,selected_indicator,title,height,color):
     # df["year"] = df["year"].apply(lambda x: datetime.strptime(str(x), "%Y"))
     chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color=color,size=30),color=color,tension=0.6).encode(
                 
-                alt.X("year:O", axis=alt.Axis(title="Year",titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
-                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=17,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                alt.X("year:O", axis=alt.Axis(title="Year",titleFontSize=16,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
+                alt.Y(selected_indicator, axis=alt.Axis(titleFontSize=16,labelFontSize=15,gridColor="lightgrey",titleFontWeight="bold")),
                 # color=publication_types[0]
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=13,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title, color=color, fontWeight="bold",fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title, color=color, fontWeight="bold",fontSize=17,subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -126,7 +129,7 @@ def altairErrorLineChart(alt,df,selected_indicator,title,height,error,color):
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=14,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title, color=color, fontWeight="bold",fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title, color=color, fontWeight="bold",fontSize=17,subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -200,7 +203,7 @@ def altairErrorBarChart(alt,df,selected_indicator,title,height,error,x_label,abb
             )
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     # chart.configure_legend(
@@ -246,7 +249,7 @@ def altairBarChart(alt,df,selected_indicator,title,height,color):
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -283,7 +286,7 @@ def altairBarChartWithLabel(alt,df,selected_indicator,title,height,color,label,a
             ).interactive()
     df["Short value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="Short value").properties(
-            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+            title=alt.Title(title,color=color, fontSize=17,subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
             height=height
         )
     chart.configure_legend(
@@ -320,7 +323,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
             ).interactive()
     df["indicator_value"] = df[selected_indicator].apply( lambda x: format_number(x) )
     # text = chart.mark_text(align="center",fontSize=12,opacity=1,color="#000",dy=-15).encode(text="indicator_value").properties(
-    #         title=alt.Title(title,subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+    #         title=alt.Title(title,subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
     #         height=height
     #     )
     chart.configure_legend(
@@ -362,7 +365,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
     #                         domain=topics,
     #                         range=ramp),  # 31333F
     #                         )).properties(
-    #     title=alt.Title("Research Interest Score Breakdown",subtitle=["Copyright WWF"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
+    #     title=alt.Title("Research Interest Score Breakdown",subtitle=["Copyright"],subtitleFontSize=10,subtitlePadding=10,dx=-20),
     # )
 # def make_choropleth(px,input_df, input_id, selected_indicator, input_color_theme):
 #         choropleth = px.choropleth(input_df, locations=input_id, color=selected_indicator, locationmode="USA-states",
@@ -704,7 +707,7 @@ def get_area_covered_table(df ,sitesdf):
     # print(max_areadf_year.info())
     # print(max_areadf_year.head(30)
     return max_areadf_year
-@st.cache_data
+# @st.cache_data
 def cumulative(df,element,min_year,selected_indicator):
     # st.write(element)
     element = int(element)
@@ -714,7 +717,7 @@ def cumulative(df,element,min_year,selected_indicator):
     else:
         value = sum(df.loc[(df["year"]>=int(min_year))&(df["year"]<=element)][selected_indicator])
     return value
-@st.cache_data
+# @st.cache_data
 def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df[selected_indicator].unique())
     df = df.loc[df[selected_indicator]!=-1]
@@ -729,8 +732,8 @@ def simple_cumlative_data_per_year(df,selected_indicator,level):
     # st.write(df)
     return df
 
-@st.cache_data
-def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end_year):
+# @st.cache_data
+def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end_year,orientation):
     # st.write(df,indicators_name)
     box_number = len(indicators_metric)
     # col =[0,0,0,0]
@@ -766,8 +769,58 @@ def generate_metrics(df,leveldf,indicators_name,indicators_metric,start_year,end
         first_state_name = "# **"+indicators_name[indicator]+ '** '
         first_state_population = format_number(size)
         first_state_delta = format_number(difference)
-        with col[i]:
+        if orientation=="vertical":
             st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
-            i=i+1
-
+        else:
+                 
+            with col[i]:
+                st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
+                i=i+1
+# @st.cache_data
+def generate_metrics_indicator(df,leveldf,indicators_name,indicators_metric,start_year,end_year,orientation):
+    # st.write(df,indicators_name)
+    box_number = len(indicators_metric)
+    # col =[0,0,0,0]
+    # if box_number == 4:
+    #     col[0],col[1],col[2],col[3] = st.columns(box_number)
+    # elif box_number == 3:
+    #     col[0],col[1],col[2] = st.columns(box_number)
+    # elif box_number == 2:
+    #     col[0],col[1] = st.columns(box_number)
+    # elif box_number == 1:
+    #     col[0] = st.columns(box_number)
+    col= st.columns(box_number)
+    
+    metric_df = leveldf
+    # st.write(col)
+    # metric_df = df[df["site"].isin(leveldf["id"].unique())]
+    # st.write(len(metric_df["site"].unique()))
+    i=0
+    for indicator in indicators_metric:
+        if indicator== "species":
+        
+            metric_df = metric_df.loc[metric_df["species"]!=53]
+        metric_df["year"] = metric_df["year"].astype(str)
+        difference = calculate_population_difference( metric_df, start_year, end_year,indicator)
+        metrics = metric_df.loc[metric_df[indicator]!="nan"][indicator].unique()
+        
+        # st.write(difference)
+        # size = len(metrics)
+        # # if size ==1 :
+        # #     if metrics[0]== "nan" :
+        # #         size =0
+            
+        # #st.write(metrics,size)
+        # # st.dataframe(df_population_difference_sorted)
+        
+        first_state_name = "# **"+indicators_name[indicator]+ '** '
+        first_state_population = format_number(difference[indicator].iloc[0])
+        first_state_delta = format_number(difference["difference"].iloc[0])
+        if orientation=="vertical":
+            st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
+        else:
+                 
+            with col[i]:
+                st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
+                i=i+1
 # def wildlife_data_clean(df):
