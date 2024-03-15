@@ -14,10 +14,10 @@ from streamlit_option_menu import option_menu
 #######################
 # Page configuration
 from views.human_wc import *
-from views.humanA import humanA
-from views.law_enforcement_patrol_data import lawEnforcement
-from views.spatial_data_and_landcover import spacialData
-from views.wildlife import wildlife
+# from views.humanA import humanA
+# from views.law_enforcement_patrol_data import lawEnforcement
+# from views.spatial_data_and_landcover import spacialData
+# from views.wildlife import wildlife
 
 st.set_page_config(
     page_title="IT Expert test",
@@ -107,17 +107,17 @@ with st.sidebar:
 content = st.empty()
 if selected_pillar =="Human wildlife conflict":
     Human_WC_page(st)
-elif selected_pillar =="Wildlife survey":
+# elif selected_pillar =="Wildlife survey":
     
-    wildlife()
-elif selected_pillar =="Human activity":
+#     wildlife()
+# elif selected_pillar =="Human activity":
     
-    humanA()
-elif selected_pillar =="Law enforcement":
+#     humanA()
+# elif selected_pillar =="Law enforcement":
     
-    lawEnforcement()
-elif selected_pillar =="Spatial data and landcover":
+#     lawEnforcement()
+# elif selected_pillar =="Spatial data and landcover":
     
-    spacialData()
+#     spacialData()
 
     
