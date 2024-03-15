@@ -109,8 +109,9 @@ def Human_WC_page(st):
 
     [data-testid="stMetric"] {
         /*background-color: #91B384;*/
-        background-color: #C0DEB1;
+        background-color: #004F45;
         text-align: center;
+        color: white;
         padding: 6px 0;
         border-radius:10px !important;
         /*box-shadow: 0px 0 4px #000;*/
@@ -125,7 +126,7 @@ def Human_WC_page(st):
         
     }
     [role="tab"] {
-        /*background-color: #C0DEB1;*/
+        /*background-color: #97B1AB;*/
         padding:5px  !important;
         text-align: center;
         border-radius: 3px;
@@ -140,8 +141,8 @@ def Human_WC_page(st):
         text-align: center;
         padding : 5px;
         word-wrap: break-word;
-        font-size: 1em;
-        /*color: #FFFFFF;*/
+        font-size: 1.06em;
+        color: #FFFFFF;
        
         
     }
@@ -153,7 +154,7 @@ def Human_WC_page(st):
         
     }*/
     /*[data-testid="stArrowVegaLiteChart"] {
-        background-color: #C0DEB1;
+        background-color: #97B1AB;
         border-radius:10px !important;
         text-align: center;
         color: #000;
@@ -167,7 +168,7 @@ def Human_WC_page(st):
         
         padding:2px;
         background: white;
-        border: 0.1px solid #D3A715;
+        border: 0.1px solid #004F45;
         margin-left: 8px;
         margin-right: 8px;
         border-radius:5px
@@ -318,7 +319,7 @@ def Human_WC_page(st):
         # coordinator_pub_df = coordinator_pub_df.loc[coordinator_pub_df[selected_indicator]!=-1]
         # df_pub1 = coordinator_pub_df.loc[(coordinator_pub_df[selected_indicator]!=-1)&(coordinator_pub_df["name"]==publication_types[0])]
         # st.line_chart( df[[selected_indicator,'year']], x="year", y=selected_indicator)
-        chart = altairLineChart(alt,df,selected_indicator, "Trends in "+selected_indicator.lower()+" per year from "+str(start_year)+" to "+str(end_year),530,"#D3A715")
+        chart = altairLineChart(alt,df,selected_indicator, "Trends in "+selected_indicator.lower()+" per year from "+str(start_year)+" to "+str(end_year),530,"#996139")
         # # st.write(df_pub1)
         # # text = chart.mark_text(align="center",fontSize=10,opacity=0.6,color="white").encode(text={"value":"Copyright WWF"})
         tab1, tab2 = st.tabs(["Chart", "Data table"])
@@ -329,7 +330,7 @@ def Human_WC_page(st):
             st.write(df[["year",selected_indicator]])
         # if selected_indicator == "Research Interest Score":
         #     # st.markdown('#### Research Interest Score Breakdown')
-        #     start = Color("#D3A715")
+        #     start = Color("#004F45")
         #     end = Color("#F9DFC5")
         #     ramp = ["%s"% x for x in list(start.range_to(end, len(value)))]
         #     source = pd.DataFrame(interestScoreBreakdown)

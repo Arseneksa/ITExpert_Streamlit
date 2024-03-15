@@ -1,9 +1,9 @@
 
 [theme]
 #base="light"
-primaryColor="#D3A715"
+primaryColor="#004F45"
 backgroundColor="#fff"
-secondaryBackgroundColor="#C0DEB1"
+secondaryBackgroundColor="#97B1AB"
 textColor="#000"
 #[theme]
 #primaryColor = "#f63366"
@@ -19,7 +19,7 @@ textColor="#000"
 #font="sans serif"
 #[theme]
 #base="light"
-#primaryColor="#D3A715"
+#primaryColor="#004F45"
 #backgroundColor="#fff"
 #backgroundColor="#12250d"
 #secondaryBackgroundColor="#2d312c"

@@ -315,7 +315,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
     # )
     alt.renderers.set_embed_options(actions={"editor": False})
     
-    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#D3A715",size=30),color="#D3A715",tension=0.6).encode(
+    chart = alt.Chart(df).mark_line(interpolate="cardinal",point=alt.OverlayMarkDef(color="#004F45",size=30),color="#004F45",tension=0.6).encode(
                 x=x_label+":O",
                 # y=selected_indicator,
                 y=alt.Y(field=selected_indicator, aggregate=aggregation, type='quantitative')
@@ -340,7 +340,7 @@ def altairLineChartWithAggregation(alt,df,selected_indicator,title,height,aggreg
     # )
     return chart
 # def pieChart():
-    start = Color("#D3A715")
+    start = Color("#004F45")
     end = Color("#F9DFC5")
     ramp = ["%s"% x for x in list(start.range_to(end, len(value)))]
     source = pd.DataFrame(interestScoreBreakdown)
