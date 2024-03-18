@@ -13,7 +13,11 @@ import datetime
 from streamlit_option_menu import option_menu
 #######################
 # Page configuration
+from views.forest_cover import forest_cover
+from views.human_pressure import human_pressure
 from views.human_wc import *
+from views.patrol_cover import patrol_cover
+from views.wildlife import wildlife
 # from views.humanA import humanA
 # from views.law_enforcement_patrol_data import lawEnforcement
 # from views.spatial_data_and_landcover import spacialData
@@ -88,7 +92,7 @@ alt.themes.enable("dark")
 
 
 pillars= [
-    "Human wildlife conflict","Wildlife survey",#"Human activity","Law enforcement","Spatial data and landcover","Capacity building"
+    "Human wildlife conflict","Wildlife ","Human pressure","Forest cover", "Patrol cover"#,"Law enforcement","Capacity building"
 ]
 with st.sidebar:
     # st.title('🏂 US Population Dashboard')
@@ -101,18 +105,25 @@ with st.sidebar:
     
     # indicator_list = list(df_reshaped.year.unique())[::-1]
     
-    selected_pillar = st.selectbox('Select Pillar', pillars)
+    selected_pillar = st.selectbox('Select monitoring pillar', pillars)
     
     
 content = st.empty()
 if selected_pillar =="Human wildlife conflict":
     Human_WC_page(st)
-# elif selected_pillar =="Wildlife survey":
+elif selected_pillar =="Wildlife ":
     
-#     wildlife()
-# elif selected_pillar =="Human activity":
+    wildlife()
+elif selected_pillar =="Human pressure":
     
-#     humanA()
+    human_pressure()
+elif selected_pillar =="Forest cover":
+    
+    forest_cover()
+    
+elif selected_pillar =="Patrol cover":
+    
+    patrol_cover()
 # elif selected_pillar =="Law enforcement":
     
 #     lawEnforcement()

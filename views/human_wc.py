@@ -1,6 +1,7 @@
 #######################
 # Import libraries
 # import streamlit as st
+import folium
 import pandas as pd
 import altair as alt
 import numpy as np
@@ -10,8 +11,11 @@ import numpy as np
 # from pydantic_settings import BaseSettings 
 from data.load_data import *
 from colour import Color
+import geopandas as gpd
 
-from tools import altairLineChart, calculate_population_difference,format_number, generate_metrics, generate_metrics_indicator
+from streamlit_folium import st_folium
+
+from tools import altairLineChart, calculate_population_difference,format_number, generate_metrics, generate_metrics_indicator, naturalbreaksMap
 #######################
 # Page configuration
 
@@ -182,7 +186,12 @@ def Human_WC_page(st):
     justify-content: center;
     align-items: center;
     }
-
+    [data-testid="baseButton-headerNoPadding"]{
+        background:#97B1AB;
+        font-weight:bold;
+        color:black;
+        border-radius:5px;
+    }
     [data-testid="stMetricDeltaIcon-Up"] {
         position: relative;
         left: 38%;
@@ -202,24 +211,31 @@ def Human_WC_page(st):
     </style>
     """, unsafe_allow_html=True)
     st.markdown(
-            ' <span style="font-size:2em;font-weight:bold;margin-left:0px;"> IT Expert</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Human wildlife conflict dashboard</span><br>',
+            ' <span style="font-size:2.2em;font-weight:bold;margin-left:0px;"> IT Expert</span><br><span style="margin-left:0px;font-size:1em;font-weight:bold" >Human wildlife conflict dashboard</span><br>',
             unsafe_allow_html=True,
         )
     
-    localurl = "http://localhost:8000/api"
+    localurl = "http://localhost:8000/api/"
     onlineurl = "https://itexpert97.pythonanywhere.com/api/"
-    dataurl =onlineurl+"Human_wildlife_conflict_data_smart/"
-    Human_wildlife_conflict_data_url =onlineurl+"Human_wildlife_conflict_data/"
+    url =  localurl
+    dataurl =url+"Human_wildlife_conflict_data_smart/"
+    Human_wildlife_conflict_data_url =url+"Human_wildlife_conflict_data/"
+    sites_url =url+"site/"
+    urlblock =url+"block/"
     url_dict  = {
         "data":dataurl,
         "Human_wildlife_conflict_data":Human_wildlife_conflict_data_url,
+        "sites":sites_url,
+        "blocks":urlblock,
     }
    
     data_dict= load_data(url_dict,st)
     # st.write(data_dict)
     data = data_dict["data"]
     Human_wildlife_conflict_data = data_dict["Human_wildlife_conflict_data"]
-    
+    sites_df = pd.json_normalize(data_dict["sites"])
+    blocksdf = pd.json_normalize(data_dict["blocks"])
+    blockgdf = gpd.read_file("data/SHAPEFILE_Block_A.shp",)
     
     df = pd.json_normalize(data)
     Human_wildlife_conflict_data_df = pd.json_normalize(Human_wildlife_conflict_data)
@@ -281,7 +297,20 @@ def Human_WC_page(st):
     #     coordinator_pub_df = df.loc[df["name"]==publication_types[0]]
     #     coordinator_pub_df = coordinator_pub_df.loc[(coordinator_pub_df["year"]>=start_year)&(coordinator_pub_df["year"]<=end_year)]
     #     coordinator_pub_df["year"] = coordinator_pub_df["year"].astype(str)
-        
+    df = pd.merge(df, sites_df[['id', 'name']], left_on="site", right_on='id', how='left')
+    df = pd.merge(df, blocksdf[['id', 'name']], left_on="block", right_on='id', how='left')
+    df =df.rename(
+        columns={
+            "id_x": "id_site",
+            "name_x": "site_name",
+            "id_y": "id_block",
+            "name_y": "block_name",
+            # "scientific_name": "SPECIES_SN",
+            
+        }
+    )
+    blockgdf["name"]=df["block_name"].unique()[0]
+    # st.write(df)
     indicators_metric = [
                 "monthly_average_rate_intrusion_with_damage",
                 "monthly_average_rate_intrusion_without_damage",
@@ -292,6 +321,9 @@ def Human_WC_page(st):
             ]
     # generate_metrics(df,df,indicator_name2,indicators_metric,start_year,end_year,"")
     # generate_metrics_indicator(df,df,indicator_name2,indicators_metric,start_year,end_year,"")
+    st.success("""##### A human-wildlife conflict monitoring study was conducted in Block A of the WWF MANGA site in Central Africa,from May 2018 to September 2022. We present here a summary of the information obtained on the various monitoring indicators during the study.
+            **Please use the range on the sidebar to select the period in which you wish to view the data.**""")
+    # generate_metrics_indicator(df,df,indicator_name2,indicators_metric,start_year,end_year,"")
     col = st.columns((2.6, 5.4), gap='small')
     with col[0]:
         with st.container():
@@ -299,7 +331,7 @@ def Human_WC_page(st):
             # st.markdown('#### Data table')
             
             # st.dataframe(df[["year","name"]])
-            st.markdown('#### Gains/Losses')
+            st.markdown('#### Indicators Gains/Losses')
             indicators_metric = [
                 "monthly_average_rate_intrusion_with_damage",
                 "monthly_average_rate_intrusion_without_damage",
@@ -313,7 +345,7 @@ def Human_WC_page(st):
     with col[1]:
         # st.write(df)
         # st.write(interestScoreBreakdown)
-        st.markdown('#### Overall intrusions stats')
+        st.markdown('#### Trends in Human wildlife conflict indicators')
         selected_indicator = st.selectbox('Select indicator', indicators)
         df[selected_indicator] = df[indcicator_name[selected_indicator]]
         # coordinator_pub_df = coordinator_pub_df.loc[coordinator_pub_df[selected_indicator]!=-1]
@@ -322,12 +354,23 @@ def Human_WC_page(st):
         chart = altairLineChart(alt,df,selected_indicator, "Trends in "+selected_indicator.lower()+" per year from "+str(start_year)+" to "+str(end_year),530,"#996139")
         # # st.write(df_pub1)
         # # text = chart.mark_text(align="center",fontSize=10,opacity=0.6,color="white").encode(text={"value":"Copyright WWF"})
-        tab1, tab2 = st.tabs(["Chart", "Data table"])
-        with tab1:
+        tab_map,tab_chart, tab_data = st.tabs(["Map","Chart", "Indicator description and Data table"])
+        with tab_map:
+            
+            block_result_gdf = pd.merge(df.sort_values(by=['year'], ascending=[ True]), blockgdf[['name', 'geometry']],left_on="block_name", right_on='name', how='left')
+            # st.altair_chart(chart, theme=None, use_container_width=True)
+            block_result_gdf = gpd.GeoDataFrame(block_result_gdf).to_crs(blockgdf.crs)
+            block_result_gdf = block_result_gdf.loc[block_result_gdf["geometry"]!=None]
+            map = naturalbreaksMap(block_result_gdf,selected_indicator,["name",selected_indicator])
+            
+            st_folium(map,height=480, use_container_width=True)
+        with tab_chart:
             
             st.altair_chart(chart, theme=None, use_container_width=True)
-        with tab2:
-            st.write(df[["year",selected_indicator]])
+       
+            # st.write(block_result_gdf[["name",selected_indicator]])
+        with tab_data:
+            st.write(df[[ "site_name","block_name","year",selected_indicator]])
         # if selected_indicator == "Research Interest Score":
         #     # st.markdown('#### Research Interest Score Breakdown')
         #     start = Color("#004F45")
