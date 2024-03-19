@@ -117,6 +117,9 @@ def wildlife():
         color: black !important;
         margin: 5px !important;
     }
+    [data-testid="stActionButtonIcon"]{
+        display:none;
+    }
     [data-testid="StyledFullScreenButton"]{
         color: black !important;
         margin-top: 5px !important;

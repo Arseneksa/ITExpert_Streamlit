@@ -25,6 +25,9 @@ def Human_WC_page(st):
     # CSS styling
     st.markdown("""
     <style>
+    [data-testid="stActionButtonIcon"]{
+        display:none;
+    }
     .vega-embed .vega-actions a, .stDeployButton {
         display: none !important;
     }
