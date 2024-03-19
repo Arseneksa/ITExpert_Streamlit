@@ -296,7 +296,7 @@ def forest_cover():
     # Load data
     localurl = "http://localhost:8000/api/"
     onlineurl = "https://itexpert97.pythonanywhere.com/api/" 
-    url = localurl
+    url =onlineurl
     dataurl =url+"forest_cover_data_smart/"
     species_url =url+"species/"
     # sampling_method_url =onlineurl+"/api/samplingMethod/"

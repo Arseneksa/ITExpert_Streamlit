@@ -303,7 +303,7 @@ def wildlife():
     # Load data
     localurl = "http://localhost:8000/api/"
     onlineurl = "https://itexpert97.pythonanywhere.com/api/"
-    url =  localurl
+    url =onlineurl
     dataurl =url+"wildlife_data_smart/"
     wildlifedataurl =url+"wildlife_data/"
     forestdataurl =url+"forest_cover_data/"
@@ -620,10 +620,13 @@ def wildlife():
         x2 = sm.add_constant(x)
         model2 = sm.OLS(y, x2)
         results = model2.fit()
-        st.write(results.summary())
+        col = st.columns((4, 4), gap='small')
+        
+        with col[0]:
+            st.write("### Summary")
+            st.write(results.summary())
+        with col[1]:
+            st.success("Encouter rate ="+str(round(results.params["const"],3))+" + "+str(round(results.params["encounter_rate_humanP"],3))+"* **Encouter rate human pressure** "+" + "+str(round(results.params["forest_cover_rate"],3))+"* **Forest cover rate** "+" + "+str(round(results.params["patrol_cover_rate"],3))+"* **Patrol cover rate** ")
         # print(results.summary())
-        # print(f"coefficient of determination: {r_sq}")
-        # print(f"coefficient of determination stat: {results.rsquared}")
-        # print(f"intercept: {model.intercept_}")
-        # print(f"regression coefficients: {results.params}")
-        # print(f"coefficients: {model.coef_}")
+        print(f"coefficient of determination stat: {results.rsquared}")
+        print(f"regression coefficients: {results.params}")

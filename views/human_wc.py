@@ -217,7 +217,7 @@ def Human_WC_page(st):
     
     localurl = "http://localhost:8000/api/"
     onlineurl = "https://itexpert97.pythonanywhere.com/api/"
-    url =  localurl
+    url =onlineurl
     dataurl =url+"Human_wildlife_conflict_data_smart/"
     Human_wildlife_conflict_data_url =url+"Human_wildlife_conflict_data/"
     sites_url =url+"site/"
